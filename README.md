@@ -48,14 +48,16 @@ Our first "client project" is to **build Chiron Guild itself**—the tools, work
 ### For Contributors
 
 1. Join the discussion and pick a mission from the **Guild Board**
-2. Use the provided templates, AI tools, and collaboration prompts
+2. Use the provided templates, AI tools (bring your own LLM!), and collaboration prompts
 3. Submit pull requests or proposals via GitHub
 
 📘 See [`CONTRIBUTING.md`](docs/CONTRIBUTING.md) for contributor onboarding.
 
-### For Clients
+### For Future Clients & Partners
 
-To submit a project or hire contributors, please reach out via **[TheChironGuild@gmail.com](mailto:TheChironGuild@gmail.com)**.
+We are currently in a bootstrapping phase, focused on building the core platform and refining our collective intelligence workflows. However, we are actively engaging with organizations interested in leveraging AI-augmented collective intelligence for their complex projects in the future.
+
+To express interest or discuss future opportunities, please reach out via **[TheChironGuild@gmail.com](mailto:TheChironGuild@gmail.com)**.
 📄 See [`LICENSE.md`](LICENSE.md) for usage terms.
 
 ---
@@ -73,7 +75,7 @@ To submit a project or hire contributors, please reach out via **[TheChironGuild
 ## 💬 Core Principles
 
 * **Own what you create** — Contributors retain rights to their work and data
-* **Open learning, fair pay** — Structured missions allow all skill levels to contribute and grow
+* **Open learning, equitable reward systems** — Structured missions allow all skill levels to contribute and grow
 * **Transparent AI use** — All AI contributions are documented and visible
 * **Community governance** — Decisions and direction shaped by Guild members
 
