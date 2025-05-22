@@ -1,79 +1,93 @@
-# Contributing to Chiron Guild 🛡️🤖
+# CONTRIBUTING to Chiron Guild 🛡️🤖
 
-Welcome to the Guild! Whether you're a developer, designer, writer, strategist, or just curious, we’re glad you're here. This document outlines how to get involved, submit work, and collaborate effectively.
+Welcome, future Guild member! We're thrilled you're considering contributing to Chiron Guild. This document outlines everything you need to get started and become an "AI-augmented super worker" by helping us build the very foundation of the Guild.
 
-## ⚔️ Our Mission
+## 1. Our Current Mission: Building the Guild Itself (Phase 0: The Bootstrapping Era)
 
-Chiron Guild is building a self-assembling, AI-augmented guild system to empower workers and communities. We believe in equitable collaboration, open learning, and the fusion of human creativity and machine intelligence.
+Chiron Guild is a community-driven project dedicated to empowering individuals through AI-augmented skills and collective intelligence. Right now, our most important "client project" is **Chiron Guild itself.**
 
-We’re currently in **Phase 0: Bootstrapping the Guild**, and your contributions now will help shape the foundation of the future.
+By contributing in Phase 0, you'll be:
+*   **Shaping the Platform:** Designing the core tools, workflows, and infrastructure.
+*   **Gaining Verifiable Skills:** Earning "Merit Badges" and building your personal skill portfolio.
+*   **Foundational to the Guild:** All contributions are credited, tracked for future reputation rewards, and directly influence the Guild's direction.
+
+## 2. Join the Guild! Your First Steps
+
+We operate transparently and collaboratively across a few key platforms:
+
+1.  **Join our Discord Server:** This is our primary real-time communication hub.
+    *   **Link:** [Your Discord Invite Link Here]
+    *   **Why:** For discussions, real-time help, community updates, and informal brainstorming.
+2.  **Explore the Google Drive Knowledge Base:** This is our central repository for project documentation, guidelines, and the AI Documentation Assistant.
+    *   **Link:** [Your Google Drive Public Share Link Here]
+    *   **Why:** To access detailed mission briefs, design docs, governance principles, and our AI prompts.
+3.  **Fork our GitHub Repository:** This is where all the code for the platform lives, and where you'll submit your technical contributions.
+    *   **Link:** [Your GitHub Org Link Here]
+    *   **Why:** To contribute code, manage technical tasks via issues, and submit Pull Requests (PRs).
+
+## 3. How to Find & Work on a Mission
+
+All contributions in Chiron Guild are structured as "Skill Missions"—bite-sized tasks that contribute to the overall project while helping you gain new skills.
+
+1.  **Browse the Guild Board (GitHub Issues):**
+    *   Our "Guild Board" is managed through **GitHub Issues**. Look for issues tagged with `skill-mission`, `good first issue`, or `help wanted`.
+    *   Each issue will contain a brief description of the task, its estimated effort, and the "Merit Badges" associated with its completion.
+    *   **Link:** [Your GitHub Issues Link Here]
+
+2.  **Understand the Mission:**
+    *   Once you've chosen a mission from GitHub Issues, the issue description will link to a **detailed Mission Brief in Google Drive**. This document (e.g., `Platform Self-Assembly/Skill Missions/MS001 - Mission Title/Mission Brief - MS001.gdoc`) will contain:
+        *   Comprehensive instructions.
+        *   Required deliverables.
+        *   Links to any supporting documentation (e.g., design mockups, API specs).
+        *   Specific prompts and guidelines for using **external AI tools** for assistance.
+
+3.  **Perform the Work (AI-Augmented!):**
+    *   Use your preferred development environment, design tools, or writing applications.
+    *   **Leverage AI tools:** Follow the guidance provided in the Mission Brief and our **AI Documentation Assistant Prompts** (found in Google Drive) to use your own external LLM (e.g., ChatGPT, Gemini, Claude, local models) to assist with brainstorming, drafting, coding, or summarizing. This is a core part of becoming an "AI-augmented super worker"!
+
+4.  **Document Your Workflow (Context Building):**
+    *   **Critically Important:** As you work, generate relevant documentation using our **AI Documentation Assistant Prompts**. This includes:
+        *   **Progress Summaries:** What did you do, challenges, next steps.
+        *   **Decision Logs:** Key choices made and their rationale.
+        *   **Code/Design Overviews:** Explanations of new components.
+    *   **Always human-review and refine** AI-generated content for accuracy and clarity.
+    *   Save these `.md` documents in the designated folders within our **Google Drive** (as specified in `Appendix F` and the Mission Brief).
+
+## 4. Submitting Your Contribution
+
+When your mission is complete:
+
+1.  **For Code Contributions:**
+    *   **Create a Pull Request (PR) on GitHub:**
+        *   Ensure your branch is up-to-date with `main`.
+        *   Link your PR to the original GitHub Issue.
+        *   Provide a clear description of your changes.
+        *   Reference any supporting documentation in Google Drive (e.g., `MS001_Code_Overview_YourName.md`).
+2.  **For Non-Code Contributions (Documentation, Design, Workflows):**
+    *   Ensure all relevant documents are finalized and saved in the correct **Google Drive** locations.
+    *   If you created new documents, **share them with `thechironguild@gmail.com`** giving **"Editor"** access, or **"Commenter"** access if you prefer to retain ownership.
+    *   Go back to the original **GitHub Issue** for the mission. Add a comment indicating completion and provide direct links to all relevant Google Drive documents.
+
+## 5. Review & Recognition (Merit Badges)
+
+*   Your submission will be reviewed by Guild Facilitators and/or peers. We'll provide constructive feedback via GitHub (for PRs) or comments in Google Docs.
+*   Once approved, your contribution will be merged (if code) and you will be awarded the associated **"Merit Badge"** on your Chiron Guild profile.
+
+## 6. Core Principles for Contributors
+
+*   **Own What You Create:** You retain rights to your individual work and data contributed to the Guild. Our community license will reflect this.
+*   **Open Learning, Fair Value:** Structured missions allow all skill levels to contribute, learn, and earn reputation.
+*   **Transparent AI Use:** Always document when and how you've used AI tools, and ensure human review of AI-generated content.
+*   **Community Governance:** Contribute to discussions on Discord and GitHub to help shape the Guild's future.
+
+## 7. Resources & Guidelines
+
+*   **Discord Server:** [Your Discord Invite Link Here]
+*   **Google Drive Knowledge Base:** [Your Google Drive Public Share Link Here]
+*   **GitHub Issues (Guild Board):** [Your GitHub Issues Link Here]
+*   **Appendix F: Context Building & AI Tool Use Documentation:** (Will be linked from your GitHub repo, but points to Google Drive for prompts).
+*   **Chiron Guild Code of Conduct (Coming Soon)**
 
 ---
 
-## 🧽 How to Get Started
-
-### 1. Join the Conversation
-
-* Discuss ideas, propose missions, and get guidance in the community forum or Discord (coming soon).
-* New contributors are encouraged to **introduce themselves and declare a focus area or mission**.
-
-### 2. Pick a Mission
-
-* Missions are modular tasks that contribute to core infrastructure, tools, governance, or documentation.
-* See the **Guild Board** (missions.md or GitHub Projects tab) to browse open missions.
-
-### 3. Use Guild Tools & Templates
-
-* Wherever possible, use shared prompts, design docs, and workflows to ensure compatibility.
-* You're welcome to bring your own LLM or tools — just document how they were used!
-
-### 4. Submit Work
-
-* Fork the repo and work in your own branch.
-* Submit a pull request (PR) or open a discussion if you're proposing a new feature, license clause, or mission type.
-* Include a brief **self-documentation note** in your PR describing your contribution and tools used (AI or human).
-
----
-
-## 📘 Contributor Principles
-
-By contributing, you agree to:
-
-* Collaborate in good faith and share knowledge freely.
-* Transparently document AI usage when submitting work.
-* Uphold the **Guild Code**: fair use, open learning, and collective empowerment.
-* License your contributions under the **Chiron Guild Community License (v1.0)**.
-
----
-
-## 🎖️ Recognition & Rewards
-
-All contributions are tracked and recognized. You may earn:
-
-* **Reputation points** toward future roles or missions.
-* **Badges** for completing specific types of work or learning paths.
-* **Eligibility for future compensation** once funding models are in place.
-
-Your participation now helps shape governance, define roles, and unlock new opportunities in the Guild’s future.
-
----
-
-## 🛠️ Areas to Contribute
-
-| Area              | Sample Missions                                                              |
-| ----------------- | ---------------------------------------------------------------------------- |
-| **Engineering**   | Build the mission system, contribute to LLM tooling, create reusable modules |
-| **Design & UX**   | Wireframe interfaces, design badges or guild profiles                        |
-| **Documentation** | Draft how-to guides, AI interaction records, or governance rules             |
-| **Governance**    | Propose policies, voting systems, or merit systems                           |
-| **Outreach**      | Draft explainers, recruit mission leads, help share the vision               |
-
----
-
-## 🧠 Questions?
-
-Open a GitHub Issue, start a Discussion, or email **[TheChironGuild@gmail.com](mailto:TheChironGuild@gmail.com)**.
-
----
-
-*Chiron Guild is professional on the outside, mythic on the inside. Step into the future of collective intelligence. Welcome to the Guild.* 🛡️🤖
+**Join the Guild. Shape the future of work.** 🛡️
