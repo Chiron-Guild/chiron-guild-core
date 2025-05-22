@@ -1,0 +1,84 @@
+# Appendix F: Context Building & AI Tool Use Documentation
+
+## 1. Introduction: The Power of Documented Context 🧠💡
+
+At Chiron Guild, our collective strength comes from shared knowledge and transparent collaboration. This Appendix details our approach to "Context Building"—how we log and summarize project documentation, AI interactions, and individual contributions.
+
+By consistently documenting our workflows, we achieve:
+*   **Enhanced Collective Intelligence:** A rich, searchable knowledge base that allows any Guild member (or future AI co-pilot) to quickly understand past decisions, progress, and challenges.
+*   **Transparency & Trust:** Clear records of human-AI collaboration, ensuring ethical AI use and accountability.
+*   **Automated Insights (Future):** The structured data we collect will be the foundation for auto-generated contribution reports, personal skill portfolios, and advanced AI-driven project management tools.
+*   **Faster Onboarding:** New contributors can quickly get up to speed on any project or mission.
+*   **Verifiable Skill Development:** Your documented contributions directly support your "Merit Badges" and skill progression within the Guild.
+
+## 2. The Human + AI Documentation Process
+
+Our documentation process is inherently a Human + AI collaboration. Humans define the intent, provide the raw data, and critically review the output. AI assists in structuring, summarizing, and suggesting content, making documentation low-effort and high-value.
+
+### 2.1. Core Principles
+
+*   **Low Effort, High Value:** Documentation should be integrated into your workflow, not an arduous afterthought.
+*   **Structured for AI & Humans:** Use the provided templates and prompts to ensure consistency, making the data easily digestible for both human review and future AI processing.
+*   **Transparency First:** Always clearly mark AI-assisted content and distinguish it from purely human-generated text.
+*   **Accuracy & Review:** AI is a powerful assistant, but its outputs must always be human-reviewed for accuracy, completeness, and context.
+
+### 2.2. How to Document Your Work
+
+We leverage our **AI Documentation Assistant** (a set of specialized prompts and guidelines) to help you efficiently generate valuable summaries and logs.
+
+**Steps:**
+1.  **Identify Documentation Need:** After completing a significant task, making a decision, or at the end of a work session, consider what needs to be documented.
+2.  **Access the AI Documentation Assistant:** Navigate to the `Project Documentation/AI Documentation Assistant Prompts/` folder in our **Notion/Google Docs** (or GitHub for code-related docs).
+3.  **Choose the Right Prompt:** Select the prompt template most relevant to your documentation need (e.g., `Daily_Progress_Summary_Prompt.md`, `Decision_Log_Prompt.md`, `Code_Module_Overview_Prompt.md`).
+4.  **Input Raw Information:** Copy the prompt template into your **external LLM of choice** (e.g., ChatGPT, Gemini, Claude, etc.). Paste your raw notes, chat logs, code snippets, meeting minutes, or bulleted lists as input.
+5.  **Generate & Refine:** Let the LLM generate the summary. **Crucially, review and human-edit the output.** Ensure it's accurate, clear, concise, and captures the necessary context. Add specific human insights the AI might have missed.
+6.  **Save in Designated Structure:** Save your finalized, human-reviewed document in the relevant folder within `Project Documentation/` (e.g., `Project Documentation/Platform Self-Assembly/Skill Missions/[Mission ID]/`). Refer to our [File Structure Guidelines](link-to-file-structure-guidelines-in-notion-or-another-doc) for exact locations.
+
+### 2.3. Workflow Stages & Documentation Points
+
+Specific documentation points are often embedded directly within Mission instructions, but generally, consider documenting at these stages:
+
+*   **Mission Acceptance:** Briefly note your understanding of the mission goals.
+*   **Daily/Session Progress:** Generate a short progress summary of what you achieved, any blockers, and next steps.
+*   **Key Decisions:** Document any significant decisions made during the mission, along with their rationale and participants.
+*   **Code/Design Overviews:** For technical contributions, summarize the purpose and function of new modules or designs.
+*   **Mission Completion:** A final summary of the outcome, lessons learned, and any future considerations.
+
+## 3. Contribution Reports & Personal Skill Portfolios 🎖️📈
+
+The structured documentation you generate, coupled with your GitHub contributions, forms the backbone of our future **auto-generated "Contribution Reports"** and **personal skill portfolios**.
+
+While these features will evolve beyond Phase 0, your consistent context building ensures that:
+*   Every "Merit Badge" earned is supported by tangible, documented work.
+*   Your workflow and skill application are transparently recorded.
+*   Eventually, the Guild will be able to automatically compile comprehensive reports showcasing your contributions, the AI tools you leveraged, and the skills you developed, providing a powerful, verifiable portfolio for your career resilience.
+
+## 4. Transparency in AI Tool Use 🤖✅
+
+Transparency is a core principle of Chiron Guild. We are committed to openly documenting how AI tools are used within our projects.
+
+*   **Explicit Tagging:** Always include a note like `*Generated with AI assistance, human-reviewed and refined.*` (or similar) at the bottom of any document largely drafted or summarized by an LLM.
+*   **Workflow Narration:** When documenting your process, specifically mention which AI tools you used and for what purpose (e.g., "Used LLM to brainstorm function names," "Leveraged LLM to draft initial test cases," "Summarized meeting notes with LLM").
+*   **Ethical Review:** We encourage peer review and discussion on the effective and ethical application of AI in our workflows.
+
+## 5. Public Knowledge Base (Guild Wiki) 🏛️🌐
+
+Much of the documentation generated, particularly for the self-assembly of the Chiron Guild platform itself, will be published to our public knowledge base (the "Guild Wiki" in Notion/Google Docs). This allows:
+
+*   **Open Learning:** Anyone can learn from our processes and insights.
+*   **Community Building:** Transparency attracts new members and fosters trust.
+*   **Thought Leadership:** Showcasing our unique Human + AI collaboration model.
+
+Mission-specific documentation will typically reside in relevant project folders, but key principles, architectural decisions, and general guidelines will be extracted and organized within this public knowledge base.
+
+## 6. Best Practices & Tips
+
+*   **Document Early, Document Often:** Small, frequent updates are easier than large, infrequent ones.
+*   **Be Concise:** Focus on essential information. AI can help you trim the fat.
+*   **Be Specific:** Instead of "fixed bug," describe *what* bug and *how* it was fixed.
+*   **Link Generously:** Cross-reference related documents, GitHub issues, and Discord discussions.
+*   **Ask for Feedback:** If you're unsure about how to document something, ask for help in the relevant Discord channel.
+
+---
+
+**Join the Guild. Shape the future of work.** 🛡️
