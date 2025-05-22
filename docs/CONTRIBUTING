@@ -1,0 +1,79 @@
+# Contributing to Chiron Guild 🛡️🤖
+
+Welcome to the Guild! Whether you're a developer, designer, writer, strategist, or just curious, we’re glad you're here. This document outlines how to get involved, submit work, and collaborate effectively.
+
+## ⚔️ Our Mission
+
+Chiron Guild is building a self-assembling, AI-augmented guild system to empower workers and communities. We believe in equitable collaboration, open learning, and the fusion of human creativity and machine intelligence.
+
+We’re currently in **Phase 0: Bootstrapping the Guild**, and your contributions now will help shape the foundation of the future.
+
+---
+
+## 🧽 How to Get Started
+
+### 1. Join the Conversation
+
+* Discuss ideas, propose missions, and get guidance in the community forum or Discord (coming soon).
+* New contributors are encouraged to **introduce themselves and declare a focus area or mission**.
+
+### 2. Pick a Mission
+
+* Missions are modular tasks that contribute to core infrastructure, tools, governance, or documentation.
+* See the **Guild Board** (missions.md or GitHub Projects tab) to browse open missions.
+
+### 3. Use Guild Tools & Templates
+
+* Wherever possible, use shared prompts, design docs, and workflows to ensure compatibility.
+* You're welcome to bring your own LLM or tools — just document how they were used!
+
+### 4. Submit Work
+
+* Fork the repo and work in your own branch.
+* Submit a pull request (PR) or open a discussion if you're proposing a new feature, license clause, or mission type.
+* Include a brief **self-documentation note** in your PR describing your contribution and tools used (AI or human).
+
+---
+
+## 📘 Contributor Principles
+
+By contributing, you agree to:
+
+* Collaborate in good faith and share knowledge freely.
+* Transparently document AI usage when submitting work.
+* Uphold the **Guild Code**: fair use, open learning, and collective empowerment.
+* License your contributions under the **Chiron Guild Community License (v1.0)**.
+
+---
+
+## 🎖️ Recognition & Rewards
+
+All contributions are tracked and recognized. You may earn:
+
+* **Reputation points** toward future roles or missions.
+* **Badges** for completing specific types of work or learning paths.
+* **Eligibility for future compensation** once funding models are in place.
+
+Your participation now helps shape governance, define roles, and unlock new opportunities in the Guild’s future.
+
+---
+
+## 🛠️ Areas to Contribute
+
+| Area              | Sample Missions                                                              |
+| ----------------- | ---------------------------------------------------------------------------- |
+| **Engineering**   | Build the mission system, contribute to LLM tooling, create reusable modules |
+| **Design & UX**   | Wireframe interfaces, design badges or guild profiles                        |
+| **Documentation** | Draft how-to guides, AI interaction records, or governance rules             |
+| **Governance**    | Propose policies, voting systems, or merit systems                           |
+| **Outreach**      | Draft explainers, recruit mission leads, help share the vision               |
+
+---
+
+## 🧠 Questions?
+
+Open a GitHub Issue, start a Discussion, or email **[TheChironGuild@gmail.com](mailto:TheChironGuild@gmail.com)**.
+
+---
+
+*Chiron Guild is professional on the outside, mythic on the inside. Step into the future of collective intelligence. Welcome to the Guild.* 🛡️🤖
