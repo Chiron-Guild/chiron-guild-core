@@ -1,93 +1,103 @@
 # CONTRIBUTING to Chiron Guild 🛡️🤖
 
-Welcome, future Guild member! We're thrilled you're considering contributing to Chiron Guild. This document outlines everything you need to get started and become an "AI-augmented super worker" by helping us build the very foundation of the Guild.
+**Initiation Protocols for the AI-Augmented Architect. Forge the New Order.**
 
-## 1. Our Current Mission: Building the Guild Itself (Phase 0: The Bootstrapping Era)
-
-Chiron Guild is a community-driven project dedicated to empowering individuals through AI-augmented skills and collective intelligence. Right now, our most important "client project" is **Chiron Guild itself.**
-
-By contributing in Phase 0, you'll be:
-*   **Shaping the Platform:** Designing the core tools, workflows, and infrastructure.
-*   **Gaining Verifiable Skills:** Earning "Merit Badges" and building your personal skill portfolio.
-*   **Foundational to the Guild:** All contributions are credited, tracked for future reputation rewards, and directly influence the Guild's direction.
-
-## 2. Join the Guild! Your First Steps
-
-We operate transparently and collaboratively across a few key platforms:
-
-1.  **Join our Discord Server:** This is our primary real-time communication hub.
-    *   **Link:** [Your Discord Invite Link Here]
-    *   **Why:** For discussions, real-time help, community updates, and informal brainstorming.
-2.  **Explore the Google Drive Knowledge Base:** This is our central repository for project documentation, guidelines, and the AI Documentation Assistant.
-    *   **Link:** [Your Google Drive Public Share Link Here]
-    *   **Why:** To access detailed mission briefs, design docs, governance principles, and our AI prompts.
-3.  **Fork our GitHub Repository:** This is where all the code for the platform lives, and where you'll submit your technical contributions.
-    *   **Link:** [Your GitHub Org Link Here]
-    *   **Why:** To contribute code, manage technical tasks via issues, and submit Pull Requests (PRs).
-
-## 3. How to Find & Work on a Mission
-
-All contributions in Chiron Guild are structured as "Skill Missions"—bite-sized tasks that contribute to the overall project while helping you gain new skills.
-
-1.  **Browse the Guild Board (GitHub Issues):**
-    *   Our "Guild Board" is managed through **GitHub Issues**. Look for issues tagged with `skill-mission`, `good first issue`, or `help wanted`.
-    *   Each issue will contain a brief description of the task, its estimated effort, and the "Merit Badges" associated with its completion.
-    *   **Link:** [Your GitHub Issues Link Here]
-
-2.  **Understand the Mission:**
-    *   Once you've chosen a mission from GitHub Issues, the issue description will link to a **detailed Mission Brief in Google Drive**. This document (e.g., `Platform Self-Assembly/Skill Missions/MS001 - Mission Title/Mission Brief - MS001.gdoc`) will contain:
-        *   Comprehensive instructions.
-        *   Required deliverables.
-        *   Links to any supporting documentation (e.g., design mockups, API specs).
-        *   Specific prompts and guidelines for using **external AI tools** for assistance.
-
-3.  **Perform the Work (AI-Augmented!):**
-    *   Use your preferred development environment, design tools, or writing applications.
-    *   **Leverage AI tools:** Follow the guidance provided in the Mission Brief and our **AI Documentation Assistant Prompts** (found in Google Drive) to use your own external LLM (e.g., ChatGPT, Gemini, Claude, local models) to assist with brainstorming, drafting, coding, or summarizing. This is a core part of becoming an "AI-augmented super worker"!
-
-4.  **Document Your Workflow (Context Building):**
-    *   **Critically Important:** As you work, generate relevant documentation using our **AI Documentation Assistant Prompts**. This includes:
-        *   **Progress Summaries:** What did you do, challenges, next steps.
-        *   **Decision Logs:** Key choices made and their rationale.
-        *   **Code/Design Overviews:** Explanations of new components.
-    *   **Always human-review and refine** AI-generated content for accuracy and clarity.
-    *   Save these `.md` documents in the designated folders within our **Google Drive** (as specified in `Appendix F` and the Mission Brief).
-
-## 4. Submitting Your Contribution
-
-When your mission is complete:
-
-1.  **For Code Contributions:**
-    *   **Create a Pull Request (PR) on GitHub:**
-        *   Ensure your branch is up-to-date with `main`.
-        *   Link your PR to the original GitHub Issue.
-        *   Provide a clear description of your changes.
-        *   Reference any supporting documentation in Google Drive (e.g., `MS001_Code_Overview_YourName.md`).
-2.  **For Non-Code Contributions (Documentation, Design, Workflows):**
-    *   Ensure all relevant documents are finalized and saved in the correct **Google Drive** locations.
-    *   If you created new documents, **share them with `thechironguild@gmail.com`** giving **"Editor"** access, or **"Commenter"** access if you prefer to retain ownership.
-    *   Go back to the original **GitHub Issue** for the mission. Add a comment indicating completion and provide direct links to all relevant Google Drive documents.
-
-## 5. Review & Recognition (Merit Badges)
-
-*   Your submission will be reviewed by Guild Facilitators and/or peers. We'll provide constructive feedback via GitHub (for PRs) or comments in Google Docs.
-*   Once approved, your contribution will be merged (if code) and you will be awarded the associated **"Merit Badge"** on your Chiron Guild profile.
-
-## 6. Core Principles for Contributors
-
-*   **Own What You Create:** You retain rights to your individual work and data contributed to the Guild. Our community license will reflect this.
-*   **Open Learning, Fair Value:** Structured missions allow all skill levels to contribute, learn, and earn reputation.
-*   **Transparent AI Use:** Always document when and how you've used AI tools, and ensure human review of AI-generated content.
-*   **Community Governance:** Contribute to discussions on Discord and GitHub to help shape the Guild's future.
-
-## 7. Resources & Guidelines
-
-*   **Discord Server:** [Your Discord Invite Link Here]
-*   **Google Drive Knowledge Base:** https://drive.google.com/drive/folders/1OPKYI5OU5X2vzKhBdlRFHp475VV25qqV?usp=sharing
-*   **GitHub Issues (Guild Board):** [Your GitHub Issues Link Here]
-*   **Appendix F: Context Building & AI Tool Use Documentation:** (Will be linked from your GitHub repo, but points to Google Drive for prompts).
-*   **Chiron Guild Code of Conduct (Coming Soon)**
+Welcome, future Guild Operative. You are at the threshold of a new digital frontier. This document contains the critical protocols for your initiation into Chiron Guild, detailing how you will arm yourself, execute **Guild Ops**, and become an "AI-augmented super worker" by actively forging the very bedrock of our collective.
 
 ---
 
-**Join the Guild. Shape the future of work.** 🛡️
+## 1. Our Prime Directive: Self-Assembly (Phase 0: The Bootstrapping Era)
+
+Chiron Guild is not just a platform; it is a declaration of war against obsolescence. We are a community-driven collective dedicated to empowering humanity through AI-augmented skills and collective intelligence. Our most crucial "client contract" right now is **Chiron Guild itself.**
+
+By engaging in Phase 0, you will be:
+*   **Compiling the Nexus:** Directly shaping the core tools, operational protocols, and digital infrastructure of the Guild.
+*   **Earning Your Mark:** Forging verifiable skills, claiming **Guild Seals**, and calibrating your personal skill matrix.
+*   **Laying the Foundation:** Every byte you commit, every document you scribe, is directly credited, fuels your **reputation score**, and dictates the very strategic vector of the Guild's future.
+
+---
+
+## 2. Access Protocols: Arming Your Station
+
+We operate with precision and transparency across key digital domains. This is your initial access point:
+
+1.  **Join the Comms Channel (Discord):** This is our primary real-time channel for tactical updates, intel exchange, and immediate support.
+    *   **Link:** [Your Discord Invite Link Here]
+    *   **Why:** For direct coordination, rapid problem-solving, and forging direct connections within the collective.
+2.  **Access the Guild Archives (Google Drive):** This is our central repository for all project documentation, operational guidelines, and the **AI Documentation Assistant** protocols.
+    *   **Link:** https://drive.google.com/drive/folders/1OPKYI5OU5X2vzKhBdlRFHp475VV25qqV?usp=sharing
+    *   **Why:** To retrieve detailed Guild Op briefs, design schematics, governance principles, and the AI prompt directives.
+3.  **Clone the Code Nexus (GitHub Repository):** This is the heart of our codebase, where the digital DNA of the Guild is forged and managed. Your technical contributions will reside here.
+    *   **Link:** [Your GitHub Org Link Here]
+    *   **Why:** To contribute compiled code, manage technical Directives via issues, and transmit your work through Pull Requests.
+
+---
+
+## 3. Executing Your Guild Op: The Path to Augmentation
+
+All contributions within Chiron Guild are structured as **Guild Ops**—precision-engineered tasks that advance the collective while sharpening your augmented capabilities.
+
+1.  **Intercept Your Directive (Guild Board - GitHub Issues):**
+    *   Our "Guild Board" is managed through **GitHub Issues**. Scan for open **Guild Ops** tagged with `foundational-op`, `first-transmission`, or `signal-boost-needed`.
+    *   Each Directive will contain a concise brief, an estimated operational tempo, and the **Guild Seals** awarded upon successful completion.
+    *   **Link:** [Your GitHub Issues Link Here]
+
+2.  **Deconstruct the Directive:**
+    *   Once you've chosen a Guild Op from GitHub Issues, the issue description will transmit a link to its **detailed Guild Op Brief in the Guild Archives (Google Drive)**. This document (e.g., `Platform Self-Assembly/Guild Ops/GO-001 - Directive Title/Directive Brief - GO-001.gdoc`) will contain:
+        *   Comprehensive operational instructions.
+        *   Required deliverables and output formats.
+        *   Links to any supporting schematics or contextual data.
+        *   Specific prompts and guidelines for augmenting your process using **external AI tools**.
+
+3.  **Execute the Work (AI-Augmented Precision!):**
+    *   Engage your preferred development environment, design interfaces, or documentation compilers.
+    *   **Leverage AI Tools:** Adhere to the guidance provided in the Guild Op Brief and our **AI Documentation Assistant Prompts** (located in the Guild Archives) to deploy your own external LLM (e.g., ChatGPT, Gemini, Claude, local models). Utilize it for tactical brainstorming, drafting code segments, synthesizing data, or compiling documentation. This symbiotic human-AI augmentation is the core of our power.
+
+4.  **Log Your Augmentation (Context Compilation):**
+    *   **Critically Important:** As you execute, compile relevant documentation using our **AI Documentation Assistant Prompts**. This includes:
+        *   **Progress Transmissions:** What was achieved, any encountered anomalies, next operational vectors.
+        *   **Decision Logs:** Key strategic or tactical decisions made, their rationale, and contributing agents.
+        *   **Code/Design Schematics:** Overviews and explanations of newly forged components or architectural designs.
+    *   **Always human-review and refine** any AI-generated content for accuracy, clarity, and consistency with Guild protocols.
+    *   Save these `.md` documents in their designated folders within our **Google Drive Guild Archives** (as specified in `Appendix F` and the Guild Op Brief).
+
+## 4. Transmitting Your Contribution
+
+When your Guild Op is complete, initiate transmission:
+
+1.  **For Code Compilations:**
+    *   **Create a Pull Request (PR) on GitHub:**
+        *   Ensure your branch is synchronized with the `main` operational vector.
+        *   Link your PR directly to the original GitHub Issue (Guild Op).
+        *   Provide a clear summary of your compiled changes.
+        *   Reference any supporting documentation in the Guild Archives (e.g., `GO-001_Code_Overview_YourAlias.md`).
+2.  **For Non-Code Compilations (Documentation, Design, Protocols):**
+    *   Ensure all relevant documents are finalized and secured in their correct **Google Drive Guild Archives** locations.
+    *   If you initiated new documents, **share their access with `thechironguild@gmail.com`** granting **"Editor"** access (or **"Commenter"** if you prefer to retain full digital ownership).
+    *   Return to the original **GitHub Issue** for the Guild Op. Add a comment confirming completion and provide direct, verified links to all relevant Guild Archive documents.
+
+## 5. Verification & Commendation (Guild Seals)
+
+*   Your transmission will undergo rigorous review by Guild Facilitators and/or peer operatives. We will provide precise feedback via GitHub (for PRs) or direct comments within the Guild Archive documents.
+*   Upon successful verification and approval, your contribution will be integrated (if code), and you will be awarded the associated **"Guild Seal"** on your Chiron Guild profile—a permanent mark of your earned standing.
+
+## 6. Guild Axioms: Our Code
+
+*   **Own What You Forge** — Contributors retain full digital sovereignty over their compiled work and data within the Guild.
+*   **Open Access, Earned Value** — Structured Guild Ops provide pathways for all skill levels to engage, augment their capabilities, and secure equitable value for their contributions.
+*   **Transparent Augmentation** — All AI contributions are meticulously logged, visible, and subjected to rigorous human oversight.
+*   **Collective Authority** — Guild decisions and strategic vectors are shaped by the collective will of its members, not by distant algorithms or corporate command.
+
+---
+
+## 7. Operational Directives & Resources
+
+*   **Comms Channel (Discord Server):** [Your Discord Invite Link Here]
+*   **Guild Archives (Google Drive Knowledge Base):** https://drive.google.com/drive/folders/1OPKYI5OU5X2vzKhBdlRFHp475VV25qqV?usp=sharing
+*   **Guild Board (GitHub Issues):** [Your GitHub Issues Link Here]
+*   **Appendix F: Context Compilation & AI Tool Use Documentation:** (Our log protocols for Guild Ops).
+*   **Chiron Guild Discipline Protocols (Coming Soon)**
+
+---
+
+**Join the Guild. Secure your place. Forge the future of work.** 🛡️
