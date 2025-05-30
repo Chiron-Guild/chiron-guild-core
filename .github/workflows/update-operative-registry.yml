@@ -34,6 +34,9 @@ jobs:
             --issue-url "${{ github.event.issue.html_url }}" \
             --closed-at "${{ github.event.issue.closed_at }}"
             
+      - name: Stage registry changes
+        run: git add registry/operative_registry.json   
+        
       - name: Show git status and diff
         run: |
           git status
