@@ -1,4 +1,4 @@
-name: Create Guild Op Directory and Log
+name: Create Guild Op Directory and Metadata File
 
 on:
   issues:
@@ -17,7 +17,7 @@ jobs:
         id: parse_guild_op
         run: |
           echo "Parsing Guild Op ID from issue title or description..."
-          GUILD_OP_ID=$(echo "${{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE '\[[A-Z]+-[A-Z]+-[0-9]{3}\]')
+          GUILD_OP_ID=$(echo "${{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE "\\[[A-Z]+-[A-Z]+-[0-9]{3}\\]")
           if [ -z "$GUILD_OP_ID" ]; then
             echo "Guild Op ID not found in issue title or description!"
             exit 1
