@@ -3,6 +3,7 @@ import json
 import os
 import re
 from datetime import datetime
+from shutil import copyfile
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Update the operative registry from a closed issue.")
@@ -16,9 +17,9 @@ def parse_args():
     return parser.parse_args()
 
 def extract_skills_from_body(issue_body):
-    # Tries to extract skills from the "Skills Demonstrated" or "Associated Skills" section
+    # More tolerant, matches headers with optional whitespace and colons
     pattern = re.compile(
-        r"## (Skills Demonstrated|Associated Skills)(.*?)(?:\n## |\Z)", re.DOTALL | re.IGNORECASE
+        r"^##\s*(Skills Demonstrated|Associated Skills)[:\s]*\n(.*?)(?=^## |\Z)", re.DOTALL | re.IGNORECASE | re.MULTILINE
     )
     match = pattern.search(issue_body)
     skills = []
@@ -26,7 +27,6 @@ def extract_skills_from_body(issue_body):
         block = match.group(2)
         for line in block.splitlines():
             skill = line.lstrip("-•* ").strip()
-            # Filter out empty lines and section dividers
             if skill and not skill.startswith("#"):
                 skills.append(skill)
     return skills
@@ -34,7 +34,7 @@ def extract_skills_from_body(issue_body):
 def main():
     args = parse_args()
 
-    # Parse assignees and labels safely
+    # Parse assignees and labels
     try:
         assignees_json = json.loads(args.assignees) if args.assignees else []
         assignees = [a.get("login", "") for a in assignees_json if "login" in a]
@@ -67,24 +67,46 @@ def main():
     if not os.path.exists("registry"):
         os.makedirs("registry")
 
-    # Load existing registry or create new
+    # Load existing registry or create new, make a backup if corrupted
+    registry = []
     if os.path.isfile(registry_path):
         with open(registry_path, "r", encoding="utf-8") as f:
             try:
                 registry = json.load(f)
-            except Exception:
+                if not isinstance(registry, list):
+                    print("Registry file is not a list. Creating backup and starting new registry.")
+                    copyfile(registry_path, registry_path + ".bak")
+                    registry = []
+            except Exception as e:
+                print(f"Warning: Failed to load registry ({e}). Creating backup and starting new registry.")
+                copyfile(registry_path, registry_path + ".bak")
                 registry = []
-    else:
-        registry = []
 
     # Remove any previous entry for this issue
+    prev_entry = next((e for e in registry if e.get("issue_number") == entry["issue_number"]), None)
     registry = [e for e in registry if e.get("issue_number") != entry["issue_number"]]
     registry.append(entry)
 
-    # Write back
-    with open(registry_path, "w", encoding="utf-8") as f:
-        json.dump(registry, f, indent=2, ensure_ascii=False)
-    print(f"Registry updated with issue #{args.issue_number}")
+    # Sort by issue_number descending for easier reading
+    registry.sort(key=lambda x: x["issue_number"], reverse=True)
+
+    # Only write if changed
+    changed = True
+    if prev_entry is not None:
+        # Compare old and new entry (excluding closed_at for timestamp drift)
+        prev_copy = prev_entry.copy()
+        new_copy = entry.copy()
+        prev_copy.pop("closed_at", None)
+        new_copy.pop("closed_at", None)
+        if prev_copy == new_copy:
+            changed = False
+
+    if changed or prev_entry is None:
+        with open(registry_path, "w", encoding="utf-8") as f:
+            json.dump(registry, f, indent=2, ensure_ascii=False)
+        print(f"Registry UPDATED with issue #{args.issue_number}")
+    else:
+        print(f"Registry NOT UPDATED: No changes for issue #{args.issue_number}")
 
 if __name__ == "__main__":
     main()
