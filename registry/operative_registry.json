@@ -1,13 +1,1 @@
-[
-  {
-    "associated_guild_op_id": "Kin-Caid",
-    "date_issued": "2025-05-30",
-    "skills_demonstrated": ["protocol design", "automation"],
-    "contribution_summary": "Drafted and implemented the registry protocol.",
-    "github_issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/1",
-    "deliverable_links": [
-      "https://github.com/Chiron-Guild/chiron-guild-core/pull/1"
-    ],
-    "compiled_context_link": "https://link-to-mini-portfolio.example.com/Kin-Caid",
-    "verification_status": "verified"
-  },
+
