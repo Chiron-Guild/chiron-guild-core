@@ -59,3 +59,4 @@ jobs:
             git push
           else
             echo "No changes to commit. Directory or metadata file might already exist."
+          fi
