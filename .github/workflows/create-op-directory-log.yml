@@ -1,4 +1,4 @@
-name: Create Guild Op Directory and Metadata File
+name: Create Guild Op Directory and Log File
 
 on:
   issues:
@@ -50,13 +50,16 @@ jobs:
           EOF
 
       - name: Commit and Push Changes
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           if [ "$(git status --porcelain)" ]; then
             git config --global user.name "${{ github.actor }}"
             git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+            git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/Chiron-Guild/chiron-guild-core.git
             git add archives/${{ env.guild_op_id }}
             git commit -m "Create directory and metadata file for Guild Op: ${{ env.guild_op_id }}"
-            git push
+            git push origin main
           else
             echo "No changes to commit. Directory or metadata file might already exist."
-          fi
+            fi
