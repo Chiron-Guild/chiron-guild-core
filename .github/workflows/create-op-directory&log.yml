@@ -1,4 +1,4 @@
-name: Create Guild Op Directory
+name: Create Guild Op Directory and Log
 
 on:
   issues:
@@ -6,7 +6,7 @@ on:
       - opened
 
 jobs:
-  create_directory:
+  create_directory_and_metadata:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,12 +28,34 @@ jobs:
         run: |
           echo "Creating directory for Guild Op: ${{ env.guild_op_id }}"
           mkdir -p "archives/${{ env.guild_op_id }}"
+
+      - name: Create Metadata File
+        run: |
+          echo "Creating metadata file for Guild Op: ${{ env.guild_op_id }}"
+          cat <<EOF > archives/${{ env.guild_op_id }}/${{ env.guild_op_id }}_operation_log.md
+          # Guild Op Metadata: ${{ env.guild_op_id }}
+
+          ## Guild Op Details
+          - **Title:** ${{ github.event.issue.title }}
+          - **URL:** ${{ github.event.issue.html_url }}
+          - **Author:** ${{ github.event.issue.user.login }}
+          - **Created At:** ${{ github.event.issue.created_at }}
+
+          ## Description
+          ${{ github.event.issue.body }}
+
+          ## Notes
+          - This is a generated log file for tracking Guild Op metadata.
+          - Update this file with progress logs, decisions, and schematics as needed.
+          EOF
+
+      - name: Commit and Push Changes
+        run: |
           if [ "$(git status --porcelain)" ]; then
             git config --global user.name "${{ github.actor }}"
             git config --global user.email "${{ github.actor }}@users.noreply.github.com"
             git add archives/${{ env.guild_op_id }}
-            git commit -m "Create directory for Guild Op: ${{ env.guild_op_id }}"
+            git commit -m "Create directory and metadata file for Guild Op: ${{ env.guild_op_id }}"
             git push
           else
-            echo "No changes to commit. Directory might already exist."
-          fi
+            echo "No changes to commit. Directory or metadata file might already exist."
