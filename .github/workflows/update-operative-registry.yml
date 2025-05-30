@@ -33,7 +33,15 @@ jobs:
             --labels '${{ toJson(github.event.issue.labels) }}' \
             --issue-url "${{ github.event.issue.html_url }}" \
             --closed-at "${{ github.event.issue.closed_at }}"
+            
+      - name: Show git status and diff
+        run: |
+          git status
+          git diff
 
+      - name: Show registry file contents
+        run: cat registry/operative_registry.json
+        
       - name: Create pull request for registry update
         uses: peter-evans/create-pull-request@v6
         with:
