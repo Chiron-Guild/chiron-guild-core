@@ -23,6 +23,7 @@ jobs:
           python .github/scripts/update_registry.py \
             --issue-number "${{ github.event.issue.number }}" \
             --issue-title "${{ github.event.issue.title }}" \
+            --issue-body "${{ github.event.issue.body }}" \
             --assignees "${{ toJson(github.event.issue.assignees) }}" \
             --labels "${{ toJson(github.event.issue.labels) }}" \
             --issue-url "${{ github.event.issue.html_url }}" \
