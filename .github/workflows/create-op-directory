@@ -1,0 +1,35 @@
+name: Create Guild Op Directory
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  create_directory:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Parse Guild Op ID from issue
+        id: parse_guild_op
+        run: |
+          echo "Parsing Guild Op ID from issue title or description..."
+          GUILD_OP_ID=$(echo "${{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE '[A-Z]+-[A-Z]+-[0-9]{3}')
+          if [ -z "$GUILD_OP_ID" ]; then
+            echo "Guild Op ID not found in issue title or description!"
+            exit 1
+          fi
+          echo "guild_op_id=$GUILD_OP_ID" >> $GITHUB_ENV
+
+      - name: Create Guild Op directory
+        run: |
+          echo "Creating directory for Guild Op: ${{ env.guild_op_id }}"
+          mkdir -p "archives/${{ env.guild_op_id }}"
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add archives/${{ env.guild_op_id }}
+          git commit -m "Create directory for Guild Op: ${{ env.guild_op_id }}"
+          git push
