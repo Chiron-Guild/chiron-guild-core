@@ -28,10 +28,10 @@ jobs:
             --issue-number "${{ github.event.issue.number }}" \
             --issue-title "${{ github.event.issue.title }}" \
             --issue-body "${{ github.event.issue.body }}" \
-            --assignees "${{ toJson(github.event.issue.assignees) }}" \
-            --labels "${{ toJson(github.event.issue.labels) }}" \
+            --assignees '${{ toJson(github.event.issue.assignees) }}' \
+            --labels '${{ toJson(github.event.issue.labels) }}' \
             --issue-url "${{ github.event.issue.html_url }}" \
-            --closed-at "${{ github.event.issue.closed_at }}"        
+            --closed-at "${{ github.event.issue.closed_at }}"      
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
