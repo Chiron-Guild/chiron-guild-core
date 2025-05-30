@@ -16,7 +16,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
+          
+      - name: Debug JSON Outputs
+        run: |
+          echo "Assignees: ${{ toJson(github.event.issue.assignees) }}"
+          echo "Labels: ${{ toJson(github.event.issue.labels) }}"
+        
       - name: Update operative registry
         run: |
           python .github/scripts/update_registry.py \
@@ -26,7 +31,7 @@ jobs:
             --assignees "${{ toJson(github.event.issue.assignees) }}" \
             --labels "${{ toJson(github.event.issue.labels) }}" \
             --issue-url "${{ github.event.issue.html_url }}" \
-            --closed-at "${{ github.event.issue.closed_at }}"
+            --closed-at "${{ github.event.issue.closed_at }}"        
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
