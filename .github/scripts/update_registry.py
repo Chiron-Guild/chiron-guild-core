@@ -16,20 +16,23 @@ def parse_args():
     parser.add_argument("--closed-at", required=False, default="")
     return parser.parse_args()
 
-def extract_skills_from_body(issue_body):
-    # More tolerant, matches headers with optional whitespace and colons
+def extract_section(issue_body, section_name):
+    # Matches headers with "##" and captures content until the next header or end of string
     pattern = re.compile(
-        r"^##\s*(Skills Demonstrated|Associated Skills)[:\s]*\n(.*?)(?=^## |\Z)", re.DOTALL | re.IGNORECASE | re.MULTILINE
+        rf"^##\s*{section_name}[:\s]*\n(.*?)(?=^## |\Z)", re.DOTALL | re.IGNORECASE | re.MULTILINE
     )
     match = pattern.search(issue_body)
-    skills = []
+    content = []
     if match:
-        block = match.group(2)
+        block = match.group(1)
         for line in block.splitlines():
-            skill = line.lstrip("-•* ").strip()
-            if skill and not skill.startswith("#"):
-                skills.append(skill)
-    return skills
+            item = line.lstrip("-•* ").strip()
+            if item and not item.startswith("#"):
+                content.append(item)
+    return content
+
+def extract_skills_from_body(issue_body):
+    return extract_section(issue_body, "Skills Demonstrated|Associated Skills")
 
 def main():
     args = parse_args()
@@ -49,8 +52,11 @@ def main():
         print(f"Error loading labels: {e}")
         labels = []
 
-    # Skills: extract only from issue body, not from labels
+    # Extract sections from the issue body
     skills = extract_skills_from_body(args.issue_body)
+    objective = extract_section(args.issue_body, "Objective")
+    deliverables = extract_section(args.issue_body, "Deliverables")
+    awarded_guild_seal = extract_section(args.issue_body, "Awarded Guild Seal")
 
     # Prepare the registry entry
     entry = {
@@ -58,8 +64,10 @@ def main():
         "issue_title": args.issue_title,
         "issue_url": args.issue_url,
         "assignees": assignees,
-        "labels": labels,
+        "Objective": objective,
+        "Deliverables": deliverables,
         "skills": skills,
+        "Awarded Guild Seal": awarded_guild_seal,
         "closed_at": args.closed_at or datetime.utcnow().isoformat() + "Z",
     }
 
