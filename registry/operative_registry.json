@@ -1,1 +1,22 @@
-
+[
+  {
+    "issue_number": 20,
+    "issue_title": "[CHIRON-STR-001] Guild Naming & Identity Forging",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/20",
+    "assignees": [
+      "Kin-Caid"
+    ],
+    "labels": [
+      "help wanted",
+      "foundational-op"
+    ],
+    "skills": [
+      "Brand Identity & Positioning: Crafting a compelling and resonant public persona.",
+      "Strategic Naming: Methodical selection of a name that aligns with vision and values.",
+      "Decision-Making Protocols: Utilizing structured thought processes for critical choices.",
+      "Digital Asset Management: Securing and managing core digital properties (domains, accounts).",
+      "Context Compilation: Applying AI Scribe Protocols to document strategic processes."
+    ],
+    "closed_at": "2025-05-30T19:33:25Z"
+  }
+]
