@@ -1,5 +1,16 @@
 [
   {
+    "issue_number": 38,
+    "issue_title": "[CHIRON-DEV-001] GitHub Nexus Initialization",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/38",
+    "assignees": [],
+    "Objective": "",
+    "Deliverables": [],
+    "skills": [],
+    "Awarded Guild Seal": "",
+    "closed_at": "2025-05-30T22:15:47Z"
+  },
+  {
     "issue_number": 20,
     "issue_title": "[CHIRON-STR-001] Guild Naming & Identity Forging",
     "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/20",
