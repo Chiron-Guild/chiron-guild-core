@@ -1,1 +1,27 @@
-
+[
+  {
+    "issue_number": 20,
+    "issue_title": "[CHIRON-STR-001] Guild Naming & Identity Forging",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/20",
+    "assignees": [
+      "Kin-Caid"
+    ],
+    "Objective": "To strategically define and secure the foundational name, primary digital presence (domains, email), and overarching conceptual identity for the Chiron Guild. This imperative Guild Op is critical for establishing our brand, public signal, and the very essence of our collective's existence.",
+    "Deliverables": [
+      "Upon successful completion of this Guild Op, the following will be verified:",
+      "1. **Chosen Guild Name:** The definitive, approved name for the cooperative (e.g., Chiron Guild).",
+      "2. **Acquired Primary Domains:** Verification of secured and owned digital real estate (e.g., , ).",
+      "3. **Secured Primary Guild Email:** Confirmation of the operational communication channel (e.g., ).",
+      "4. **Naming & Identity Decision Log:** A concise, AI-augmented Decision Log (compiled via the ) documenting the strategic process, rationale, and final choice for the Guild's name and primary digital identifiers."
+    ],
+    "skills": [
+      "Brand Identity & Positioning: Crafting a compelling and resonant public persona.",
+      "Strategic Naming: Methodical selection of a name that aligns with vision and values.",
+      "Decision-Making Protocols: Utilizing structured thought processes for critical choices.",
+      "Digital Asset Management: Securing and managing core digital properties (domains, accounts).",
+      "Context Compilation: Applying AI Scribe Protocols to document strategic processes."
+    ],
+    "Awarded Guild Seal": "Completion of this Guild Op, upon verification, will award the operative with the **GS-STR-Naming-v1** Guild Seal.",
+    "closed_at": "2025-05-30T20:20:03Z"
+  }
+]
