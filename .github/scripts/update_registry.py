@@ -16,20 +16,18 @@ def parse_args():
     parser.add_argument("--closed-at", required=False, default="")
     return parser.parse_args()
 
-def extract_section(issue_body, section_name):
+def extract_section(issue_body, section_name, is_single_line=False):
     # Matches headers with "##" and captures content until the next header or end of string
     pattern = re.compile(
         rf"^##\s*{section_name}[:\s]*\n(.*?)(?=^## |\Z)", re.DOTALL | re.IGNORECASE | re.MULTILINE
     )
     match = pattern.search(issue_body)
-    content = []
     if match:
-        block = match.group(1)
-        for line in block.splitlines():
-            item = line.lstrip("-•* ").strip()
-            if item and not item.startswith("#"):
-                content.append(item)
-    return content
+        block = match.group(1).strip()
+        if is_single_line:
+            return " ".join(block.splitlines()).strip()  # Combine lines into one string
+        return [line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip() and not line.startswith("#")]
+    return "" if is_single_line else []
 
 def extract_skills_from_body(issue_body):
     return extract_section(issue_body, "Skills Demonstrated|Associated Skills")
@@ -54,9 +52,9 @@ def main():
 
     # Extract sections from the issue body
     skills = extract_skills_from_body(args.issue_body)
-    objective = extract_section(args.issue_body, "Objective")
+    objective = extract_section(args.issue_body, "Objective", is_single_line=True)
     deliverables = extract_section(args.issue_body, "Deliverables")
-    awarded_guild_seal = extract_section(args.issue_body, "Awarded Guild Seal")
+    awarded_guild_seal = extract_section(args.issue_body, "Awarded Guild Seal", is_single_line=True)
 
     # Prepare the registry entry
     entry = {
