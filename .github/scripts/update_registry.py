@@ -1,72 +1,90 @@
 import argparse
 import json
 import os
+import re
 from datetime import datetime
 
-def get_issue_body_excerpt(issue_body, max_length=160):
-    if not issue_body:
-        return ""
-    return (issue_body[:max_length] + "...") if len(issue_body) > max_length else issue_body
+def parse_args():
+    parser = argparse.ArgumentParser(description="Update the operative registry from a closed issue.")
+    parser.add_argument("--issue-number", required=True)
+    parser.add_argument("--issue-title", required=True)
+    parser.add_argument("--issue-body", required=True)
+    parser.add_argument("--assignees", required=False, default="[]")
+    parser.add_argument("--labels", required=False, default="[]")
+    parser.add_argument("--issue-url", required=True)
+    parser.add_argument("--closed-at", required=False, default="")
+    return parser.parse_args()
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--issue-number', required=True)
-parser.add_argument('--issue-title', required=True)
-parser.add_argument('--issue-body', required=False, default="")
-parser.add_argument('--assignees', required=True)
-parser.add_argument('--labels', required=True)
-parser.add_argument('--issue-url', required=True)
-parser.add_argument('--closed-at', required=True)
-args = parser.parse_args()
+def extract_skills_from_body(issue_body):
+    # Tries to extract skills from the "Skills Demonstrated" or "Associated Skills" section
+    pattern = re.compile(
+        r"## (Skills Demonstrated|Associated Skills)(.*?)(?:\n## |\Z)", re.DOTALL | re.IGNORECASE
+    )
+    match = pattern.search(issue_body)
+    skills = []
+    if match:
+        block = match.group(2)
+        for line in block.splitlines():
+            skill = line.lstrip("-•* ").strip()
+            # Filter out empty lines and section dividers
+            if skill and not skill.startswith("#"):
+                skills.append(skill)
+    return skills
 
-registry_path = 'registry/operative_registry.json'
+def main():
+    args = parse_args()
 
-try:
-    with open(registry_path, 'r') as f:
-        registry = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
-    registry = []
+    # Parse assignees and labels safely
+    try:
+        assignees_json = json.loads(args.assignees) if args.assignees else []
+        assignees = [a.get("login", "") for a in assignees_json if "login" in a]
+    except Exception as e:
+        print(f"Error loading assignees: {e}")
+        assignees = []
 
-assignees = json.loads(args.assignees)
-labels = [lbl['name'] for lbl in json.loads(args.labels)]
-skills = [l for l in labels if l not in ["guild-seal"]]
+    try:
+        labels_json = json.loads(args.labels) if args.labels else []
+        labels = [l.get("name", "") for l in labels_json if "name" in l]
+    except Exception as e:
+        print(f"Error loading labels: {e}")
+        labels = []
 
-# Attempt to extract deliverable links from the issue body (naive approach)
-import re
-def extract_links(text):
-    if not text:
-        return []
-    # Find Markdown-style and plain URLs
-    md_links = re.findall(r'\[.*?\]\((https?://[^\s)]+)\)', text)
-    plain_links = re.findall(r'(https?://[^\s)]+)', text)
-    # Remove duplicates and md_links already in plain_links
-    all_links = list({*md_links, *plain_links})
-    return all_links
+    # Skills: extract only from issue body, not from labels
+    skills = extract_skills_from_body(args.issue_body)
 
-deliverable_links = extract_links(args.issue_body)
-
-for assignee in assignees:
+    # Prepare the registry entry
     entry = {
-        "associated_guild_op_id": assignee.get('login', ''),
-        "operative_display_name": assignee.get('login', ''),
-        "operative_github_profile": f"https://github.com/{assignee.get('login','')}",
-        "date_issued": args.closed_at[:10],
-        "project_name": "",  # To be filled manually or via convention
-        "role": "",          # To be filled manually or via convention
-        "skills_demonstrated": skills,
-        "contribution_summary": args.issue_title,
+        "issue_number": int(args.issue_number),
         "issue_title": args.issue_title,
-        "issue_body_excerpt": get_issue_body_excerpt(args.issue_body),
-        "github_issue_url": args.issue_url,
-        "pull_request_urls": [],  # Enhancement: parse PR references from body/comments
-        "deliverable_links": deliverable_links,
-        "compiled_context_link": "",  # Could be filled in later
-        "reviewer_ids": [],           # Enhancement: fetch from API if desired
-        "verification_status": "verified",
-        "verification_method": "Guild Seal label, issue closed",
-        "tags": skills,
-        "time_spent": ""              # Could be filled in manually if tracked
+        "issue_url": args.issue_url,
+        "assignees": assignees,
+        "labels": labels,
+        "skills": skills,
+        "closed_at": args.closed_at or datetime.utcnow().isoformat() + "Z",
     }
+
+    registry_path = os.path.join("registry", "operative_registry.json")
+    if not os.path.exists("registry"):
+        os.makedirs("registry")
+
+    # Load existing registry or create new
+    if os.path.isfile(registry_path):
+        with open(registry_path, "r", encoding="utf-8") as f:
+            try:
+                registry = json.load(f)
+            except Exception:
+                registry = []
+    else:
+        registry = []
+
+    # Remove any previous entry for this issue
+    registry = [e for e in registry if e.get("issue_number") != entry["issue_number"]]
     registry.append(entry)
 
-with open(registry_path, 'w') as f:
-    json.dump(registry, f, indent=2)
+    # Write back
+    with open(registry_path, "w", encoding="utf-8") as f:
+        json.dump(registry, f, indent=2, ensure_ascii=False)
+    print(f"Registry updated with issue #{args.issue_number}")
+
+if __name__ == "__main__":
+    main()
