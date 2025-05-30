@@ -1,5 +1,42 @@
 [
   {
+    "issue_number": 40,
+    "issue_title": "[CHIRON-DEV-001] GitHub Nexus Initialization",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/40",
+    "assignees": [
+      "Kin-Caid"
+    ],
+    "Objective": "To establish the primary code repository within the Chiron Guild GitHub organization, populating it with foundational documents and configuring it for future development and collaboration. This forms the central nervous system of the Guild's codebase.  ---",
+    "Deliverables": [
+      "1. **Repository Creation**",
+      "A public GitHub repository named  created within the **Chiron-Guild** organization.",
+      "2. **Foundational Documents**",
+      "README.md**: Refined version uploaded/replaced in the repository.",
+      "CONTRIBUTING.md**: Refined version uploaded to the repository.",
+      "GUILD_MANIFESTO.md**: Refined version uploaded to the repository.",
+      "Context_Compilation_Protocol.md**: Refined version uploaded to the repository.",
+      "LICENSE.md**: Your chosen license file uploaded to the repository.",
+      "3. **Link Updates**",
+      "All internal and external links within the above documents updated:",
+      "Pointing to the correct  repository URL.",
+      "Pointing to the relevant Google Drive URLs.",
+      "4. **Progress Transmission**",
+      "A concise **Progress Transmission** documenting the setup process and any encountered anomalies (generated via AI Scribe Protocol).",
+      ""
+    ],
+    "skills": [
+      "GitHub Administration**",
+      "Version Control Setup**",
+      "Infrastructure Management**",
+      "Digital Asset Management**",
+      "Link Management**",
+      "Context Compilation**",
+      ""
+    ],
+    "Awarded Guild Seal": "**GS-DEV-NexusInit-v1**  ---",
+    "closed_at": "2025-05-30T22:34:30Z"
+  },
+  {
     "issue_number": 20,
     "issue_title": "[CHIRON-STR-001] Guild Naming & Identity Forging",
     "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/20",
