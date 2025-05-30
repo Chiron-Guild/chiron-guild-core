@@ -17,12 +17,12 @@ jobs:
         id: parse_guild_op
         run: |
           echo "Parsing Guild Op ID from issue title or description..."
-          GUILD_OP_ID=$(echo "${{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE '[A-Z]+-[A-Z]+-[0-9]{3}')
+          GUILD_OP_ID=$(echo "${{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE '\[[A-Z]+-[A-Z]+-[0-9]{3}\]')
           if [ -z "$GUILD_OP_ID" ]; then
             echo "Guild Op ID not found in issue title or description!"
             exit 1
           fi
-          echo "guild_op_id=$GUILD_OP_ID" >> $GITHUB_ENV
+          echo "guild_op_id=${GUILD_OP_ID}" >> $GITHUB_ENV
 
       - name: Create Guild Op directory
         run: |
