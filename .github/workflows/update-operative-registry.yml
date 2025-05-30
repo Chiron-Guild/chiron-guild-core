@@ -22,16 +22,22 @@ jobs:
           echo "Assignees: ${{ toJson(github.event.issue.assignees) }}"
           echo "Labels: ${{ toJson(github.event.issue.labels) }}"
         
+      - name: Set environment variables
+        run: |
+          echo "ISSUE_BODY<<EOF" >> $GITHUB_ENV
+          echo "${{ github.event.issue.body }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Update operative registry
         run: |
           python .github/scripts/update_registry.py \
             --issue-number "${{ github.event.issue.number }}" \
             --issue-title "${{ github.event.issue.title }}" \
-            --issue-body "${{ github.event.issue.body }}" \
+            --issue-body "${ISSUE_BODY}" \
             --assignees '${{ toJson(github.event.issue.assignees) }}' \
             --labels '${{ toJson(github.event.issue.labels) }}' \
             --issue-url "${{ github.event.issue.html_url }}" \
-            --closed-at "${{ github.event.issue.closed_at }}"      
+            --closed-at "${{ github.event.issue.closed_at }}"
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
