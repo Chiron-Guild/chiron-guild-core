@@ -30,9 +30,12 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const pull_request = github.context.payload.pull_request; // <--- KEY CHANGE HERE
+            // The 'context' object is directly available in the script's scope
+            // It contains the webhook event payload
+            const pull_request = context.payload.pull_request; // <--- KEY CHANGE: Use 'context.payload' directly
+
             if (!pull_request) {
-              console.log('Pull request context is not available.');
+              console.log('Pull request payload is not available in context.payload.');
               core.setOutput('skip_update', 'true');
               return;
             }
@@ -58,21 +61,21 @@ jobs:
             console.log(`Found linked issue number: #${issueNumber}`);
             
             try {
-              // Fetch the original Guild Op issue details using the GitHub API
+              // The 'github' object is the Octokit client, 'context' has repo info
               const { data: issue } = await github.rest.issues.get({
-                owner: github.context.repo.owner, // <--- Use github.context.repo
-                repo: github.context.repo.repo,   // <--- Use github.context.repo
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 issue_number: issueNumber,
               });
               
               // Output the fetched issue details as workflow outputs
-              core.setOutput('issue_number', issue.number.toString()); // Ensure it's a string
+              core.setOutput('issue_number', issue.number.toString());
               core.setOutput('issue_title', issue.title);
               core.setOutput('issue_body', issue.body);
               core.setOutput('assignees', JSON.stringify(issue.assignees));
               core.setOutput('labels', JSON.stringify(issue.labels));
               core.setOutput('issue_url', issue.html_url);
-              core.setOutput('closed_at', issue.closed_at || ''); // Handle null closed_at
+              core.setOutput('closed_at', issue.closed_at || '');
               core.setOutput('skip_update', 'false');
 
             } catch (error) {
