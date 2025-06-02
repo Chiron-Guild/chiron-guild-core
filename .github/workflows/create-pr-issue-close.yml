@@ -1,0 +1,40 @@
+name: Generate Guild Op Work PR on Issue Close
+
+on:
+  issues:
+    types: [closed] # Trigger when any issue is closed
+
+permissions:
+  contents: write      # To allow git operations if needed (e.g., creating a new branch)
+  pull-requests: write # Essential for creating a Pull Request
+
+jobs:
+  create-guild-op-pr:
+    runs-on: ubuntu-latest
+    # Optional: Add an 'if' condition here if you only want specific issue types (e.g., those with a 'guild-op' label)
+    # For example: if: contains(github.event.issue.labels.*.name, 'guild-op')
+    env:
+      GH_TOKEN: ${{ github.token }} # Required for gh CLI authentication
+
+    steps:
+      - name: Set Guild Op branch name
+        # We assume the work for the Guild Op is done on a branch named 'feature/guild-op-<issue_number>'
+        id: set_branch_name
+        run: echo "GUILD_OP_BRANCH=feature/guild-op-${{ github.event.issue.number }}" >> $GITHUB_ENV
+
+      - name: Verify Guild Op branch existence
+        run: |
+          git ls-remote --heads origin "${{ env.GUILD_OP_BRANCH }}" || { echo "Error: Guild Op branch '${{ env.GUILD_OP_BRANCH }}' does not exist. Please ensure work is committed and pushed before closing the issue."; exit 1; }
+
+      - name: Create Pull Request for Guild Op work
+        # Uses the GitHub CLI (gh) to create a PR from the Guild Op's feature branch to 'main'.
+        run: |
+          gh pr create \
+            --base main \
+            --head ${{ env.GUILD_OP_BRANCH }} \
+            --title "Guild Op #${{ github.event.issue.number }}: ${{ github.event.issue.title }}" \
+            --body "## Guild Op Work PR\n\nThis Pull Request contains the work completed for Guild Op #${{ github.event.issue.number }}: **\"${{ github.event.issue.title }}\"**.\n\n---\n**Objective:**\n${{ github.event.issue.body }}\n---\nCloses #${{ github.event.issue.number }}" \
+            --label "guild-op-work,awaiting-review" \
+            --repo ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ github.token }}
