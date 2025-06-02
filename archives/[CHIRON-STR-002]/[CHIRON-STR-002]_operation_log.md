@@ -2,14 +2,15 @@
 
 ## Guild Op Details
 - **Title:** [CHIRON-STR-002] - Initial Guild Board Population & Directive Release
-- **URL:** https://github.com/Chiron-Guild/chiron-guild-core/issues/42
+- **URL:** https://github.com/Chiron-Guild/chiron-guild-core/issues/44
 - **Author:** Kin-Caid
-- **Created At:** 2025-06-02T16:49:35Z
+- **Created At:** 2025-06-02T17:35:51Z
 
 ## Description
 # Guild Op: [CHIRON-STR-002] - Initial Guild Board Population & Directive Release
 
 ## Category: STR
+## Parent Project: Guild Board Initialization & First Directives Deployment
 ## Assignees: @Kin-Caid
 
 ## Objective:
