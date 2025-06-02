@@ -25,14 +25,18 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Debug: Initial registry.json content
+        run: |
+          echo "--- Content of registry/operative_registry.json BEFORE update_registry.py runs ---"
+          cat registry/operative_registry.json || echo "File not found or empty."
+          echo "--- End of initial content ---"
+
       - name: Get linked Guild Op issue details
         id: get_issue_details
         uses: actions/github-script@v6
         with:
           script: |
-            // The 'context' object is directly available in the script's scope
-            // It contains the webhook event payload
-            const pull_request = context.payload.pull_request; // Use 'context.payload'
+            const pull_request = context.payload.pull_request;
             
             if (!pull_request) {
               console.log('Pull request payload is not available in context.payload.');
@@ -47,7 +51,6 @@ jobs:
               return;
             }
             
-            // Regex to find "Closes #<issue_number>" in the PR body (case-insensitive)
             const regex = /Closes\s+#(\d+)/i; 
             const match = prBody.match(regex);
             
@@ -61,14 +64,12 @@ jobs:
             console.log(`Found linked issue number: #${issueNumber}`);
             
             try {
-              // The 'github' object is the Octokit client, 'context' has repo info
               const { data: issue } = await github.rest.issues.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issueNumber,
               });
               
-              // Output the fetched issue details as workflow outputs
               core.setOutput('issue_number', issue.number.toString());
               core.setOutput('issue_title', issue.title);
               core.setOutput('issue_body', issue.body);
@@ -89,9 +90,6 @@ jobs:
       - name: Update operative registry
         if: steps.get_issue_details.outputs.skip_update == 'false'
         run: |
-          # Write the issue body to a temporary file using a Heredoc for robustness
-          # The single quotes around EOF_ISSUE_BODY prevent variable expansion inside the Heredoc,
-          # ensuring the content is written verbatim.
           cat <<'EOF_ISSUE_BODY' > issue_body.md
           ${{ steps.get_issue_details.outputs.issue_body }}
           EOF_ISSUE_BODY
@@ -105,9 +103,30 @@ jobs:
             --issue-url "${{ steps.get_issue_details.outputs.issue_url }}" \
             --closed-at "${{ steps.get_issue_details.outputs.closed_at }}"
 
+      - name: Debug: Registry.json content AFTER python script
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: |
+          echo "--- Content of registry/operative_registry.json AFTER update_registry.py runs ---"
+          cat registry/operative_registry.json
+          echo "--- End of content after script ---"
+
+      - name: Debug: Git status BEFORE staging
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: |
+          echo "--- Git status BEFORE 'git add' ---"
+          git status
+          echo "--- End of git status before add ---"
+
       - name: Stage registry changes
         if: steps.get_issue_details.outputs.skip_update == 'false'
         run: git add registry/operative_registry.json
+
+      - name: Debug: Git status AFTER staging
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: |
+          echo "--- Git status AFTER 'git add' ---"
+          git status
+          echo "--- End of git status after add ---"
 
       - name: Commit and push registry changes
         if: steps.get_issue_details.outputs.skip_update == 'false'
@@ -115,10 +134,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Check if there are actual changes to commit before creating a commit
-          if ! git diff --cached --exit-code; then
-            echo "No changes detected in registry/operative_registry.json. Skipping commit."
-          else
+          # Check if there are actual staged changes.
+          # 'git diff --quiet --cached' returns non-zero if there ARE differences (i.e., not quiet), zero if no differences.
+          if ! git diff --quiet --cached; then # Condition is true if there ARE changes staged
             git commit -m "Auto-update registry: Guild Seal for #${{ steps.get_issue_details.outputs.issue_number }} (via PR #${{ github.event.pull_request.number }} merge)"
             git push
+            echo "Registry committed and pushed."
+          else
+            echo "No changes detected in registry/operative_registry.json. Skipping commit."
           fi
