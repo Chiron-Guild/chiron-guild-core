@@ -37,7 +37,7 @@
     ],
     "Awarded Guild Seal": "GS-STR-BoardPopulate-v1",
     "closed_at": "2025-06-02" 
-  }
+  },
   {
     "issue_number": 40,
     "issue_title": "[CHIRON-DEV-001] GitHub Nexus Initialization",
