@@ -1,68 +1,107 @@
-name: Update Operative Registry on Guild Seal Issue Close
+name: Update Operative Registry on Guild Op PR Merge
 
 on:
-  issues:
-    types: [closed]
+  pull_request:
+    types: [closed] # Trigger when a Pull Request is closed (either merged or not)
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: write      # To commit and push changes to the operative registry
+  pull-requests: read  # To read the PR body and access linked issues
+  issues: read         # To fetch the original Guild Op issue details
 
 jobs:
   update-registry:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true # Only run if the PR was actually merged
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set environment variables
-        run: |
-          echo "ISSUE_BODY<<EOF" >> $GITHUB_ENV
-          echo "${{ github.event.issue.body }}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+        with:
+          ref: main # We need to check out the main branch to update the registry file
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
+      - name: Get linked Guild Op issue details
+        id: get_issue_details
+        uses: actions/github-script@v6 # Using github-script to fetch issue details from the linked issue
+        with:
+          script: |
+            const prBody = github.event.pull_request.body;
+            // Regex to find "Closes #<issue_number>" in the PR body (case-insensitive)
+            const regex = /Closes\s+#(\d+)/i;
+            const match = prBody.match(regex);
+            
+            if (!match) {
+              console.log('No "Closes #<issue_number>" found in PR body. Skipping registry update for this PR.');
+              core.setOutput('skip_update', 'true');
+              return;
+            }
+            
+            const issueNumber = parseInt(match[1], 10);
+            console.log(`Found linked issue number: #${issueNumber}`);
+            
+            try {
+              // Fetch the original Guild Op issue details using the GitHub API
+              const { data: issue } = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+              
+              // Output the fetched issue details as workflow outputs
+              core.setOutput('issue_number', issue.number);
+              core.setOutput('issue_title', issue.title);
+              core.setOutput('issue_body', issue.body);
+              core.setOutput('assignees', JSON.stringify(issue.assignees));
+              core.setOutput('labels', JSON.stringify(issue.labels));
+              core.setOutput('issue_url', issue.html_url);
+              core.setOutput('closed_at', issue.closed_at);
+              core.setOutput('skip_update', 'false');
+
+            } catch (error) {
+              console.error(`Failed to fetch issue #${issueNumber}: ${error.message}. Skipping registry update.`);
+              core.setOutput('skip_update', 'true');
+            }
+          
+          # This ensures the output variables can be directly consumed by subsequent steps
+          result-encoding: json 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use built-in GITHUB_TOKEN for API access
+
       - name: Update operative registry
+        # Only run this step if the issue details were successfully fetched
+        if: steps.get_issue_details.outputs.skip_update == 'false'
         run: |
+          # Write the issue body to a temporary file to avoid command-line argument limits
+          echo "${{ steps.get_issue_details.outputs.issue_body }}" > issue_body.md
+          
           python .github/scripts/update_registry.py \
-            --issue-number "${{ github.event.issue.number }}" \
-            --issue-title "${{ github.event.issue.title }}" \
-            --issue-body "${ISSUE_BODY}" \
-            --assignees '${{ toJson(github.event.issue.assignees) }}' \
-            --labels '${{ toJson(github.event.issue.labels) }}' \
-            --issue-url "${{ github.event.issue.html_url }}" \
-            --closed-at "${{ github.event.issue.closed_at }}"
+            --issue-number "${{ steps.get_issue_details.outputs.issue_number }}" \
+            --issue-title "${{ steps.get_issue_details.outputs.issue_title }}" \
+            --issue-body "$(cat issue_body.md)" \
+            --assignees '${{ steps.get_issue_details.outputs.assignees }}' \
+            --labels '${{ steps.get_issue_details.outputs.labels }}' \
+            --issue-url "${{ steps.get_issue_details.outputs.issue_url }}" \
+            --closed-at "${{ steps.get_issue_details.outputs.closed_at }}"
 
       - name: Stage registry changes
+        if: steps.get_issue_details.outputs.skip_update == 'false'
         run: git add registry/operative_registry.json
 
-      - name: Debug git remote and user
+      - name: Commit and push registry changes
+        if: steps.get_issue_details.outputs.skip_update == 'false'
         run: |
-          git remote -v
-          git config --get user.name || echo "Git user.name not set"
-          git config --get user.email || echo "Git user.email not set"
-
-      - name: Show git status and diff
-        run: |
-          git status
-          git diff
-
-      - name: Show registry file contents
-        run: cat registry/operative_registry.json
-
-      - name: Create pull request for registry update
-        uses: peter-evans/create-pull-request@v6
-        with:
-          commit-message: "Auto-update registry: Guild Seal for #${{ github.event.issue.number }}"
-          branch: "auto/registry-update-issue-${{ github.event.issue.number }}"
-          title: "Auto-update registry: Guild Seal for #${{ github.event.issue.number }}"
-          body: |
-            This PR was automatically generated by the workflow to update the operative registry for Issue #${{ github.event.issue.number }}.
-          labels: "automated,registry-update"
-          delete-branch: true
-          token: ${{ github.token }} # Use the built-in GITHUB_TOKEN
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are actual changes to commit before creating a commit
+          if ! git diff --cached --exit-code; then
+            echo "No changes detected in registry/operative_registry.json. Skipping commit."
+          else
+            git commit -m "Auto-update registry: Guild Seal for #${{ steps.get_issue_details.outputs.issue_number }} (via PR #${{ github.event.pull_request.number }} merge)"
+            git push
+          fi
