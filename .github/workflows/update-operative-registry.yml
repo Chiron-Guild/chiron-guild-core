@@ -103,14 +103,14 @@ jobs:
             --issue-url "${{ steps.get_issue_details.outputs.issue_url }}" \
             --closed-at "${{ steps.get_issue_details.outputs.closed_at }}"
 
-      - name: Debug: Registry.json content AFTER python script
+      - name: Debug Registry.json content AFTER python script
         if: steps.get_issue_details.outputs.skip_update == 'false'
         run: |
           echo "--- Content of registry/operative_registry.json AFTER update_registry.py runs ---"
           cat registry/operative_registry.json
           echo "--- End of content after script ---"
 
-      - name: Debug: Git status BEFORE staging
+      - name: Debug Git status BEFORE staging
         if: steps.get_issue_details.outputs.skip_update == 'false'
         run: |
           echo "--- Git status BEFORE 'git add' ---"
@@ -121,7 +121,7 @@ jobs:
         if: steps.get_issue_details.outputs.skip_update == 'false'
         run: git add registry/operative_registry.json
 
-      - name: Debug: Git status AFTER staging
+      - name: Debug Git status AFTER staging
         if: steps.get_issue_details.outputs.skip_update == 'false'
         run: |
           echo "--- Git status AFTER 'git add' ---"
