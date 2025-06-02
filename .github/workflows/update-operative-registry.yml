@@ -32,8 +32,8 @@ jobs:
           script: |
             // The 'context' object is directly available in the script's scope
             // It contains the webhook event payload
-            const pull_request = context.payload.pull_request; // <--- KEY CHANGE: Use 'context.payload' directly
-
+            const pull_request = context.payload.pull_request; // Use 'context.payload'
+            
             if (!pull_request) {
               console.log('Pull request payload is not available in context.payload.');
               core.setOutput('skip_update', 'true');
@@ -87,11 +87,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update operative registry
-        # Only run this step if the issue details were successfully fetched
         if: steps.get_issue_details.outputs.skip_update == 'false'
         run: |
-          # Write the issue body to a temporary file to avoid command-line argument limits
-          echo "${{ steps.get_issue_details.outputs.issue_body }}" > issue_body.md
+          # Write the issue body to a temporary file using a Heredoc for robustness
+          # The single quotes around EOF_ISSUE_BODY prevent variable expansion inside the Heredoc,
+          # ensuring the content is written verbatim.
+          cat <<'EOF_ISSUE_BODY' > issue_body.md
+          ${{ steps.get_issue_details.outputs.issue_body }}
+          EOF_ISSUE_BODY
           
           python .github/scripts/update_registry.py \
             --issue-number "${{ steps.get_issue_details.outputs.issue_number }}" \
