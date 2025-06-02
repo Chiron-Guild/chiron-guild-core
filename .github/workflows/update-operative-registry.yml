@@ -25,11 +25,11 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Debug: Initial registry.json content
+      - name: Debug Initial registry.json content
         run: |
-          echo "--- Content of registry/operative_registry.json BEFORE update_registry.py runs ---"
-          cat registry/operative_registry.json || echo "File not found or empty."
-          echo "--- End of initial content ---"
+         echo "--- Content of registry/operative_registry.json BEFORE update_registry.py runs ---"
+         cat registry/operative_registry.json || echo "File not found or empty."
+         echo "--- End of initial content ---"
 
       - name: Get linked Guild Op issue details
         id: get_issue_details
