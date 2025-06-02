@@ -25,7 +25,9 @@ def extract_section(issue_body, section_name, is_single_line=False):
     if match:
         block = match.group(1).strip()
         if is_single_line:
-            return " ".join(block.splitlines()).strip()  # Combine lines into one string
+            # For single line fields, strip markdown list prefixes if any and join lines
+            return " ".join([line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip() and not line.startswith("#")]).strip()
+        # For multi-line (list) fields, ensure each item is clean
         return [line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip() and not line.startswith("#")]
     return "" if is_single_line else []
 
@@ -55,6 +57,10 @@ def main():
     objective = extract_section(args.issue_body, "Objective", is_single_line=True)
     deliverables = extract_section(args.issue_body, "Deliverables")
     awarded_guild_seal = extract_section(args.issue_body, "Awarded Guild Seal", is_single_line=True)
+    
+    # NEW: Extract Estimated Effort and Verification/Acceptance Criteria
+    estimated_effort = extract_section(args.issue_body, "Estimated Effort", is_single_line=True)
+    acceptance_criteria = extract_section(args.issue_body, "Verification/Acceptance Criteria")
 
     # Prepare the registry entry
     entry = {
@@ -65,6 +71,8 @@ def main():
         "Objective": objective,
         "Deliverables": deliverables,
         "skills": skills,
+        "Estimated Effort": estimated_effort, # NEW FIELD
+        "Acceptance Criteria": acceptance_criteria, # NEW FIELD
         "Awarded Guild Seal": awarded_guild_seal,
         "closed_at": args.closed_at or datetime.utcnow().isoformat() + "Z",
     }
