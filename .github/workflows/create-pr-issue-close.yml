@@ -5,44 +5,74 @@ on:
     types: [closed] # Trigger when any issue is closed
 
 permissions:
-  contents: write      # To allow git operations if needed (e.g., creating a new branch)
+  contents: write      # To allow git operations (e.g., fetching branches for verification)
   pull-requests: write # Essential for creating a Pull Request
 
 jobs:
   create-guild-op-pr:
     runs-on: ubuntu-latest
-    # Optional: Add an 'if' condition here if you only want specific issue types (e.g., those with a 'guild-op' label)
+    # Optional: Add an 'if' condition here if you only want specific issue types
     # For example: if: contains(github.event.issue.labels.*.name, 'guild-op')
     env:
       GH_TOKEN: ${{ github.token }} # Required for gh CLI authentication
 
     steps:
-      - name: Check out repository # <--- CRITICAL ADDITION
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
-          # Ensure that the token used here has read access to branches.
-          # The default GITHUB_TOKEN has this permission.
           token: ${{ github.token }}
+          # Fetch all history for all tags and branches
+          fetch-depth: 0 # Necessary for 'git ls-remote' and 'git branch -r' to see all remote branches
 
-      - name: Set Guild Op branch name
-        # We assume the work for the Guild Op is done on a branch named 'feature/guild-op-<issue_number>'
-        id: set_branch_name
-        run: echo "GUILD_OP_BRANCH=feature/guild-op-${{ github.event.issue.number }}" >> $GITHUB_ENV
-
-      - name: Verify Guild Op branch existence
-        # The 'git ls-remote' command will now work correctly after checkout
+      - name: Set Guild Op branch name and PR details
+        id: pr_details
         run: |
-          git ls-remote --heads origin "${{ env.GUILD_OP_BRANCH }}" || { echo "Error: Guild Op branch '${{ env.GUILD_OP_BRANCH }}' does not exist on remote 'origin'. Please ensure work is committed and pushed to this branch before closing the issue. If it exists, check repository permissions."; exit 1; }
+          echo "GUILD_OP_BRANCH=feature/guild-op-${{ github.event.issue.number }}" >> $GITHUB_ENV
+          echo "PR_TITLE=Completes Guild Op #${{ github.event.issue.number }}: ${{ github.event.issue.title }}" >> $GITHUB_ENV
+          # Using a heredoc for cleaner multi-line PR body definition
+          # This PR body is concise and links back to the original issue.
+          cat <<EOF > pr_body.md
+          ## Guild Op Work PR
+
+          This Pull Request contains the work completed for Guild Op #${{ github.event.issue.number }}: **"${{ github.event.issue.title }}"**.
+
+          Full details and original Guild Op Brief can be found in the originating issue: ${{ github.event.issue.html_url }}
+
+          ---
+          Closes #${{ github.event.issue.number }}
+          EOF
+          echo "PR_BODY_FILE=pr_body.md" >> $GITHUB_ENV
+
+      - name: Verify Guild Op branch existence on remote
+        run: |
+          echo "Checking for remote branch: ${{ env.GUILD_OP_BRANCH }}"
+          # Fetch remote branches explicitly to ensure local git knows about them
+          git fetch origin
+          # Check if the branch exists on the remote
+          if git show-ref --verify --quiet refs/remotes/origin/"${{ env.GUILD_OP_BRANCH }}"; then
+            echo "Guild Op branch '${{ env.GUILD_OP_BRANCH }}' found on remote 'origin'."
+          else
+            echo "Error: Guild Op branch '${{ env.GUILD_OP_BRANCH }}' does not exist on remote 'origin'."
+            echo "Please ensure work is committed and pushed to this branch before closing the Guild Op issue."
+            echo "Available remote branches:"
+            git branch -r
+            exit 1
+          fi
 
       - name: Create Pull Request for Guild Op work
-        # Uses the GitHub CLI (gh) to create a PR from the Guild Op's feature branch to 'main'.
         run: |
+          echo "Creating Pull Request..."
+          echo "Title: ${{ env.PR_TITLE }}"
+          echo "Head Branch: ${{ env.GUILD_OP_BRANCH }}"
+          echo "Base Branch: main" # Or your Guild's primary integration branch
+          echo "Body will be read from: ${{ env.PR_BODY_FILE }}"
+          
           gh pr create \
             --base main \
-            --head ${{ env.GUILD_OP_BRANCH }} \
-            --title "Guild Op #${{ github.event.issue.number }}: ${{ github.event.issue.title }}" \
-            --body "## Guild Op Work PR\n\nThis Pull Request contains the work completed for Guild Op #${{ github.event.issue.number }}: **\"${{ github.event.issue.title }}\"**.\n\n---\n**Objective:**\n${{ github.event.issue.body }}\n---\nCloses #${{ github.event.issue.number }}" \
-            --label "guild-op-work,awaiting-review" \
-            --repo ${{ github.repository }}
+            --head "${{ env.GUILD_OP_BRANCH }}" \
+            --title "${{ env.PR_TITLE }}" \
+            --body-file "${{ env.PR_BODY_FILE }}" \
+            --label "guild-op-work,status:pending-review" \
+            --repo "${{ github.repository }}"
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }} # Ensure GH_TOKEN is explicitly passed to this step's env
