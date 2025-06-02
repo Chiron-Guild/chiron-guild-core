@@ -17,14 +17,22 @@ jobs:
       GH_TOKEN: ${{ github.token }} # Required for gh CLI authentication
 
     steps:
+      - name: Check out repository # <--- CRITICAL ADDITION
+        uses: actions/checkout@v4
+        with:
+          # Ensure that the token used here has read access to branches.
+          # The default GITHUB_TOKEN has this permission.
+          token: ${{ github.token }}
+
       - name: Set Guild Op branch name
         # We assume the work for the Guild Op is done on a branch named 'feature/guild-op-<issue_number>'
         id: set_branch_name
         run: echo "GUILD_OP_BRANCH=feature/guild-op-${{ github.event.issue.number }}" >> $GITHUB_ENV
 
       - name: Verify Guild Op branch existence
+        # The 'git ls-remote' command will now work correctly after checkout
         run: |
-          git ls-remote --heads origin "${{ env.GUILD_OP_BRANCH }}" || { echo "Error: Guild Op branch '${{ env.GUILD_OP_BRANCH }}' does not exist. Please ensure work is committed and pushed before closing the issue."; exit 1; }
+          git ls-remote --heads origin "${{ env.GUILD_OP_BRANCH }}" || { echo "Error: Guild Op branch '${{ env.GUILD_OP_BRANCH }}' does not exist on remote 'origin'. Please ensure work is committed and pushed to this branch before closing the issue. If it exists, check repository permissions."; exit 1; }
 
       - name: Create Pull Request for Guild Op work
         # Uses the GitHub CLI (gh) to create a PR from the Guild Op's feature branch to 'main'.
