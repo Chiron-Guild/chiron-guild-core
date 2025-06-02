@@ -1,25 +1,23 @@
-name: Create Guild Op Directory and Log File
+name: Create Guild Op Directory and Log File on Feature Branch
 
 on:
   issues:
     types:
       - opened
 
+permissions:
+  contents: write # IMPORTANT: Grant write permissions for the GITHUB_TOKEN
+
 jobs:
   create_directory_and_metadata:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # IMPORTANT: Grant write permissions for the GITHUB_TOKEN
-
     steps:
-      - name: Checkout repository
-        # Use GITHUB_TOKEN for checkout - it has read permissions by default, but also write due to above permissions
-        uses: actions/checkout@v4 
-
       - name: Parse Guild Op ID from issue
         id: parse_guild_op
         run: |
           echo "Parsing Guild Op ID from issue title or description..."
+          # Adjusted regex to be more specific to "[XXX-YYY-ZZZ]" format if needed,
+          # or keep as is if it captures all desired IDs
           GUILD_OP_ID=$(echo "${{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE "\\[[A-Z]+-[A-Z]+-[0-9]{3}\\]" | head -n 1)
 
           if [ -z "$GUILD_OP_ID" ]; then
@@ -28,7 +26,27 @@ jobs:
           fi
           echo "Found Guild Op ID: ${GUILD_OP_ID}"
           echo "guild_op_id=${GUILD_OP_ID}" >> $GITHUB_ENV
+          echo "GUILD_OP_BRANCH=feature/guild-op-${{ github.event.issue.number }}" >> $GITHUB_ENV # Set feature branch name
 
+      - name: Checkout repository - target main first
+        uses: actions/checkout@v4
+        with:
+          ref: main # Checkout main to base the new branch from
+
+      - name: Create and switch to Guild Op feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if the branch already exists
+          if git rev-parse --verify ${{ env.GUILD_OP_BRANCH }} >/dev/null 2>&1; then
+            echo "Branch ${{ env.GUILD_OP_BRANCH }} already exists. Checking it out."
+            git checkout ${{ env.GUILD_OP_BRANCH }}
+          else
+            echo "Creating new branch: ${{ env.GUILD_OP_BRANCH }}"
+            git checkout -b ${{ env.GUILD_OP_BRANCH }}
+          fi
+          
       - name: Create Guild Op directory
         run: |
           echo "Creating directory for Guild Op: ${{ env.guild_op_id }}"
@@ -57,7 +75,7 @@ jobs:
           EOF
           echo "Metadata file created."
           
-      - name: Commit and Push Changes
+      - name: Commit and Push Changes to Feature Branch
         run: |
           # Check if there are actual changes before attempting to commit
           if [ -z "$(git status --porcelain)" ]; then
@@ -65,14 +83,9 @@ jobs:
             exit 0 # Exit successfully if no changes
           fi
 
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          
-          # No need to set remote URL with PAT, GITHUB_TOKEN is automatically used
           git add "archives/${{ env.guild_op_id }}"
-          git commit -m "feat(guild-op): Create directory and metadata file for Guild Op: ${{ env.guild_op_id }}"
+          git commit -m "feat(guild-op): Scaffold directory and metadata for Guild Op: ${{ env.guild_op_id }}"
           
-          # Push changes using the default GITHUB_TOKEN
-          echo "Attempting to push changes to main branch using GITHUB_TOKEN..."
-          git push origin main
-          echo "Changes pushed successfully."
+          echo "Attempting to push changes to feature branch ${{ env.GUILD_OP_BRANCH }} using GITHUB_TOKEN..."
+          git push origin ${{ env.GUILD_OP_BRANCH }}
+          echo "Changes pushed successfully to feature branch."
