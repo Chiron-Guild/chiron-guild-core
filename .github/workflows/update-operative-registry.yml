@@ -5,7 +5,7 @@ on:
     types: [closed] # Trigger when a Pull Request is closed (either merged or not)
 
 permissions:
-  contents: write      # To commit and push changes to the operative registry
+  contents: write      # To commit and push changes to the operative registry AND delete branch
   pull-requests: read  # To read the PR body and access linked issues
   issues: read         # To fetch the original Guild Op issue details
 
@@ -14,129 +14,139 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true # Only run if the PR was actually merged
 
-    steps: # Indent 2 spaces
-      - name: Check out repository # Indent 4 spaces
-        uses: actions/checkout@v4 # Indent 6 spaces
-        with: # Indent 8 spaces
-          ref: main # Indent 10 spaces
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main # We need to check out the main branch to update the registry file
 
-      - name: Set up Python # Indent 4 spaces
-        uses: actions/setup-python@v5 # Indent 6 spaces
-        with: # Indent 8 spaces
-          python-version: '3.x' # Indent 10 spaces
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-      - name: Debug: Initial registry.json content # Indent 4 spaces
-        run: | # Indent 6 spaces
-          echo "--- Content of registry/operative_registry.json BEFORE update_registry.py runs ---" # Indent 8 spaces
-          cat registry/operative_registry.json || echo "File not found or empty." # Indent 8 spaces
-          echo "--- End of initial content ---" # Indent 8 spaces
+      - name: Debug: Initial registry.json content
+        run: |
+          echo "--- Content of registry/operative_registry.json BEFORE update_registry.py runs ---"
+          cat registry/operative_registry.json || echo "File not found or empty."
+          echo "--- End of initial content ---"
 
-      - name: Get linked Guild Op issue details # Indent 4 spaces
-        id: get_issue_details # Indent 6 spaces
-        uses: actions/github-script@v6 # Indent 6 spaces
-        with: # Indent 6 spaces
-          script: | # Indent 8 spaces (The `|` indicates a multi-line string, and subsequent lines must be indented by at least 2 more spaces than the `script:` key)
-            const pull_request = context.payload.pull_request; # Indent 10 spaces. THIS IS YOUR ORIGINAL LINE 28's *start* in the script.
-            if (!pull_request) { # Indent 10 spaces. This was the specific line 28 mentioned.
-              console.log('Pull request payload is not available in context.payload.'); # Indent 12 spaces
-              core.setOutput('skip_update', 'true'); # Indent 12 spaces
-              return; # Indent 12 spaces
+      - name: Get linked Guild Op issue details
+        id: get_issue_details
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pull_request = context.payload.pull_request;
+            
+            if (!pull_request) {
+              console.log('Pull request payload is not available in context.payload.');
+              core.setOutput('skip_update', 'true');
+              return;
             }
 
-            const prBody = pull_request.body; # Indent 10 spaces
-            if (typeof prBody !== 'string') { # Indent 10 spaces
-              console.log('PR body is not available or not a string. Skipping registry update.'); # Indent 12 spaces
-              core.setOutput('skip_update', 'true'); # Indent 12 spaces
-              return; # Indent 12 spaces
+            const prBody = pull_request.body;
+            if (typeof prBody !== 'string') {
+              console.log('PR body is not available or not a string. Skipping registry update.');
+              core.setOutput('skip_update', 'true');
+              return;
             }
             
-            const regex = /Closes\s+#(\d+)/i; # Indent 10 spaces
-            const match = prBody.match(regex); # Indent 10 spaces
+            const regex = /Closes\s+#(\d+)/i; 
+            const match = prBody.match(regex);
             
-            if (!match) { # Indent 10 spaces
-              console.log('No "Closes #<issue_number>" found in PR body. Skipping registry update for this PR.'); # Indent 12 spaces
-              core.setOutput('skip_update', 'true'); # Indent 12 spaces
-              return; # Indent 12 spaces
+            if (!match) {
+              console.log('No "Closes #<issue_number>" found in PR body. Skipping registry update for this PR.');
+              core.setOutput('skip_update', 'true');
+              return;
             }
             
-            const issueNumber = parseInt(match[1], 10); # Indent 10 spaces
-            console.log(`Found linked issue number: #${issueNumber}`); # Indent 10 spaces
+            const issueNumber = parseInt(match[1], 10);
+            console.log(`Found linked issue number: #${issueNumber}`);
             
-            try { # Indent 10 spaces
-              const { data: issue } = await github.rest.issues.get({ # Indent 12 spaces
-                owner: context.repo.owner, # Indent 14 spaces
-                repo: context.repo.repo,   # Indent 14 spaces
-                issue_number: issueNumber, # Indent 14 spaces
-              }); # Indent 12 spaces
+            try {
+              const { data: issue } = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
               
-              core.setOutput('issue_number', issue.number.toString()); # Indent 12 spaces
-              core.setOutput('issue_title', issue.title); # Indent 12 spaces
-              core.setOutput('issue_body', issue.body); # Indent 12 spaces
-              core.setOutput('assignees', JSON.stringify(issue.assignees)); # Indent 12 spaces
-              core.setOutput('labels', JSON.stringify(issue.labels)); # Indent 12 spaces
-              core.setOutput('issue_url', issue.html_url); # Indent 12 spaces
-              core.setOutput('closed_at', issue.closed_at || ''); # Indent 12 spaces
-              core.setOutput('skip_update', 'false'); # Indent 12 spaces
+              core.setOutput('issue_number', issue.number.toString());
+              core.setOutput('issue_title', issue.title);
+              core.setOutput('issue_body', issue.body);
+              core.setOutput('assignees', JSON.stringify(issue.assignees));
+              core.setOutput('labels', JSON.stringify(issue.labels));
+              core.setOutput('issue_url', issue.html_url);
+              core.setOutput('closed_at', issue.closed_at || '');
+              core.setOutput('skip_update', 'false');
 
-            } catch (error) { # Indent 10 spaces
-              console.error(`Failed to fetch issue #${issueNumber}: ${error.message}. Skipping registry update.`); # Indent 12 spaces
-              core.setOutput('skip_update', 'true'); # Indent 12 spaces
-            } # Indent 10 spaces
-          result-encoding: json # Indent 8 spaces
-        env: # Indent 6 spaces
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Indent 8 spaces
+            } catch (error) {
+              console.error(`Failed to fetch issue #${issueNumber}: ${error.message}. Skipping registry update.`);
+              core.setOutput('skip_update', 'true');
+            }
+          result-encoding: json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update operative registry # Indent 4 spaces
-        if: steps.get_issue_details.outputs.skip_update == 'false' # Indent 6 spaces
-        run: | # Indent 6 spaces
-          cat <<'EOF_ISSUE_BODY' > issue_body.md # Indent 8 spaces
-          ${{ steps.get_issue_details.outputs.issue_body }} # Indent 8 spaces
-          EOF_ISSUE_BODY # Indent 8 spaces
+      - name: Update operative registry
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: |
+          cat <<'EOF_ISSUE_BODY' > issue_body.md
+          ${{ steps.get_issue_details.outputs.issue_body }}
+          EOF_ISSUE_BODY
           
-          python .github/scripts/update_registry.py \ # Indent 8 spaces
-            --issue-number "${{ steps.get_issue_details.outputs.issue_number }}" \ # Indent 10 spaces
-            --issue-title "${{ steps.get_issue_details.outputs.issue_title }}" \ # Indent 10 spaces
-            --issue-body "$(cat issue_body.md)" \ # Indent 10 spaces
-            --assignees '${{ steps.get_issue_details.outputs.assignees }}' \ # Indent 10 spaces
-            --labels '${{ steps.get_issue_details.outputs.labels }}' \ # Indent 10 spaces
-            --issue-url "${{ steps.get_issue_details.outputs.issue_url }}" \ # Indent 10 spaces
-            --closed-at "${{ steps.get_issue_details.outputs.closed_at }}" # Indent 10 spaces
+          python .github/scripts/update_registry.py \
+            --issue-number "${{ steps.get_issue_details.outputs.issue_number }}" \
+            --issue-title "${{ steps.get_issue_details.outputs.issue_title }}" \
+            --issue-body "$(cat issue_body.md)" \
+            --assignees '${{ steps.get_issue_details.outputs.assignees }}' \
+            --labels '${{ steps.get_issue_details.outputs.labels }}' \
+            --issue-url "${{ steps.get_issue_details.outputs.issue_url }}" \
+            --closed-at "${{ steps.get_issue_details.outputs.closed_at }}"
 
-      - name: Debug: Registry.json content AFTER python script # Indent 4 spaces
-        if: steps.get_issue_details.outputs.skip_update == 'false' # Indent 6 spaces
-        run: | # Indent 6 spaces
-          echo "--- Content of registry/operative_registry.json AFTER update_registry.py runs ---" # Indent 8 spaces
-          cat registry/operative_registry.json # Indent 8 spaces
-          echo "--- End of content after script ---" # Indent 8 spaces
+      - name: Debug: Registry.json content AFTER python script
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: |
+          echo "--- Content of registry/operative_registry.json AFTER update_registry.py runs ---"
+          cat registry/operative_registry.json
+          echo "--- End of content after script ---"
 
-      - name: Debug: Git status BEFORE staging # Indent 4 spaces
-        if: steps.get_issue_details.outputs.skip_update == 'false' # Indent 6 spaces
-        run: | # Indent 6 spaces
-          echo "--- Git status BEFORE 'git add' ---" # Indent 8 spaces
-          git status # Indent 8 spaces
-          echo "--- End of git status before add ---" # Indent 8 spaces
+      - name: Debug: Git status BEFORE staging
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: |
+          echo "--- Git status BEFORE 'git add' ---"
+          git status
+          echo "--- End of git status before add ---"
 
-      - name: Stage registry changes # Indent 4 spaces
-        if: steps.get_issue_details.outputs.skip_update == 'false' # Indent 6 spaces
-        run: git add registry/operative_registry.json # Indent 8 spaces
+      - name: Stage registry changes
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: git add registry/operative_registry.json
 
-      - name: Debug: Git status AFTER staging # Indent 4 spaces
-        if: steps.get_issue_details.outputs.skip_update == 'false' # Indent 6 spaces
-        run: | # Indent 6 spaces
-          echo "--- Git status AFTER 'git add' ---" # Indent 8 spaces
-          git status # Indent 8 spaces
-          echo "--- End of git status after add ---" # Indent 8 spaces
+      - name: Debug: Git status AFTER staging
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: |
+          echo "--- Git status AFTER 'git add' ---"
+          git status
+          echo "--- End of git status after add ---"
 
-      - name: Commit and push registry changes # Indent 4 spaces
-        if: steps.get_issue_details.outputs.skip_update == 'false' # Indent 6 spaces
-        run: | # Indent 6 spaces
-          git config user.name "github-actions[bot]" # Indent 8 spaces
-          git config user.email "github-actions[bot]@users.noreply.github.com" # Indent 8 spaces
+      - name: Commit and push registry changes
+        if: steps.get_issue_details.outputs.skip_update == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          if ! git diff --quiet --cached; then # Indent 8 spaces
-            git commit -m "Auto-update registry: Guild Seal for #${{ steps.get_issue_details.outputs.issue_number }} (via PR #${{ github.event.pull_request.number }} merge)" # Indent 10 spaces
-            git push # Indent 10 spaces
-            echo "Registry committed and pushed." # Indent 10 spaces
-          else # Indent 8 spaces
-            echo "No changes detected in registry/operative_registry.json. Skipping commit." # Indent 10 spaces
-          fi # Indent 8 spaces
+          if ! git diff --quiet --cached; then
+            git commit -m "Auto-update registry: Guild Seal for #${{ steps.get_issue_details.outputs.issue_number }} (via PR #${{ github.event.pull_request.number }} merge)"
+            git push
+            echo "Registry committed and pushed."
+          else
+            echo "No changes detected in registry/operative_registry.json. Skipping commit."
+          fi
+
+      - name: Delete merged feature branch # <--- NEW STEP
+        if: github.event.pull_request.merged == true # Double-check condition
+        run: |
+          BRANCH_TO_DELETE="${{ github.event.pull_request.head.ref }}"
+          echo "Attempting to delete merged branch: ${BRANCH_TO_DELETE}"
+          git push origin --delete "${BRANCH_TO_DELETE}" || { echo "Warning: Could not delete branch ${BRANCH_TO_DELETE}. It might have already been deleted or permissions are insufficient."; }
+        env:
+          GITHUB_TOKEN: ${{ github.token }} # Ensure token with write permissions is available
