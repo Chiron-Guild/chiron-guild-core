@@ -27,12 +27,25 @@ jobs:
 
       - name: Get linked Guild Op issue details
         id: get_issue_details
-        uses: actions/github-script@v6 # Using github-script to fetch issue details from the linked issue
+        uses: actions/github-script@v6
         with:
           script: |
-            const prBody = github.event.pull_request.body;
+            const pull_request = github.context.payload.pull_request; // <--- KEY CHANGE HERE
+            if (!pull_request) {
+              console.log('Pull request context is not available.');
+              core.setOutput('skip_update', 'true');
+              return;
+            }
+
+            const prBody = pull_request.body;
+            if (typeof prBody !== 'string') {
+              console.log('PR body is not available or not a string. Skipping registry update.');
+              core.setOutput('skip_update', 'true');
+              return;
+            }
+            
             // Regex to find "Closes #<issue_number>" in the PR body (case-insensitive)
-            const regex = /Closes\s+#(\d+)/i;
+            const regex = /Closes\s+#(\d+)/i; 
             const match = prBody.match(regex);
             
             if (!match) {
@@ -47,30 +60,28 @@ jobs:
             try {
               // Fetch the original Guild Op issue details using the GitHub API
               const { data: issue } = await github.rest.issues.get({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                owner: github.context.repo.owner, // <--- Use github.context.repo
+                repo: github.context.repo.repo,   // <--- Use github.context.repo
                 issue_number: issueNumber,
               });
               
               // Output the fetched issue details as workflow outputs
-              core.setOutput('issue_number', issue.number);
+              core.setOutput('issue_number', issue.number.toString()); // Ensure it's a string
               core.setOutput('issue_title', issue.title);
               core.setOutput('issue_body', issue.body);
               core.setOutput('assignees', JSON.stringify(issue.assignees));
               core.setOutput('labels', JSON.stringify(issue.labels));
               core.setOutput('issue_url', issue.html_url);
-              core.setOutput('closed_at', issue.closed_at);
+              core.setOutput('closed_at', issue.closed_at || ''); // Handle null closed_at
               core.setOutput('skip_update', 'false');
 
             } catch (error) {
               console.error(`Failed to fetch issue #${issueNumber}: ${error.message}. Skipping registry update.`);
               core.setOutput('skip_update', 'true');
             }
-          
-          # This ensures the output variables can be directly consumed by subsequent steps
-          result-encoding: json 
+          result-encoding: json
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use built-in GITHUB_TOKEN for API access
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update operative registry
         # Only run this step if the issue details were successfully fetched
