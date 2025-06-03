@@ -2,7 +2,7 @@
 
 **Plug in. Forge the Future. Welcome to Chiron Guild.** We are a collective dedicated to architecting the next generation of AI-augmented labor—a system where individuals own their contributions, command their tools, and collectively build a more equitable digital future.
 
-To understand the soul of our endeavor, read [The Chiron Guild: A Manifesto for a New Reality](docs/Guild Manifesto.md).
+To understand the soul of our endeavor, read [The Chiron Guild: A Manifesto for a New Reality](docs/Guild_Manifesto.md).
 
 ---
 
