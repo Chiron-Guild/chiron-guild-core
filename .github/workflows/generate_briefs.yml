@@ -3,7 +3,7 @@ name: Create Guild Op Issues
 on:
   push:
     paths:
-      - 'archives/input_ops.json' # Path to your input JSON
+      - 'archives/input_ops.json'
 
 permissions:
   contents: read
@@ -13,39 +13,25 @@ jobs:
   create_issues_from_json:
     runs-on: ubuntu-latest
     env:
-      PROJECT_ID: "CCG"
-      CONTEXT_LABEL: "Context:PERS"
+      PROJECT_ID: "CCG" # Or your desired default
+      CONTEXT_LABEL: "Context:PERS" # Or your desired default
       ASSIGNEE: "Kin-Caid"
       REPO_NAME: ${{ github.repository }}
       OPS_FILE_PATH: "archives/input_ops.json"
-      # --- CORRECTED PATH FOR PROMPT TEMPLATE ---
-      PROMPT_TEMPLATE_PATH: "docs/prompts/issue_creation_prompt_template.txt" 
+      # --- THIS IS THE LINE TO CORRECT ---
+      PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/api_brief_generation_prompt.md" 
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install Python Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install google-generativeai PyGithub # PyGithub is needed if script uses it
-
-      - name: Authenticate GitHub CLI (Only if your script uses 'gh CLI', not needed for PyGithub version)
-        # If using PyGithub version of process_ops.py, this step can be removed.
-        # run: gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
-        # Ensure GITHUB_TOKEN is available if script expects it, but PyGithub uses it directly
-        if: ${{ false }} # Temporarily disable if using PyGithub version of script
+      # ... (Checkout, Setup Python, Install Dependencies steps) ...
+      
+      # Authenticate GitHub CLI step - ensure it's disabled if using PyGithub
+      - name: Authenticate GitHub CLI (Skipped if using PyGithub)
+        if: ${{ false }} 
         run: echo "Skipping gh auth as PyGithub is used"
 
       - name: Run Guild Op Processing Script
         run: |
-          # --- CORRECTED PATH TO SCRIPT ---
           python .github/scripts/process_ops.py \
             --ops_file "${{ env.OPS_FILE_PATH }}" \
             --project_id "${{ env.PROJECT_ID }}" \
@@ -55,4 +41,4 @@ jobs:
             --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # PyGithub script will use this
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
