@@ -5,28 +5,25 @@ import argparse
 import google.generativeai as genai
 from pathlib import Path
 
-# Configuration (Keep your existing GEMINI_API_KEY, GEMINI_MODEL_NAME, rate limits)
+# --- Configuration ---
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-# ### UPDATED ### - Specific model as requested by user
-GEMINI_MODEL_NAME = "gemini-2.5-flash-preview-05-20"
-# ### NEW ### - Rate limits based on user's model documentation
-# 10 RPM, 250k TPM, 500 RPD
-# Script primarily manages RPM. TPM/RPD are operational considerations.
-REQUESTS_PER_MINUTE_LIMIT = 9.5
+GEMINI_MODEL_NAME = "gemini-1.5-flash-preview-05-20" # Or "gemini-1.5-flash-latest"
+REQUESTS_PER_MINUTE_LIMIT = 9.5 
 SLEEP_INTERVAL = 60.0 / REQUESTS_PER_MINUTE_LIMIT
 
+# --- Initialize Gemini Client ---
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 else:
-    print("ERROR: GEMINI_API_KEY environment variable not set.")
+    print("ERROR: GEMINI_API_KEY environment variable not set. Please set it in your GitHub Repository Secrets.")
     exit(1)
 
 generation_config = {
-    "temperature": 0.7,
+    "temperature": 0.7, 
     "top_p": 1,
     "top_k": 1,
     "max_output_tokens": 8192, 
-    "response_mime_type": "application/json",
+    "response_mime_type": "application/json", 
 }
 
 safety_settings = [
@@ -36,16 +33,18 @@ safety_settings = [
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
 ]
 
+# --- Helper Functions ---
 def load_prompt_template(template_path):
+    """Loads the prompt template from the specified file path."""
     try:
         with open(template_path, 'r') as f:
             return f.read()
     except FileNotFoundError:
-        print(f"ERROR: Prompt template not found at {template_path}")
+        print(f"ERROR: Prompt template not found at {template_path}. Please ensure the path is correct.")
         exit(1)
 
 def call_gemini_api(prompt_text):
-    # (Keep your existing call_gemini_api function - it already expects JSON)
+    """Calls the Gemini API with the given prompt text and returns parsed JSON response."""
     try:
         model = genai.GenerativeModel(
             model_name=GEMINI_MODEL_NAME,
@@ -79,11 +78,11 @@ def call_gemini_api(prompt_text):
         if hasattr(e, 'message'): print(f"Error Message: {e.message}")
         return None
 
+# --- Main Processing Logic ---
 def main():
     parser = argparse.ArgumentParser(description="Generate Guild Op brief proposals for review.")
-    # ... (all your argparse definitions remain the same) ...
-    parser.add_argument("--ops_file", required=True, help="Path to the JSON file containing Guild Ops.")
-    parser.add_argument("--project_id", required=True, help="Project ID (e.g., CCG). This will be used for the Op ID prefix if not overridden by op-specific data.")
+    parser.add_argument("--ops_file", required=True, help="Path to the JSON file containing Guild Ops (e.g., archives/input_ops.json).")
+    parser.add_argument("--project_id_cli_arg", required=True, help="Overall Project ID Prefix (e.g., CCG) to use for Op IDs.")
     parser.add_argument("--context_label", required=True, help="Context label (e.g., Context:PERS).")
     parser.add_argument("--assignee", default="Kin-Caid", help="Default assignee.")
     parser.add_argument("--prompt_template_path", 
@@ -91,6 +90,7 @@ def main():
                         help="Path to prompt template for review generation, relative to repository root.")
     parser.add_argument("--output_json_file", default="_generated_briefs_to_create.json", help="Output JSON file for machine processing.")
     parser.add_argument("--output_md_file", default="_generated_briefs_for_review.md", help="Output Markdown file for human review.")
+    parser.add_argument("--project_mappings_file", default="project_mappings.json", help="Path to the project_mappings.json file, relative to repo root.")
 
     args = parser.parse_args()
 
@@ -100,7 +100,7 @@ def main():
 
     try:
         with open(args.ops_file, 'r') as f:
-            project_data = json.load(f) 
+            project_data_from_input_ops = json.load(f) 
     except FileNotFoundError:
         print(f"ERROR: Ops file not found at {args.ops_file}")
         return
@@ -108,33 +108,56 @@ def main():
         print(f"ERROR: Could not decode JSON from {args.ops_file}")
         return
 
-    # --- REVISED: Extract ops from the top-level "guild_ops" array ---
-    # And create a lookup for sector names
+    project_mappings = {}
+    try:
+        # Construct absolute path if needed, or assume it's relative to repo root
+        mappings_file_path = Path(args.project_mappings_file)
+        if not mappings_file_path.is_absolute() and not Path.cwd().joinpath(mappings_file_path).exists():
+             # Try relative to script if not found at repo root (for local dev flexibility)
+             script_dir_path = Path(__file__).resolve().parent
+             if script_dir_path.joinpath(mappings_file_path).exists():
+                  mappings_file_path = script_dir_path.joinpath(mappings_file_path)
+        
+        if mappings_file_path.exists():
+            with open(mappings_file_path, 'r') as f_map:
+                project_mappings = json.load(f_map)
+        else:
+            print(f"WARNING: Project mappings file not found at '{args.project_mappings_file}' or alternate paths. Mappings will not be used.")
+    except json.JSONDecodeError:
+        print(f"WARNING: Could not decode JSON from '{args.project_mappings_file}'. Mappings will not be used.")
+    except Exception as e:
+        print(f"WARNING: Could not load project mappings file '{args.project_mappings_file}': {e}")
+
+
+    overall_project_name_for_briefs = project_data_from_input_ops.get("project_name")
+    if not overall_project_name_for_briefs:
+        overall_project_name_for_briefs = project_mappings.get(args.project_id_cli_arg)
+        if not overall_project_name_for_briefs:
+            overall_project_name_for_briefs = f"Project: {args.project_id_cli_arg}"
+            print(f"WARNING: Using fallback Parent Project name: '{overall_project_name_for_briefs}'. Define 'project_name' in '{args.ops_file}' or map '{args.project_id_cli_arg}' in '{args.project_mappings_file}'.")
     
+    print(f"Using Overall Parent Project Name for briefs: '{overall_project_name_for_briefs}'")
+
     sector_name_lookup = {}
-    if "project_sectors" in project_data and isinstance(project_data["project_sectors"], list):
-        for sector in project_data["project_sectors"]:
+    if "project_sectors" in project_data_from_input_ops and isinstance(project_data_from_input_ops["project_sectors"], list):
+        for sector in project_data_from_input_ops["project_sectors"]:
             if "sector_id" in sector and "sector_name" in sector:
                 sector_name_lookup[sector["sector_id"]] = sector["sector_name"]
             else:
                 print(f"WARNING: Sector object missing 'sector_id' or 'sector_name': {sector}")
 
     all_individual_ops_with_context = []
-    if "guild_ops" in project_data and isinstance(project_data["guild_ops"], list):
-        for op_detail in project_data["guild_ops"]:
+    if "guild_ops" in project_data_from_input_ops and isinstance(project_data_from_input_ops["guild_ops"], list):
+        for op_detail in project_data_from_input_ops["guild_ops"]:
             op_copy = op_detail.copy()
             sector_id_from_op = op_detail.get("sector_id")
             
-            # Get sector_name:
-            # 1. If op_detail itself has "sector_name" (as in your last example op)
-            # 2. Else, try to look it up using sector_id_from_op
             if "sector_name" in op_detail:
                 op_copy["sector_name_for_prompt"] = op_detail["sector_name"]
             elif sector_id_from_op is not None and sector_id_from_op in sector_name_lookup:
                 op_copy["sector_name_for_prompt"] = sector_name_lookup[sector_id_from_op]
             else:
                 op_copy["sector_name_for_prompt"] = "Unknown Sector (ID not found or missing)"
-                print(f"WARNING: Could not find sector_name for op '{op_detail.get('op_title')}' with sector_id '{sector_id_from_op}'")
             
             all_individual_ops_with_context.append(op_copy)
     else:
@@ -144,27 +167,30 @@ def main():
     if not all_individual_ops_with_context:
         print("No Guild Ops found to process in the 'guild_ops' list of the input file.")
         return
-    # --- END REVISED EXTRACTION LOGIC ---
 
     prompt_template_full_path = Path(args.prompt_template_path)
+    if not prompt_template_full_path.is_absolute() and not Path.cwd().joinpath(prompt_template_full_path).exists():
+        script_dir_path = Path(__file__).resolve().parent
+        if script_dir_path.joinpath(prompt_template_full_path).exists():
+            prompt_template_full_path = script_dir_path.joinpath(prompt_template_full_path)
+
     prompt_template = load_prompt_template(prompt_template_full_path)
     
     op_type_counters = {}
     all_generated_briefs_json = []
     all_generated_briefs_md_parts = []
 
-    # Now iterate over the flat list: all_individual_ops_with_context
     print(f"Processing {len(all_individual_ops_with_context)} individual Guild Ops for review generation using model {GEMINI_MODEL_NAME}...")
 
-    for i, op_details in enumerate(all_individual_ops_with_context): # op_details is now from the top-level guild_ops list
+    for i, op_details in enumerate(all_individual_ops_with_context):
         print(f"\n--- Generating brief for Op {i+1}/{len(all_individual_ops_with_context)}: {op_details.get('op_title', 'N/A')} ---")
 
         op_type = op_details.get("op_type", "UNKNOWN").upper()
         op_type_counters[op_type] = op_type_counters.get(op_type, 0) + 1
         num_id = f"{op_type_counters[op_type]:03d}"
 
-        # Use "sector_name_for_prompt" which we added
-        current_prompt = prompt_template.replace("{{PROJECT_ID}}", args.project_id) \
+        current_prompt = prompt_template.replace("{{OVERALL_PROJECT_NAME}}", overall_project_name_for_briefs) \
+                                        .replace("{{PROJECT_ID}}", args.project_id_cli_arg) \
                                         .replace("{{OP_TYPE}}", op_details.get("op_type", "N/A")) \
                                         .replace("{{OP_TYPE_UPPERCASE}}", op_details.get("op_type", "N/A").upper()) \
                                         .replace("{{OP_TYPE_LOWERCASE}}", op_details.get("op_type", "N/A").lower()) \
@@ -177,9 +203,6 @@ def main():
         
         llm_response_data = call_gemini_api(current_prompt)
 
-        # ... (rest of your main function's logic for handling llm_response_data, 
-        #      creating json_entry_for_output, md_entry, sleeping, and writing files) ...
-        # Store the raw LLM response along with original details for the JSON output
         json_entry_for_output = {
             "original_op_input_details": op_details,
             "llm_generated_data": llm_response_data,
@@ -217,11 +240,10 @@ def main():
         md_entry += "---\n"
         all_generated_briefs_md_parts.append(md_entry)
 
-        if i < len(all_individual_ops_with_context) - 1: # Use the correct list length here
+        if i < len(all_individual_ops_with_context) - 1:
             print(f"Sleeping for {SLEEP_INTERVAL:.2f} seconds to respect RPM limit...")
             time.sleep(SLEEP_INTERVAL)
 
-    # ... (file writing logic remains the same) ...
     output_json_path = Path(args.output_json_file)
     with open(output_json_path, 'w') as f_json:
         json.dump(all_generated_briefs_json, f_json, indent=2)
@@ -230,7 +252,9 @@ def main():
     output_md_path = Path(args.output_md_file)
     with open(output_md_path, 'w') as f_md:
         f_md.write(f"# Guild Op Briefs - For Review\n\n")
-        f_md.write(f"**Project ID (User Input):** `{args.project_id}` | **Context Label (User Input):** `{args.context_label}`\n\n")
+        # --- MODIFIED: Display the overall_project_name_for_briefs ---
+        f_md.write(f"**Overall Parent Project for this Batch:** `{overall_project_name_for_briefs}`\n\n")
+        f_md.write(f"**Input Project ID Prefix (for Op IDs):** `{args.project_id_cli_arg}` | **Input Context Label:** `{args.context_label}`\n\n")
         f_md.write("Review the following proposed GitHub Issues. The content below is generated by the LLM based on the `review_generation_prompt_template.txt`.\n")
         f_md.write("The accompanying `_generated_briefs_to_create.json` file contains the raw JSON structured data from the LLM.\n\n---\n\n")
         for entry in all_generated_briefs_md_parts:
@@ -239,7 +263,5 @@ def main():
 
     print(f"\n--- Brief Generation For Review Complete ---")
 
-
 if __name__ == "__main__":
     main()
-
