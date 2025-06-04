@@ -1,22 +1,25 @@
 import os
 import json
-import subprocess
 import time
 import argparse
 import google.generativeai as genai
 from pathlib import Path
+from github import Github, UnknownObjectException, GithubException # Added PyGithub imports
 
-# Configuration
+# --- Configuration ---
+# Your Gemini API Key from GitHub Repository Secrets
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+# Your GitHub Token (Personal Access Token with 'repo' and 'issues' scopes)
+# This will be injected by GitHub Actions, or set locally for testing.
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 
-# User specified "gemini-1.5-flash-preview-05-20", using 'gemini-1.5-flash-latest' for broader compatibility and updates.
-# If you have specific access to the preview model and prefer it, you can change this back.
-GEMINI_MODEL_NAME = "gemini-1.5-flash-latest" 
+# Gemini Model Name (using latest for broader compatibility and updates)
+# You can change this back to 'gemini-1.5-flash-preview-05-20' if preferred and accessible.
+GEMINI_MODEL_NAME = "gemini-2.5-flash-preview-05-20" 
 REQUESTS_PER_MINUTE_LIMIT = 10
 SLEEP_INTERVAL = 60.0 / REQUESTS_PER_MINUTE_LIMIT
 
-# Configure the Gemini client
+# --- Initialize Gemini Client ---
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 else:
@@ -43,6 +46,22 @@ safety_settings = [
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
 ]
 
+# --- Initialize PyGithub Client ---
+github_client = None
+if GITHUB_TOKEN:
+    try:
+        github_client = Github(GITHUB_TOKEN)
+        # Verify token by fetching user info (optional, but good for early failure detection)
+        # user = github_client.get_user()
+        # print(f"Authenticated to GitHub as: {user.login}")
+    except Exception as e:
+        print(f"ERROR: Failed to initialize PyGithub client with provided GITHUB_TOKEN: {e}")
+        exit(1)
+else:
+    print("ERROR: GITHUB_TOKEN environment variable not set. Cannot interact with GitHub API.")
+    exit(1)
+
+# --- Helper Functions ---
 def load_prompt_template(template_path):
     """Loads the prompt template from the specified file path."""
     try:
@@ -62,14 +81,13 @@ def call_gemini_api(prompt_text):
         )
         response = model.generate_content(prompt_text)
         
-        # Check if the response contains any text content, which should be our JSON.
         if response.text:
             return json.loads(response.text)
         else:
             print("WARNING: Gemini API response was empty or did not contain text content.")
-            # Print full response for debugging if it's not text
-            # if response.candidates and response.candidates[0].content:
-            #     print(f"Full Gemini Response Content: {response.candidates[0].content}")
+            if response.candidates and response.candidates[0].content:
+                # Attempt to print non-text content for debugging
+                print(f"Full Gemini Response Content: {response.candidates[0].content}")
             return None
 
     except json.JSONDecodeError as e:
@@ -78,7 +96,6 @@ def call_gemini_api(prompt_text):
         return None
     except Exception as e:
         print(f"ERROR: An error occurred while calling Gemini API: {e}")
-        # Attempt to print response content for more context
         if 'response' in locals() and hasattr(response, 'text'):
             print(f"Partial Gemini Response Text: {response.text[:500]}")
         elif 'response' in locals() and hasattr(response, 'prompt_feedback') and response.prompt_feedback.block_reason:
@@ -86,39 +103,36 @@ def call_gemini_api(prompt_text):
         return None
 
 def create_github_issue(title, body, labels, assignee, repo_name):
-    """Creates a GitHub issue using the gh CLI tool."""
-    labels_str = ",".join(labels)
-    # The --body-file approach is more robust for longer content, but direct --body works for most cases
-    # For very long bodies, consider writing to a temp file and using --body-file @temp_file
-    cmd = [
-        "gh", "issue", "create",
-        "--title", title,
-        "--body", body,
-        "--label", labels_str,
-        "--assignee", assignee,
-        "--repo", repo_name
-    ]
+    """Creates a GitHub issue using PyGithub."""
     try:
-        print(f"Attempting to create issue: '{title}' in repository: '{repo_name}'")
+        print(f"Attempting to create issue: '{title}' in repository: '{repo_name}' using PyGithub.")
         
-        # Ensure GITHUB_TOKEN is available to the gh CLI command
-        env_with_token = os.environ.copy()
-        env_with_token["GITHUB_TOKEN"] = GITHUB_TOKEN
-
-        process = subprocess.run(cmd, capture_output=True, text=True, check=True, env=env_with_token)
-        print(f"Successfully created issue: {process.stdout.strip()}")
+        # Get the repository object
+        repo = github_client.get_repo(repo_name)
+        
+        # Create the issue
+        issue = repo.create_issue(
+            title=title,
+            body=body,
+            labels=labels,
+            assignee=assignee # Note: assignee must be a valid GitHub username within the repo context
+        )
+        print(f"Successfully created issue: {issue.html_url}")
         return True
-    except subprocess.CalledProcessError as e:
-        print(f"ERROR: Failed to create GitHub issue for '{title}'.")
-        print(f"  Return code: {e.returncode}")
-        print(f"  Stdout: {e.stdout}")
-        print(f"  Stderr: {e.stderr}")
+    except UnknownObjectException as e:
+        print(f"ERROR: GitHub repository '{repo_name}' or assignee '{assignee}' not found or inaccessible: {e}")
+        return False
+    except GithubException as e:
+        print(f"ERROR: GitHub API error when creating issue '{title}': {e}")
+        # Sometimes, specific errors (like 'Issue already exists') are in e.data
+        if hasattr(e, 'data') and isinstance(e.data, dict) and 'message' in e.data:
+            print(f"  GitHub API Message: {e.data['message']}")
         return False
     except Exception as e:
         print(f"ERROR: An unexpected error occurred during GitHub issue creation: {e}")
         return False
 
-
+# --- Main Processing Logic ---
 def main():
     parser = argparse.ArgumentParser(description="Process Guild Ops and create GitHub Issues using Gemini.")
     parser.add_argument("--ops_file", required=True, help="Path to the JSON file containing Guild Ops.")
@@ -130,12 +144,12 @@ def main():
     
     args = parser.parse_args()
 
-    # Pre-check for API keys
+    # Pre-check for API keys (redundant with global checks, but good for local runs without setting env vars)
     if not GEMINI_API_KEY:
-        print("ERROR: GEMINI_API_KEY environment variable is not set. Please configure it in your GitHub Repository Secrets.")
+        print("ERROR: GEMINI_API_KEY environment variable is not set. Please configure it in your GitHub Repository Secrets or local environment.")
         return
     if not GITHUB_TOKEN:
-        print("ERROR: GITHUB_TOKEN environment variable is not set. This is usually set automatically by GitHub Actions.")
+        print("ERROR: GITHUB_TOKEN environment variable is not set. This is usually set automatically by GitHub Actions, but needed for local PyGithub use.")
         return
 
     try:
@@ -158,11 +172,14 @@ def main():
     total_ops = len(guild_ops_list)
     created_count = 0
 
-    print(f"Starting to process {total_ops} Guild Ops from {args.ops_file}...")
+    print(f"\n--- Guild Op Creation System Initialized ---")
+    print(f"Processing {total_ops} Guild Ops from {args.ops_file}...")
     print(f"Issues will be created in repository: {args.repo_name}")
     print(f"Default Assignee: {args.assignee}")
     print(f"Project ID: {args.project_id}")
     print(f"Context Label: {args.context_label}")
+    print(f"Using Gemini Model: {GEMINI_MODEL_NAME}")
+
 
     # Iteratively process each Guild Op
     for i, op_details in enumerate(guild_ops_list):
@@ -185,7 +202,7 @@ def main():
                                         .replace("{{ASSIGNEE}}", args.assignee) \
                                         .replace("{{NUM_ID}}", num_id)
         
-        print(f"Calling Gemini API for Op {num_id}...")
+        print(f"Calling Gemini API for Op {op_type}-{num_id}...")
         llm_response_data = call_gemini_api(current_prompt)
 
         if llm_response_data and isinstance(llm_response_data, dict):
@@ -212,7 +229,7 @@ def main():
     print(f"Successfully created GitHub Issues: {created_count}")
     if created_count < total_ops:
         print(f"WARNING: Failed to create issues for {total_ops - created_count} Ops. Check logs above for specific errors.")
-        print("Remember to remove successfully processed Ops from 'guild_ops_input.json' before running again to avoid duplicates.")
+        print("Remember to remove successfully processed Ops from 'archives/input_ops.json' before running again to avoid duplicates.")
 
 
 if __name__ == "__main__":
