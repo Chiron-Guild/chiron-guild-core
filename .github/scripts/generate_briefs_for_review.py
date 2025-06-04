@@ -8,11 +8,11 @@ from pathlib import Path
 # Configuration
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 # ### UPDATED ### - Specific model as requested by user
-GEMINI_MODEL_NAME = "models/gemini-1.5-flash-preview-05-20"
+GEMINI_MODEL_NAME = "gemini-2.5-flash-preview-05-20"
 # ### NEW ### - Rate limits based on user's model documentation
 # 10 RPM, 250k TPM, 500 RPD
 # Script primarily manages RPM. TPM/RPD are operational considerations.
-REQUESTS_PER_MINUTE_LIMIT = 10
+REQUESTS_PER_MINUTE_LIMIT = 9.5
 SLEEP_INTERVAL = 60.0 / REQUESTS_PER_MINUTE_LIMIT
 
 if GEMINI_API_KEY:
