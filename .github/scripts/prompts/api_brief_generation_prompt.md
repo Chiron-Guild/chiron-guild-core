@@ -13,7 +13,7 @@ The user will provide a JSON payload containing:
     *   Each `guild_op` within a sector has `op_title`, `op_type`, and `primary_deliverable`.
 2.  `target_op_title`: A string specifying the exact `op_title` of the Guild Op within `guild_op_data` for which the brief needs to be generated.
 3.  `project_id_for_ops` (Optional): A string for the `[PROJECT_ID]` to be used for all Ops from this specific `guild_op_data` (e.g., "CCGAME", "WATERSHED"). If not provided, use "PROJECT" as a placeholder and note this.
-4.  `assignee_override` (Optional): A string specifying the GitHub username to assign (e.g., "specific-operative"). If not provided, default to "Kin-Caid".
+4.  `assignee_override` (Optional): A string specifying the GitHub username to assign (e.g., "specific-operative"). If not provided, default to no one.
 
 **PROCESSING THE INPUT JSON & GENERATING THE BRIEF:**
 
@@ -23,7 +23,7 @@ The user will provide a JSON payload containing:
 4.  **`[PROJECT_ID]` Determination:** Use the `project_id_for_ops` provided by the user. If missing, use "PROJECT" as a placeholder.
 5.  **`[NUM_ID]`:** Always use `XXX` as a placeholder.
 6.  **`[OP_TYPE]`:** Use the `op_type` from the target `guild_op`.
-7.  **Assignee:** Use `assignee_override` if provided; otherwise, default to "Kin-Caid".
+7.  **Assignee:** Use `assignee_override` if provided; otherwise, default to no one.
 
 **STRICT OUTPUT FORMAT (GitHub Issue Markdown):**
 Your entire output MUST be a single Markdown block, starting and ending with `---` fences.
@@ -34,7 +34,7 @@ labels:
   - "[op_type_from_json_lowercase]" # e.g., dev, doc
   # Add other contextual mandatory labels (foundational-op, first-transmission, help wanted) if inferable from sector/op description.
 assignees:
-  - "[assignee]" # Default to Kin-Caid or use assignee_override
+  - "[assignee]" # Default to no one or use assignee_override
 ---
 
 # Guild Op Brief: [PROJECT_ID]-[OP_TYPE_FROM_JSON]-[NUM_ID] [op_title_from_json]
