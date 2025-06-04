@@ -1,44 +1,65 @@
-name: Create Guild Op Issues
+name: Generate Guild Op Briefs for Review
 
 on:
   push:
     paths:
-      - 'archives/input_ops.json'
+      - 'archives/input_ops.json' # Path to your input JSON
 
 permissions:
-  contents: read
-  issues: write
+  contents: read 
 
 jobs:
-  create_issues_from_json:
+  generate_for_review:
     runs-on: ubuntu-latest
     env:
-      PROJECT_ID: "CCG" # Or your desired default
-      CONTEXT_LABEL: "Context:PERS" # Or your desired default
+      PROJECT_ID: "CCG" 
+      CONTEXT_LABEL: "Context:PERS" 
       ASSIGNEE: "Kin-Caid"
       REPO_NAME: ${{ github.repository }}
-      OPS_FILE_PATH: "archives/input_ops.json"
-      # --- THIS IS THE LINE TO CORRECT ---
-      PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/api_brief_generation_prompt.md" 
+      OPS_FILE_PATH: "archives/input_ops.json" 
+      # --- UPDATED TO THE NEW, RICHER PROMPT TEMPLATE ---
+      PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/review_generation_prompt_template.txt" 
+      OUTPUT_JSON_FILE: "_generated_briefs_to_create.json"
+      OUTPUT_MD_FILE: "_generated_briefs_for_review.md"
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
     steps:
-      # ... (Checkout, Setup Python, Install Dependencies steps) ...
-      
-      # Authenticate GitHub CLI step - ensure it's disabled if using PyGithub
-      - name: Authenticate GitHub CLI (Skipped if using PyGithub)
-        if: ${{ false }} 
-        run: echo "Skipping gh auth as PyGithub is used"
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Run Guild Op Processing Script
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python Dependencies
         run: |
-          python .github/scripts/process_ops.py \
+          python -m pip install --upgrade pip
+          pip install google-generativeai 
+
+      - name: Run Brief Generation for Review Script
+        run: |
+          python .github/scripts/generate_briefs_for_review.py \
             --ops_file "${{ env.OPS_FILE_PATH }}" \
             --project_id "${{ env.PROJECT_ID }}" \
             --context_label "${{ env.CONTEXT_LABEL }}" \
             --assignee "${{ env.ASSIGNEE }}" \
-            --repo_name "${{ env.REPO_NAME }}" \
-            --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}"
+            --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}" \
+            --output_json_file "${{ env.OUTPUT_JSON_FILE }}" \
+            --output_md_file "${{ env.OUTPUT_MD_FILE }}"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Generated Briefs for Review (JSON)
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-briefs-json
+          path: ${{ env.OUTPUT_JSON_FILE }}
+          if-no-files-found: error
+
+      - name: Upload Generated Briefs for Review (Markdown)
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-briefs-markdown
+          path: ${{ env.OUTPUT_MD_FILE }}
+          if-no-files-found: error
