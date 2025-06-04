@@ -62,12 +62,6 @@
             "op_title": "Codify Core Game Data & Infrastructure Parameters (GameData Module)",
             "op_type": "DEV",
             "primary_deliverable": "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data as constants."
-        },
-        {
-            "sector_id": 1,
-            "op_title": "Develop Game State Management Module (GameState Module)",
-            "op_type": "DEV",
-            "primary_deliverable": "A functional JavaScript module (`GameState.js`) for managing all dynamic game state properties, with unit tests."
         }
     ]
 }
