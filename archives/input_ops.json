@@ -50,7 +50,7 @@
             "alignment_with_meta_objectives": "This ensures 'effective community engagement' (M1) through a polished and 'accessible' (M3) product, solidifying 'Chiron Guild's leadership' (M2) and showcasing the 'Precision Shell' (M4) through a high-quality deliverable."
         }
     ],
-    "guild_operations": [
+    "guild_ops": [
         {
             "sector_id": 1,
             "op_title": "Formalize V2.2 Core Game Mechanics & Calculation Rules from Miro",
