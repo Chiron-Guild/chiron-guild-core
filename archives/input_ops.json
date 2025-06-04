@@ -1,1 +1,212 @@
-
+[
+  {
+    "sector_name": "1. Core Game Mechanics Automation",
+    "op_title": "Formalize V2.2 Core Game Mechanics & Calculation Rules from Miro",
+    "op_type": "DOC",
+    "primary_deliverable": "A comprehensive technical specification document translating Miro rules into pseudo-code/algorithmic descriptions."
+  },
+  {
+    "sector_name": "1. Core Game Mechanics Automation",
+    "op_title": "Codify Core Game Data & Infrastructure Parameters (GameData Module)",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data as constants."
+  },
+  {
+    "sector_name": "1. Core Game Mechanics Automation",
+    "op_title": "Develop Game State Management Module (GameState Module)",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional JavaScript module (`GameState.js`) for managing all dynamic game state properties, with unit tests."
+  },
+  {
+    "sector_name": "1. Core Game Mechanics Automation",
+    "op_title": "Implement Water Flow Simulation Logic (FlowPhase Module)",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional JavaScript module (`FlowPhase.js`) accurately simulating the V2.2 Flow Phase, with unit tests."
+  },
+  {
+    "sector_name": "1. Core Game Mechanics Automation",
+    "op_title": "Implement Operations & Maintenance Calculation Logic (Maintenance Module)",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional JavaScript module (`Maintenance.js`) correctly calculating O&M costs and applying penalties, with unit tests."
+  },
+  {
+    "sector_name": "1. Core Game Mechanics Automation",
+    "op_title": "Implement Game Scoring & Flood Point Tracking Logic (Scoring Module)",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional JavaScript module (`Scoring.js`) for accurately calculating and tracking Flood Points, with unit tests."
+  },
+  {
+    "sector_name": "1. Core Game Mechanics Automation",
+    "op_title": "Develop Core Game Loop Orchestration Logic",
+    "op_type": "DEV",
+    "primary_deliverable": "An initial JavaScript script/module (`GameEngineCore.js`) orchestrating the high-level game round sequence."
+  },
+  {
+    "sector_name": "1. Core Game Mechanics Automation",
+    "op_title": "Verify Integrated Core Mechanics Engine Against V2.2 Rule Set",
+    "op_type": "QAT",
+    "primary_deliverable": "A Quality Assurance test report documenting execution of game scenarios and confirming alignment with V2.2 rules via console/state inspection."
+  },
+  {
+    "sector_name": "2. Interactive User Interface & Experience (UI/UX)",
+    "op_title": "Design UI Mockups & User Flow Schematics for Creek Connections",
+    "op_type": "DSN",
+    "primary_deliverable": "A set of visual mockups for all key game screens and a user flow diagram illustrating player navigation."
+  },
+  {
+    "sector_name": "2. Interactive User Interface & Experience (UI/UX)",
+    "op_title": "Develop Interactive Watershed Map Renderer Component",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional JavaScript component rendering the game's watershed map with user interaction capabilities."
+  },
+  {
+    "sector_name": "2. Interactive User Interface & Experience (UI/UX)",
+    "op_title": "Implement Dynamic Infrastructure Placement & Upgrade Panel",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional UI component for displaying, selecting, and placing/upgrading infrastructure, updating GameState."
+  },
+  {
+    "sector_name": "2. Interactive User Interface & Experience (UI/UX)",
+    "op_title": "Develop Real-Time Game Status Display Components",
+    "op_type": "DEV",
+    "primary_deliverable": "Functional UI components for Scoreboard, Budget Tracker, and Round/Phase Tracker, updating in real-time from GameState."
+  },
+  {
+    "sector_name": "2. Interactive User Interface & Experience (UI/UX)",
+    "op_title": "Implement Player Action Controls & Game Event Triggers",
+    "op_type": "DEV",
+    "primary_deliverable": "Functional UI buttons/controls for player actions that trigger game logic and update the UI."
+  },
+  {
+    "sector_name": "2. Interactive User Interface & Experience (UI/UX)",
+    "op_title": "Implement Basic Visual Feedback for Game Events",
+    "op_type": "DEV",
+    "primary_deliverable": "Basic visual cues and animations for key game events (water flow, flood markers, penalty indicators)."
+  },
+  {
+    "sector_name": "2. Interactive User Interface & Experience (UI/UX)",
+    "op_title": "Initial UI/UX Playability & Heuristic Evaluation",
+    "op_type": "QAT",
+    "primary_deliverable": "A report detailing findings from an initial playability test and heuristic evaluation of the UI, identifying issues and improvements."
+  },
+  {
+    "sector_name": "3. Campaign Progression & Content Integration",
+    "op_title": "Define Data Structures for Campaign Phases & Event Cards",
+    "op_type": "DOC",
+    "primary_deliverable": "A technical document specifying data structures for multi-phase campaign progression and Event Card format/content."
+  },
+  {
+    "sector_name": "3. Campaign Progression & Content Integration",
+    "op_title": "Develop Campaign Management Logic",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional JavaScript module (`CampaignManager.js`) handling transitions between campaign phases and managing state."
+  },
+  {
+    "sector_name": "3. Campaign Progression & Content Integration",
+    "op_title": "Implement Event Card System Logic",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional system to draw, present, and trigger effects of Event Cards."
+  },
+  {
+    "sector_name": "3. Campaign Progression & Content Integration",
+    "op_title": "Integrate All V2.2 Event Card Content",
+    "op_type": "DEV",
+    "primary_deliverable": "All defined V2.2 Event Card data fully encoded and integrated into the Event Card System."
+  },
+  {
+    "sector_name": "3. Campaign Progression & Content Integration",
+    "op_title": "Implement Scenario & Phase Objective Display & Tracking",
+    "op_type": "DEV",
+    "primary_deliverable": "UI elements and underlying logic to display current phase objectives and track progress."
+  },
+  {
+    "sector_name": "3. Campaign Progression & Content Integration",
+    "op_title": "Develop Game State Persistence Mechanism (Client-Side)",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional client-side mechanism (e.g., LocalStorage) to save and load campaign progress."
+  },
+  {
+    "sector_name": "3. Campaign Progression & Content Integration",
+    "op_title": "Test Full Campaign Playthrough & Phase Transitions",
+    "op_type": "QAT",
+    "primary_deliverable": "A test report confirming successful execution of a full 3-phase campaign, validating transitions, rules, and objectives."
+  },
+  {
+    "sector_name": "4. Gameplay Data Logging & Analytics Framework",
+    "op_title": "Define Data Schema for Player Actions & Game Outcomes Logging",
+    "op_type": "DOC",
+    "primary_deliverable": "A specification document detailing the schema for logged data (actions, events, outcomes)."
+  },
+  {
+    "sector_name": "4. Gameplay Data Logging & Analytics Framework",
+    "op_title": "Implement Player Action & Game Event Logging System",
+    "op_type": "DEV",
+    "primary_deliverable": "A functional JavaScript module that automatically logs defined player actions and game events."
+  },
+  {
+    "sector_name": "4. Gameplay Data Logging & Analytics Framework",
+    "op_title": "Develop Game Outcome Recording Mechanism",
+    "op_type": "DEV",
+    "primary_deliverable": "Functionality to capture and store the final state of a completed game (scores, budget, win/loss status)."
+  },
+  {
+    "sector_name": "4. Gameplay Data Logging & Analytics Framework",
+    "op_title": "Implement Client-Side Data Export Feature (JSON/CSV)",
+    "op_type": "DEV",
+    "primary_deliverable": "A user-triggered feature to download aggregated gameplay data and outcomes as JSON or CSV."
+  },
+  {
+    "sector_name": "4. Gameplay Data Logging & Analytics Framework",
+    "op_title": "Verify Data Logging Integrity & Export Accuracy",
+    "op_type": "QAT",
+    "primary_deliverable": "A test report confirming correct logging of actions/events, accurate outcome recording, and well-formed data exports."
+  },
+  {
+    "sector_name": "5. Finalization, Accessibility, & Deployment",
+    "op_title": "Conduct Cross-Browser & Device Compatibility Testing",
+    "op_type": "QAT",
+    "primary_deliverable": "A test report detailing game performance and visual consistency across specified browsers and devices, identifying bugs."
+  },
+  {
+    "sector_name": "5. Finalization, Accessibility, & Deployment",
+    "op_title": "Implement Foundational Web Accessibility Features (WCAG AA)",
+    "op_type": "DEV",
+    "primary_deliverable": "Game interface updated with key accessibility features (keyboard navigation, ARIA, color contrast) aiming for WCAG 2.1 AA."
+  },
+  {
+    "sector_name": "5. Finalization, Accessibility, & Deployment",
+    "op_title": "Perform Code & Asset Performance Optimization",
+    "op_type": "DEV",
+    "primary_deliverable": "Optimized game code and assets resulting in improved load times, smoother animations, and reduced overhead."
+  },
+  {
+    "sector_name": "5. Finalization, Accessibility, & Deployment",
+    "op_title": "Compile Comprehensive User Guide & Gameplay Instructions",
+    "op_type": "DOC",
+    "primary_deliverable": "A user-friendly guide detailing how to play, rules, UI, objectives, and campaign structure."
+  },
+  {
+    "sector_name": "5. Finalization, Accessibility, & Deployment",
+    "op_title": "Coordinate & Analyze External User Acceptance Testing (UAT)",
+    "op_type": "COM",
+    "primary_deliverable": "A summary report of feedback from external UAT, focusing on usability, clarity, engagement, learning, and bugs."
+  },
+  {
+    "sector_name": "5. Finalization, Accessibility, & Deployment",
+    "op_title": "Create Deployment Package & Documentation",
+    "op_type": "DEV",
+    "primary_deliverable": "A production-ready build of the web application and documentation for deploying to a standard web hosting platform."
+  },
+  {
+    "sector_name": "5. Finalization, Accessibility, & Deployment",
+    "op_title": "Define Initial Deployment & Hosting Strategy",
+    "op_type": "STR",
+    "primary_deliverable": "A document outlining recommended hosting, deployment process, and initial monitoring/maintenance."
+  },
+  {
+    "sector_name": "5. Finalization, Accessibility, & Deployment",
+    "op_title": "Final Accessibility Compliance Audit & Remediation",
+    "op_type": "QAT",
+    "primary_deliverable": "An audit report verifying accessibility implementation against WCAG guidelines, with record of remediations."
+  }
+]
