@@ -1,4 +1,4 @@
-name: Create Guild Op Issues
+name: Generate Guild Op Briefs
 
 on:
   push:
