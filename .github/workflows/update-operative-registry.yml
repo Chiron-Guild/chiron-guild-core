@@ -27,8 +27,8 @@ jobs:
 
       - name: Debug Initial registry.json content
         run: |
-         echo "--- Content of registry/operative_registry.json BEFORE update_registry.py runs ---"
-         cat registry/operative_registry.json || echo "File not found or empty."
+         echo "--- Content of _Admin & Core Docs\registry\operative_registry.json BEFORE update_registry.py runs ---"
+         cat _Admin & Core Docs\registry\operative_registry.json || echo "File not found or empty."
          echo "--- End of initial content ---"
 
       - name: Get linked Guild Op issue details
@@ -63,7 +63,7 @@ jobs:
             const issueNumber = parseInt(match[1], 10);
             console.log(`Found linked issue number: #${issueNumber}`);
             
-            try {
+            try {n 
               const { data: issue } = await github.rest.issues.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -106,8 +106,8 @@ jobs:
       - name: Debug Registry.json content AFTER python script
         if: steps.get_issue_details.outputs.skip_update == 'false'
         run: |
-          echo "--- Content of registry/operative_registry.json AFTER update_registry.py runs ---"
-          cat registry/operative_registry.json
+          echo "--- Content of _Admin & Core Docs\registry\operative_registry.json AFTER update_registry.py runs ---"
+          cat _Admin & Core Docs\registry\operative_registry.json
           echo "--- End of content after script ---"
 
       - name: Debug Git status BEFORE staging
@@ -119,7 +119,7 @@ jobs:
 
       - name: Stage registry changes
         if: steps.get_issue_details.outputs.skip_update == 'false'
-        run: git add registry/operative_registry.json
+        run: git add _Admin & Core Docs\registry\operative_registry.json
 
       - name: Debug Git status AFTER staging
         if: steps.get_issue_details.outputs.skip_update == 'false'
@@ -139,7 +139,7 @@ jobs:
             git push
             echo "Registry committed and pushed."
           else
-            echo "No changes detected in registry/operative_registry.json. Skipping commit."
+            echo "No changes detected in _Admin & Core Docs\registry\operative_registry.json. Skipping commit."
           fi
 
       - name: Delete merged feature branch # <--- NEW STEP
