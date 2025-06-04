@@ -15,9 +15,9 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 
 # Gemini Model Name (using latest for broader compatibility and updates)
 # You can change this back to 'gemini-1.5-flash-preview-05-20' if preferred and accessible.
-GEMINI_MODEL_NAME = "gemini-2.5-flash-preview-05-20" 
-REQUESTS_PER_MINUTE_LIMIT = 10
-SLEEP_INTERVAL = 60.0 / REQUESTS_PER_MINUTE_LIMIT
+GEMINI_MODEL_NAME = "gemini-2.0-flash-lite" 
+REQUESTS_PER_MINUTE_LIMIT = 25
+SLEEP_INTERVAL = 1000.0 / REQUESTS_PER_MINUTE_LIMIT
 
 # --- Initialize Gemini Client ---
 if GEMINI_API_KEY:
