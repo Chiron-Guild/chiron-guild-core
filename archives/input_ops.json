@@ -1,14 +1,41 @@
-[
-  {
-    "sector_name": "1. Core Game Mechanics Automation",
-    "op_title": "Formalize V2.2 Core Game Mechanics & Calculation Rules from Miro",
-    "op_type": "DOC",
-    "primary_deliverable": "A comprehensive technical specification document translating Miro rules into pseudo-code/algorithmic descriptions."
-  },
-  {
-    "sector_name": "1. Core Game Mechanics Automation",
-    "op_title": "Codify Core Game Data & Infrastructure Parameters (GameData Module)",
-    "op_type": "DEV",
-    "primary_deliverable": "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data as constants."
-  },
-]
+{
+  "meta_objectives": [
+    {
+      "id": "M1",
+      "text": "To empower effective community engagement and data-driven strategic planning for watershed resilience through the delivery of an interactive, automated digital game."
+    },
+    {
+      "id": "M2",
+      "text": "To solidify the Chiron Guild's leadership in civic technology by delivering an automated digital game that effectively educates stakeholders and generates actionable insights for sustainable infrastructure."
+    },
+    {
+      "id": "M3",
+      "text": "To pioneer a replicable model for interactive policy engagement by creating a scalable, automated digital game that translates complex systems into accessible learning experiences for diverse stakeholders."
+    },
+    {
+      "id": "M4",
+      "text": "To showcase the Chiron Guild's 'Precision Shell' by engineering a robust, automated digital game that revolutionizes stakeholder education on infrastructure management, thereby supplanting less effective traditional engagement methods."
+    }
+  ],
+  "project_sectors": [
+    {
+      "sector_id": 1,
+      "sector_name": "Core Game Mechanics Automation",
+      "sector_summary": "Implement the fundamental game logic, rules engine, and automated calculations (such as water flow, O&M, and scoring) as defined in the V2.2 feature set.",
+      "alignment_with_meta_objectives": "This directly supports the 'automated digital game' aspect critical to M1, M2, M3, and M4, forming the 'robust' engineering backbone (M4).",
+      "guild_ops": [
+        {
+          "op_title": "Formalize V2.2 Core Game Mechanics & Calculation Rules from Miro",
+          "op_type": "DOC",
+          "primary_deliverable": "A comprehensive technical specification document translating Miro rules into pseudo-code/algorithmic descriptions."
+        },
+        {
+          "op_title": "Codify Core Game Data & Infrastructure Parameters (GameData Module)",
+          "op_type": "DEV",
+          "primary_deliverable": "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data as constants."
+        },
+        {
+          "op_title": "Develop Game State Management Module (GameState Module)",
+          "op_type": "DEV",
+          "primary_deliverable": "A functional JavaScript module (`GameState.js`) for managing all dynamic game state properties, with unit tests."
+        },
