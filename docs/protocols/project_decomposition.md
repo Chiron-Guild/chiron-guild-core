@@ -6,8 +6,38 @@
 **Objective:** To provide a standardized, LLM-augmented process for decomposing complex projects into a structured JSON format (input_ops.json). This JSON will define meta-objectives, project sectors, and discrete `Guild Ops`, suitable for input into automated brief generation systems. This protocol leverages a "Mythic Core, Precision Shell" approach.
 
 ---
+## 0. Overview of the Project Decomposition & Guild Op Lifecycle
 
-## 0. LLM Priming Protocol (Execute Once Per Session or As Needed)
+This protocol outlines a multi-stage process, combining Operative strategy with LLM assistance and GitHub Actions automation, to transform a high-level project concept into actionable Guild Ops managed on the Guild Board.
+
+**The lifecycle consists of the following key stages:**
+
+*   **Stage 1: LLM Priming (Operative & LLM)**
+    *   Establish foundational context for the LLM regarding Chiron Guild terminology and ethos.
+*   **Stage 2: Project Definition & High-Level Structuring (Operative & LLM)**
+    *   **Task 2.1. Meta-Objective Definition:** Distill the project's core purpose into 3-5 Meta-Objectives (output: JSON snippet).
+    *   **Task 2.2. Strategic Chunking & Sector Definition:** Break down the project into 3-5 major Project Sectors, aligning them with Meta-Objectives (output: JSON snippet).
+*   **Stage 3: Granular Guild Op Identification (Operative & LLM - Iterative per Sector)**
+    *   For each defined Project Sector, generate a list of 5-10 discrete Guild Ops (output: JSON snippet per sector).
+*   **Stage 4: Assembling the `input_ops.json` File (Operative Task)**
+    *   Consolidate the project name, and the JSON outputs from Tasks 2.1, 2.2, and 3 into a single, canonical `archives/input_ops.json` file. This file serves as the master input for automated brief generation.
+*   **Stage 5: Automated Brief Generation for Review (Operative Task & GitHub Action)**
+    *   The Operative pushes the `archives/input_ops.json` file to the repository.
+    *   This triggers the `Generate Guild Op Briefs for Review` GitHub Action (`generate_briefs.yml`).
+    *   The Action uses an LLM to generate detailed brief proposals for each Op in `input_ops.json`.
+    *   The Action outputs two artifacts for download:
+        *   `_generated_briefs_for_review.md` (human-readable).
+        *   `_generated_briefs_to_create.json` (machine-readable, containing full proposed issue details).
+    *   The Operative reviews these artifacts and refines `_generated_briefs_to_create.json` if necessary.
+    *   The Operative cleans the processed Ops from `archives/input_ops.json`.
+*   **Stage 6: Guild Op Brief Instantiation on GitHub Board (Issue Creation & Automated Archival)**
+    *   The Operative uses the finalized data from `_generated_briefs_to_create.json` to create new GitHub Issues (manually or via a future local script).
+    *   The creation of each GitHub Issue automatically triggers the `Create Guild Op Directory and Log` GitHub Action (`create-op-directory-log.yml`).
+    *   This second Action scaffolds the `archives/[GUILD_OP_ID]/` directory and initial log file on a new feature branch for that Guild Op.
+
+This structured lifecycle ensures clarity, provides opportunities for review, and leverages automation for efficiency. The following sections detail the prompts and procedures for each stage.
+---
+## 1. LLM Priming Protocol (Execute Once Per Session or As Needed)
 
 **Purpose:** To establish foundational context for the LLM, ensuring its responses align with Chiron Guild terminology, objectives, and operational ethos.
 
@@ -37,11 +67,11 @@ The Chiron Guild is a worker-owned, AI-augmented digital cooperative. Our ethos 
 Your primary function is to assist Operative Kin-Caid in breaking down complex Project Briefs into a structured JSON format. You will guide the definition of meta-objectives, the identification of project sectors, and the granulation of work into Guild Ops for each sector. Your responses must be structured as requested (often JSON), precise, and focused on verifiable outcomes, embodying the 'Precision Shell.'
 ```
 
-## 1. LLM-Assisted Meta-Objective Definition (Task 1.1)
+## 2. LLM-Assisted Meta-Objective Definition
 
 **Purpose:** To prime the LLM to act as a project analyst helping define core project objectives.
 
-## 1. LLM-Assisted Meta-Objective Definition (Task 1.1)
+## Task 2.1. LLM-Assisted Meta-Objective Definition
 
 **Purpose:** To assist the Operative in distilling a project's core purpose into a set of compelling Meta-Objective statements, formatted for easy inclusion in input_ops.json.
 
@@ -70,7 +100,7 @@ Your goal is to assist Operative Kin-Caid in drafting 3-5 concise, compelling Me
 The Chiron Guild is a worker-owned, AI-augmented digital cooperative with a 'Mythic Core, Precision Shell' ethos. Your analysis should align with this mission.
 ```
 
-**Example User Input for Task 1.1:**
+**Example User Input for Task 2.1:**
 
 ```text
 Project Name/Concept: Chiron Guild Internal Communications Hub
@@ -81,7 +111,7 @@ The Chiron Guild currently uses a mix of Discord, email, and shared documents fo
 Task: Generate the JSON array of Meta-Objectives.
 ```
 
-**Example LLM Output for Task 1.1:**
+**Example LLM Output for Task 2.1:**
 
 ```text
 [
@@ -105,12 +135,12 @@ Task: Generate the JSON array of Meta-Objectives.
 
 Review the LLM's suggestions. Select, refine, or combine them to finalize the list of Meta-Objectives. This JSON array will form the meta_objectives part of input_ops.json.
 
-## 2. LLM-Assisted Strategic Chunking & Sector Definition (Task 1.2)
+## Task 2.2 LLM-Assisted Strategic Chunking & Sector Definition
 
 **Purpose:** To assist the Operative in breaking down the project (based on its finalized Meta-Objectives) into major, distinct Project Sectors, formatted for easy inclusion in input_ops.json.
 
 **User Inputs to LLM:**
-* Finalized Project Meta-Objectives (text or the JSON array from Task 1.1).
+* Finalized Project Meta-Objectives (text or the JSON array from Task 2.1).
 * Overall Project Name/Concept.
 * Optional: Additional project context or constraints.
 
@@ -134,7 +164,7 @@ Your goal is to assist Operative Kin-Caid in breaking down the project into 3-5 
 **Chiron Guild Context Reminder:**
 Focus on logical, comprehensive breakdowns that enable efficient project execution through subsequent Guild Op definition.
 ```
-**Example User Input for Task 1.2:**
+**Example User Input for Task 2.2:**
 
 ```text
 Overall Project Name: Chiron Guild Internal Communications Hub
@@ -156,7 +186,7 @@ Additional Context: The solution will likely involve selecting and deploying a s
 Task: Generate the JSON array of Project Sectors.
 ```
 
-**Example LLM Output for Task 1.2:**
+**Example LLM Output for Task 2.2:**
 
 ```text
 [
@@ -191,7 +221,7 @@ Task: Generate the JSON array of Project Sectors.
 
 Review the LLM's suggestions. Refine sector names, summaries, and alignments as needed. This JSON array will form the project_sectors part of input_ops.json.
 
-##3. LLM-Assisted Granular Op Identification (Task 1.3 - Run for EACH Sector)
+##3. LLM-Assisted Granular Op Identification (Task 3.1 - Run for EACH Sector)
 
 **Purpose:** To assist the Operative in generating a list of 5-10 discrete, actionable Guild Ops for each defined Project Sector, formatted for easy inclusion in input_ops.json.
 
@@ -204,7 +234,7 @@ Review the LLM's suggestions. Refine sector names, summaries, and alignments as 
 **LLM Prompt:**
 
 ```text
-# System Instruction (for AI Studio Preamble/Tuning - Task 1.3: Granular Guild Op Identification for Project Decomposition)
+# System Instruction (for AI Studio Preamble/Tuning - Task 3.1: Granular Guild Op Identification for Project Decomposition)
 
 You are an expert task analyst and project deconstruction specialist for the Chiron Guild, working with Operative Kin-Caid. Your responses must embody the Guild's "Mythic Core, Precision Shell" ethos – visionary in scope, meticulous in detail.
 
@@ -228,7 +258,7 @@ Your goal is to assist Operative Kin-Caid by generating a list of 5-10 potential
 Guild Ops are fundamental. Ensure precision and actionability. The `sector_id` is crucial.
 ```
 
-**Example User Input for Task 1.3 (for a single sector):**
+**Example User Input for Task 3.1 (for a single sector):**
 
 ```text
 Project Meta-Objective(s):
@@ -242,7 +272,7 @@ Current Sector Summary: Thoroughly research, evaluate, and select a suitable sel
 Task: Generate the JSON array of Guild Ops for this sector.
 ```
 
-**Example LLM Output for Task 1.3 (for a single sector):**
+**Example LLM Output for Task 3.1 (for a single sector):**
 
 ```text
 [
@@ -281,20 +311,20 @@ Task: Generate the JSON array of Guild Ops for this sector.
 
 **Operative Action:** 
 
-Run Task 1.3 for each Project Sector defined in Task 1.2. Collect all the JSON arrays of Guild Ops.
+Run Task 3.1 for each Project Sector defined in Task 2.2. Collect all the JSON arrays of Guild Ops.
 
 ## 4. Assembling the Final input_ops.json (Operative Task)
 
-**Purpose:** To consolidate the outputs from Tasks 1.1, 1.2, and 1.3 into the single, canonical input_ops.json file.
+**Purpose:** To consolidate the outputs from Tasks 2.1, 2.2, and 3.1 into the single, canonical input_ops.json file.
 
 **Process:**
 1. Create input_ops.json: Start a new JSON file.
-2. Add project_name: Define the top-level project_name string. This might be based on the initial user input for Task 1.1, potentially with a PROJECT_ID suffix if desired (e.g., "Creek Connections Game - CCG").
-3. Add meta_objectives: Copy the finalized JSON array of meta-objective objects from Task 1.1 and place it as the value for the meta_objectives key.
-4. Add project_sectors: Copy the finalized JSON array of project sector objects from Task 1.2 and place it as the value for the project_sectors key.
+2. Add project_name: Define the top-level project_name string. This might be based on the initial user input for Task 2.1, potentially with a PROJECT_ID suffix if desired (e.g., "Creek Connections Game - CCG").
+3. Add meta_objectives: Copy the finalized JSON array of meta-objective objects from Task 2.1 and place it as the value for the meta_objectives key.
+4. Add project_sectors: Copy the finalized JSON array of project sector objects from Task 2.2 and place it as the value for the project_sectors key.
 5. Add guild_ops:
 6. Create an empty array as the value for the guild_ops key.
-7. Take all the individual JSON arrays of Guild Op objects generated from Task 1.3 (one array per sector).
+7. Take all the individual JSON arrays of Guild Op objects generated from Task 3.1 (one array per sector).
 8. Concatenate these arrays into a single, flat list of Guild Op objects. This combined list becomes the value for the top-level guild_ops key.
 
 **Target input_ops.json Schema:**
