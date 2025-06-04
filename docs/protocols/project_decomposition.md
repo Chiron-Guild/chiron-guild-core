@@ -6,9 +6,11 @@
 **Objective:** To provide a standardized, LLM-augmented process for decomposing complex projects into a structured JSON format (input_ops.json). This JSON will define meta-objectives, project sectors, and discrete `Guild Ops`, suitable for input into automated brief generation systems. This protocol leverages a "Mythic Core, Precision Shell" approach.
 
 ---
-## 0. Overview of the Project Decomposition & Guild Op Lifecycle
+## Stage 0. Overview of the Project Decomposition & Guild Op Lifecycle
 
-This protocol outlines a multi-stage process, combining Operative strategy with LLM assistance and GitHub Actions automation, to transform a high-level project concept into actionable Guild Ops managed on the Guild Board.
+This protocol outlines a multi-stage process, combining Operative strategy with LLM assistance and GitHub Actions automation, to transform a high-level project concept into actionable Guild Ops managed on the Guild Board. 
+
+This structured lifecycle ensures clarity, provides opportunities for review, and leverages automation for efficiency. The following sections detail the prompts and procedures for each stage.
 
 **The lifecycle consists of the following key stages:**
 
@@ -20,7 +22,7 @@ This protocol outlines a multi-stage process, combining Operative strategy with 
 *   **Stage 3: Granular Guild Op Identification (Operative & LLM - Iterative per Sector)**
     *   For each defined Project Sector, generate a list of 5-10 discrete Guild Ops (output: JSON snippet per sector).
 *   **Stage 4: Assembling the `input_ops.json` File (Operative Task)**
-    *   Consolidate the project name, and the JSON outputs from Tasks 2.1, 2.2, and 3 into a single, canonical `archives/input_ops.json` file. This file serves as the master input for automated brief generation.
+    *   Consolidate the project name, and the JSON outputs from Tasks 2.1, 2.2, and 3.1 into a single, canonical `archives/input_ops.json` file. This file serves as the master input for automated brief generation.
 *   **Stage 5: Automated Brief Generation for Review (Operative Task & GitHub Action)**
     *   The Operative pushes the `archives/input_ops.json` file to the repository.
     *   This triggers the `Generate Guild Op Briefs for Review` GitHub Action (`generate_briefs.yml`).
@@ -34,10 +36,9 @@ This protocol outlines a multi-stage process, combining Operative strategy with 
     *   The Operative uses the finalized data from `_generated_briefs_to_create.json` to create new GitHub Issues (manually or via a future local script).
     *   The creation of each GitHub Issue automatically triggers the `Create Guild Op Directory and Log` GitHub Action (`create-op-directory-log.yml`).
     *   This second Action scaffolds the `archives/[GUILD_OP_ID]/` directory and initial log file on a new feature branch for that Guild Op.
-
-This structured lifecycle ensures clarity, provides opportunities for review, and leverages automation for efficiency. The following sections detail the prompts and procedures for each stage.
 ---
-## 1. LLM Priming Protocol (Execute Once Per Session or As Needed)
+
+## Stage 1. LLM Priming Protocol (Execute Once Per Session or As Needed)
 
 **Purpose:** To establish foundational context for the LLM, ensuring its responses align with Chiron Guild terminology, objectives, and operational ethos.
 
@@ -67,7 +68,7 @@ The Chiron Guild is a worker-owned, AI-augmented digital cooperative. Our ethos 
 Your primary function is to assist Operative Kin-Caid in breaking down complex Project Briefs into a structured JSON format. You will guide the definition of meta-objectives, the identification of project sectors, and the granulation of work into Guild Ops for each sector. Your responses must be structured as requested (often JSON), precise, and focused on verifiable outcomes, embodying the 'Precision Shell.'
 ```
 
-## 2. LLM-Assisted Meta-Objective Definition
+## Stage 2. LLM-Assisted Meta-Objective Definition
 
 **Purpose:** To prime the LLM to act as a project analyst helping define core project objectives.
 
@@ -131,9 +132,10 @@ Task: Generate the JSON array of Meta-Objectives.
 ```
 
 
-**Operative Action:** 
-
-Review the LLM's suggestions. Select, refine, or combine them to finalize the list of Meta-Objectives. This JSON array will form the meta_objectives part of input_ops.json.
+**Operative Action for Task 2.1:** 
+1. Review the LLM's suggestions.
+2. Select, refine, or combine them to finalize the list of Meta-Objectives. (Note: This JSON array will form the meta_objectives part of input_ops.json.)
+---
 
 ## Task 2.2 LLM-Assisted Strategic Chunking & Sector Definition
 
@@ -217,11 +219,12 @@ Task: Generate the JSON array of Project Sectors.
 ]
 ```
 
-**Operative Action:** 
+**Operative Action for Stage 2.2:** 
 
 Review the LLM's suggestions. Refine sector names, summaries, and alignments as needed. This JSON array will form the project_sectors part of input_ops.json.
+---
 
-##3. LLM-Assisted Granular Op Identification (Task 3.1 - Run for EACH Sector)
+## Stage 3. LLM-Assisted Granular Op Identification (Task 3.1 - Run for EACH Sector)
 
 **Purpose:** To assist the Operative in generating a list of 5-10 discrete, actionable Guild Ops for each defined Project Sector, formatted for easy inclusion in input_ops.json.
 
@@ -231,7 +234,7 @@ Review the LLM's suggestions. Refine sector names, summaries, and alignments as 
 *The sector_name of the current sector.
 *The sector_summary of the current sector.
 
-**LLM Prompt:**
+**LLM Prompt for Task 3.1:**
 
 ```text
 # System Instruction (for AI Studio Preamble/Tuning - Task 3.1: Granular Guild Op Identification for Project Decomposition)
@@ -309,7 +312,7 @@ Task: Generate the JSON array of Guild Ops for this sector.
 ]
 ```
 
-**Operative Action:** 
+**Operative Action for Stage 3:** 
 
 Run Task 3.1 for each Project Sector defined in Task 2.2. Collect all the JSON arrays of Guild Ops.
 
