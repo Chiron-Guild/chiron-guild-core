@@ -7,26 +7,46 @@ on:
 
 permissions:
   contents: write # IMPORTANT: Grant write permissions for the GITHUB_TOKEN
+  pull-requests: write # Needed if you want the action to create a PR later (optional)
 
 jobs:
   create_directory_and_metadata:
     runs-on: ubuntu-latest
     steps:
-      - name: Parse Guild Op ID from issue
+      - name: Parse Guild Op Info from Issue
         id: parse_guild_op
         run: |
-          echo "Parsing Guild Op ID from issue title or description..."
-          # Adjusted regex to be more specific to "[XXX-YYY-ZZZ]" format if needed,
-          # or keep as is if it captures all desired IDs
-          GUILD_OP_ID=$(echo "${{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE "\\[[A-Z]+-[A-Z]+-[0-9]{3}\\]" | head -n 1)
+          echo "Parsing Guild Op Info from issue..."
+          # Extract RAW_GUILD_OP_ID (e.g., [CHRN-DEV-001])
+          RAW_GUILD_OP_ID=<span class="math-inline">\(echo "</span>{{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE "\[[A-Z0-9_]+-[A-Z]{3,5}-[0-9]{3,}\]" | head -n 1)
 
-          if [ -z "$GUILD_OP_ID" ]; then
-            echo "::error::Guild Op ID not found in issue title or description! Please include an ID like [AAA-BBB-123]."
+          if [ -z "$RAW_GUILD_OP_ID" ]; then
+            echo "::error::Guild Op ID not found or invalid format in issue title/body! Please include an ID like [PROJECTPREFIX-TYPE-001]."
             exit 1
           fi
-          echo "Found Guild Op ID: ${GUILD_OP_ID}"
-          echo "guild_op_id=${GUILD_OP_ID}" >> $GITHUB_ENV
-          echo "GUILD_OP_BRANCH=feature/guild-op-${{ github.event.issue.number }}" >> $GITHUB_ENV # Set feature branch name
+          echo "Found Raw Guild Op ID: <span class="math-inline">\{RAW\_GUILD\_OP\_ID\}"
+echo "raw\_guild\_op\_id\=</span>{RAW_GUILD_OP_ID}" >> <span class="math-inline">GITHUB\_ENV
+\# Extract PROJECT\_ID\_PREFIX \(e\.g\., CHRN from \[CHRN\-DEV\-001\]\)
+\# Removes brackets, then takes part before first hyphen
+PROJECT\_ID\_PREFIX\_RAW\=</span>(echo "<span class="math-inline">\{RAW\_GUILD\_OP\_ID\}" \| sed 's/\\\[//g; s/\\\]//g'\) \# Remove brackets
+PROJECT\_ID\_PREFIX\=</span>(echo "${PROJECT_ID_PREFIX_RAW}" | awk -F'-' '{print $1}')
+          
+          if [ -z "$PROJECT_ID_PREFIX" ]; then
+            echo "::error::Could not parse PROJECT_ID_Prefix from Guild Op ID: ${RAW_GUILD_OP_ID}"
+            exit 1
+          fi
+          echo "Found Project ID Prefix: <span class="math-inline">\{PROJECT\_ID\_PREFIX\}"
+echo "project\_id\_prefix\=</span>{PROJECT_ID_PREFIX}" >> <span class="math-inline">GITHUB\_ENV
+\# Extract Project Name Slug from label \(e\.g\., "Guild\-Self\-Assembly" from "Project\-Slug\:Guild\-Self\-Assembly"\)
+PROJECT\_NAME\_SLUG\=</span>(echo "${{ toJSON(github.event.issue.labels) }}" | jq -r '.[] | select(.name | startswith("Project-Slug:")) | .name' | sed 's/Project-Slug://g' | head -n 1)
+
+          if [ -z "$PROJECT_NAME_SLUG" ]; then
+            echo "::error::'Project-Slug:' label not found or is empty on the issue! Example: 'Project-Slug:My-Awesome-Project'"
+            exit 1
+          fi
+          echo "Found Project Name Slug: <span class="math-inline">\{PROJECT\_NAME\_SLUG\}"
+echo "project\_name\_slug\=</span>{PROJECT_NAME_SLUG}" >> <span class="math-inline">GITHUB\_ENV
+echo "GUILD\_OP\_BRANCH\=feature/guild\-op\-</span>{{ github.event.issue.number }}" >> $GITHUB_ENV
 
       - name: Checkout repository - target main first
         uses: actions/checkout@v4
@@ -38,54 +58,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Check if the branch already exists
           if git rev-parse --verify ${{ env.GUILD_OP_BRANCH }} >/dev/null 2>&1; then
-            echo "Branch ${{ env.GUILD_OP_BRANCH }} already exists. Checking it out."
+            echo "Branch ${{ env.GUILD_OP_BRANCH }} already exists. Checking it out and pulling latest from main."
             git checkout ${{ env.GUILD_OP_BRANCH }}
+            # Optional: git pull origin main # To ensure branch is up-to-date if it's an old one
           else
-            echo "Creating new branch: ${{ env.GUILD_OP_BRANCH }}"
-            git checkout -b ${{ env.GUILD_OP_BRANCH }}
-          fi
-          
-      - name: Create Guild Op directory
-        run: |
-          echo "Creating directory for Guild Op: ${{ env.guild_op_id }}"
-          mkdir -p "archives/${{ env.guild_op_id }}"
-          echo "Directory created: archives/${{ env.guild_op_id }}"
-
-      - name: Create Metadata File
-        run: |
-          METADATA_FILE="archives/${{ env.guild_op_id }}/${{ env.guild_op_id }}_operation_log.md"
-          echo "Creating metadata file: ${METADATA_FILE}"
-          cat <<EOF > "${METADATA_FILE}"
-          # Guild Op Metadata: ${{ env.guild_op_id }}
-
-          ## Guild Op Details
-          - **Title:** ${{ github.event.issue.title }}
-          - **URL:** ${{ github.event.issue.html_url }}
-          - **Author:** ${{ github.event.issue.user.login }}
-          - **Created At:** ${{ github.event.issue.created_at }}
-
-          ## Description
-          ${{ github.event.issue.body }}
-
-          ## Notes
-          - This is a generated log file for tracking Guild Op metadata.
-          - Update this file with progress logs, decisions, and schematics as needed.
-          EOF
-          echo "Metadata file created."
-          
-      - name: Commit and Push Changes to Feature Branch
-        run: |
-          # Check if there are actual changes before attempting to commit
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "No changes detected. Directory or metadata file might already exist or issue ID was duplicated."
-            exit 0 # Exit successfully if no changes
-          fi
-
-          git add "archives/${{ env.guild_op_id }}"
-          git commit -m "feat(guild-op): Scaffold directory and metadata for Guild Op: ${{ env.guild_op_id }}"
-          
-          echo "Attempting to push changes to feature branch ${{ env.GUILD_OP_BRANCH }} using GITHUB_TOKEN..."
-          git push origin ${{ env.GUILD_OP_BRANCH }}
-          echo "Changes pushed successfully to feature branch."
+            echo
