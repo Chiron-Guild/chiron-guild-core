@@ -62,6 +62,12 @@
             "op_title": "Codify Core Game Data & Infrastructure Parameters (GameData Module)",
             "op_type": "DEV",
             "primary_deliverable": "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data as constants."
+        },
+        {
+            "sector_name": "2. Interactive User Interface & Experience (UI/UX)",
+            "op_title": "Develop Interactive Watershed Map Renderer Component",
+            "op_type": "DEV",
+            "primary_deliverable": "A functional JavaScript component rendering the game's watershed map with user interaction capabilities."
         }
     ]
 }
