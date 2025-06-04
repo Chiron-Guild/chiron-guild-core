@@ -81,27 +81,27 @@ def call_gemini_api(prompt_text):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate Guild Op brief proposals for review.")
+    # ... (all your argparse definitions remain the same) ...
     parser.add_argument("--ops_file", required=True, help="Path to the JSON file containing Guild Ops.")
     parser.add_argument("--project_id", required=True, help="Project ID.")
     parser.add_argument("--context_label", required=True, help="Context label.")
     parser.add_argument("--assignee", default="Kin-Caid", help="Default assignee.")
-    # --- UPDATED DEFAULT PROMPT TEMPLATE PATH ---
     parser.add_argument("--prompt_template_path", 
                         default=".github/scripts/prompts/review_generation_prompt_template.txt", 
                         help="Path to prompt template for review generation, relative to repository root.")
     parser.add_argument("--output_json_file", default="_generated_briefs_to_create.json", help="Output JSON file for machine processing.")
     parser.add_argument("--output_md_file", default="_generated_briefs_for_review.md", help="Output Markdown file for human review.")
-    
+
     args = parser.parse_args()
 
-    # ... (API Key check, ops_file loading - same as your provided script) ...
-    if not GEMINI_API_KEY: # Duplicating check just in case
+    if not GEMINI_API_KEY:
         print("ERROR: GEMINI_API_KEY environment variable is not set. Exiting.")
         return
 
     try:
         with open(args.ops_file, 'r') as f:
-            guild_ops_list = json.load(f)
+            # Load the entire project structure
+            project_data = json.load(f) 
     except FileNotFoundError:
         print(f"ERROR: Ops file not found at {args.ops_file}")
         return
@@ -109,22 +109,47 @@ def main():
         print(f"ERROR: Could not decode JSON from {args.ops_file}")
         return
 
+    # --- NEW: Extract the flat list of all guild_ops ---
+    all_individual_ops = []
+    if "project_sectors" in project_data and isinstance(project_data["project_sectors"], list):
+        for sector in project_data["project_sectors"]:
+            if "guild_ops" in sector and isinstance(sector["guild_ops"], list):
+                for op in sector["guild_ops"]:
+                    # Add sector_name to each op for context if needed by the prompt
+                    op_with_sector_context = op.copy() # Avoid modifying original if iterating elsewhere
+                    op_with_sector_context["sector_name"] = sector.get("sector_name", "Unknown Sector")
+                    all_individual_ops.append(op_with_sector_context)
+            else:
+                print(f"WARNING: Sector '{sector.get('sector_name', 'Unknown Sector')}' is missing 'guild_ops' list or it's not a list.")
+    else:
+        print(f"ERROR: The input JSON file '{args.ops_file}' does not contain a 'project_sectors' list or it's not a list.")
+        print(f"Script expects a structure like: {{ \"project_sectors\": [ {{ \"guild_ops\": [{{op_details...}}] }} ] }}")
+        return
+    
+    if not all_individual_ops:
+        print("No Guild Ops found to process in the input file.")
+        return
+    # --- END NEW EXTRACTION LOGIC ---
+
     prompt_template_full_path = Path(args.prompt_template_path)
     prompt_template = load_prompt_template(prompt_template_full_path)
     
     op_type_counters = {}
-    all_generated_briefs_json = [] # This will now store the richer JSON
-    all_generated_briefs_md_parts = [] # Store parts of MD for final assembly
+    all_generated_briefs_json = []
+    all_generated_briefs_md_parts = []
 
-    print(f"Processing {len(guild_ops_list)} Guild Ops from {args.ops_file} for review generation using model {GEMINI_MODEL_NAME}...")
+    # Now iterate over the flat list: all_individual_ops
+    print(f"Processing {len(all_individual_ops)} individual Guild Ops for review generation using model {GEMINI_MODEL_NAME}...")
 
-    for i, op_details in enumerate(guild_ops_list):
-        print(f"\n--- Generating brief for Op {i+1}/{len(guild_ops_list)}: {op_details.get('op_title', 'N/A')} ---")
+    for i, op_details in enumerate(all_individual_ops): # op_details is now a dictionary from the guild_ops list
+        print(f"\n--- Generating brief for Op {i+1}/{len(all_individual_ops)}: {op_details.get('op_title', 'N/A')} ---")
 
         op_type = op_details.get("op_type", "UNKNOWN").upper()
         op_type_counters[op_type] = op_type_counters.get(op_type, 0) + 1
         num_id = f"{op_type_counters[op_type]:03d}"
 
+        # Your prompt template uses {{SECTOR_NAME}}
+        # The extraction logic above added "sector_name" to op_details
         current_prompt = prompt_template.replace("{{PROJECT_ID}}", args.project_id) \
                                         .replace("{{OP_TYPE}}", op_details.get("op_type", "N/A")) \
                                         .replace("{{OP_TYPE_UPPERCASE}}", op_details.get("op_type", "N/A").upper()) \
@@ -138,20 +163,21 @@ def main():
         
         llm_response_data = call_gemini_api(current_prompt)
 
+        # ... (rest of your main function's logic for handling llm_response_data, 
+        #      creating json_entry_for_output, md_entry, sleeping, and writing files remains the same) ...
         # Store the raw LLM response along with original details for the JSON output
         json_entry_for_output = {
             "original_op_input_details": op_details, # Original input for this Op
             "llm_generated_data": llm_response_data, # The full JSON returned by LLM
             "generation_status": "success" if llm_response_data else "failure"
         }
-        all_generated_briefs_json.append(json_entry_for_output) # Add to our list for _generated_briefs_to_create.json
+        all_generated_briefs_json.append(json_entry_for_output) 
 
-        md_entry = f"## PROPOSED BRIEF FOR: {op_details.get('op_title', 'N/A')} (Input)\n\n"
+        md_entry = f"## PROPOSED BRIEF FOR: {op_details.get('op_title', 'N/A')} (Input from Sector: {op_details.get('sector_name')})\n\n" # Added sector name here too
         if llm_response_data and isinstance(llm_response_data, dict):
-            # Extract fields for Markdown formatting
             title = llm_response_data.get("issue_title", "[MISSING TITLE FROM LLM]")
             labels = llm_response_data.get("issue_labels", [])
-            assignee = llm_response_data.get("assignee", args.assignee) # Fallback to arg
+            assignee = llm_response_data.get("assignee", args.assignee) 
             full_markdown_body = llm_response_data.get("full_markdown_body", "[MISSING MARKDOWN BODY FROM LLM]")
             scribes_notes = llm_response_data.get("scribes_generation_notes", "N/A")
 
@@ -178,11 +204,11 @@ def main():
         md_entry += "---\n"
         all_generated_briefs_md_parts.append(md_entry)
 
-        if i < len(guild_ops_list) - 1:
+        if i < len(all_individual_ops) - 1: # Use the correct list length here
             print(f"Sleeping for {SLEEP_INTERVAL:.2f} seconds to respect RPM limit...")
             time.sleep(SLEEP_INTERVAL)
 
-    # Write the JSON output file which contains the direct LLM responses
+    # Write the JSON output file
     output_json_path = Path(args.output_json_file)
     with open(output_json_path, 'w') as f_json:
         json.dump(all_generated_briefs_json, f_json, indent=2)
@@ -200,6 +226,7 @@ def main():
     print(f"Generated Markdown review file written to: {output_md_path.resolve()}")
 
     print(f"\n--- Brief Generation For Review Complete ---")
+
 
 if __name__ == "__main__":
     main()
