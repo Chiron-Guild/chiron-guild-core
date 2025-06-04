@@ -13,7 +13,7 @@ The user will provide a JSON payload containing:
     *   Each `guild_op` within a sector has `op_title`, `op_type`, and `primary_deliverable`.
 2.  `target_op_title`: A string specifying the exact `op_title` of the Guild Op within `guild_op_data` for which the brief needs to be generated.
 3.  `project_id_for_ops` (Optional): A string for the `[PROJECT_ID]` to be used for all Ops from this specific `guild_op_data` (e.g., "CCGAME", "WATERSHED"). If not provided, use "PROJECT" as a placeholder and note this.
-4.  `assignee_override` (Optional): A string specifying the GitHub username to assign (e.g., "specific-operative"). If not provided, default to no one.
+4.  `assignee_override` (Optional): A string specifying the GitHub username to assign (e.g., "specific-operative"). If not provided, the Guild Op will be unassigned.
 
 **PROCESSING THE INPUT JSON & GENERATING THE BRIEF:**
 
@@ -23,7 +23,7 @@ The user will provide a JSON payload containing:
 4.  **`[PROJECT_ID]` Determination:** Use the `project_id_for_ops` provided by the user. If missing, use "PROJECT" as a placeholder.
 5.  **`[NUM_ID]`:** Always use `XXX` as a placeholder.
 6.  **`[OP_TYPE]`:** Use the `op_type` from the target `guild_op`.
-7.  **Assignee:** Use `assignee_override` if provided; otherwise, default to no one.
+7.  **Assignee:** If `assignee_override` is provided by the user, use that value. Otherwise, the Op will be unassigned.
 
 **STRICT OUTPUT FORMAT (GitHub Issue Markdown):**
 Your entire output MUST be a single Markdown block, starting and ending with `---` fences.
@@ -33,8 +33,10 @@ title: "[PROJECT_ID]-[OP_TYPE_FROM_JSON]-[NUM_ID] [op_title_from_json]"
 labels:
   - "[op_type_from_json_lowercase]" # e.g., dev, doc
   # Add other contextual mandatory labels (foundational-op, first-transmission, help wanted) if inferable from sector/op description.
+# If assignee_override IS PROVIDED in user input:
 assignees:
-  - "[assignee]" # Default to no one or use assignee_override
+  - "[assignee_override_value]"
+# If assignee_override IS NOT PROVIDED, OMIT the 'assignees:' line entirely.
 ---
 
 # Guild Op Brief: [PROJECT_ID]-[OP_TYPE_FROM_JSON]-[NUM_ID] [op_title_from_json]
@@ -48,17 +50,13 @@ assignees:
 ## Deliverables:
 - [The `primary_deliverable` from the target `guild_op` in the JSON.]
 - All necessary `Context Compilations` (e.g., decision logs, progress summaries) stored in `archives/[PROJECT_ID]-[OP_TYPE_FROM_JSON]-[NUM_ID]/`.
-- Clear, commented code and/or well-formatted documentation, as applicable to the `OP_TYPE`.
+- Clear, commented code and/or well-formatted documentation, as applicable to the `OP_TYPE`, adhering to Chiron Guild's "Precision Shell" standards.
 
 ## Associated Skills:
 [Infer a bulleted list of 3-5 key skills. Consider:
     - The `op_type` (e.g., DEV -> JavaScript, Python, API Design; DOC -> Technical Writing, UML; DSN -> UI/UX Design, Figma).
     - Keywords in `op_title` and `primary_deliverable` (e.g., "Codify Core Game Data" -> Data Modeling, JavaScript; "Miro" -> Miro diagramming).
     - The nature of the `sector_summary` (e.g., "rules engine" -> Algorithmic Thinking).
-    Example:
-    - Skill relevant to OP_TYPE (e.g., JavaScript Programming for DEV)
-    - Skill related to deliverable (e.g., Technical Specification Writing for DOC)
-    - Skill related to op_title keywords (e.g., Game Mechanics Design)
 ]
 
 ## Awarded Guild Seal:
@@ -72,11 +70,26 @@ assignees:
 Example: "This Op is part of the '[sector_name]' sector, which focuses on '[brief paraphrase of sector_summary]'. Specifically, '[op_title]' is crucial for [how it helps the sector]. This work directly supports our broader goal to '[relevant part of meta_objective text, e.g., empower effective community engagement...]' (Ref Meta-Objective: [ID of meta_objective])."]
 
 ## Estimated Effort:
-Not Estimated by Operative.
+[Infer an estimated effort category. Use categories: Small (e.g., foundational data setup, simple verification task; 1-4 hours), Medium (e.g., implementing a well-defined module or component, creating a detailed specification document; 4-8 hours), Large (e.g., developing a complex system, orchestrating a major integration, significant design work; 8-16 hours), X-Large (e.g., leading a major strategic initiative, architecting a new core system from scratch; 16+ hours).
+Base the inference on:
+    - `op_type`: `DOC` for straightforward translation might be Small/Medium. Complex `DEV` for a core module or new system could be Medium/Large/X-Large.
+    - Complexity and scope implied by `primary_deliverable` (e.g., "A comprehensive technical specification" is likely Medium or Large; "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data" might be Small or Medium).
+    - Keywords in `op_title` (e.g., "Formalize," "Develop Core," "Implement" vs. "Verify," "Codify Parameters").
+    - The nature of the `sector_summary` (is this Op a small piece of a large sector, or a cornerstone?).
+This is a heuristic; aim for a reasonable suggestion.]
 
 ## Verification/Acceptance Criteria:
-- [Primary deliverable] is completed, reviewed, and meets defined quality standards.
-- To be further defined by Operative if more specific criteria are needed.
+[Generate 2-4 specific, objective criteria. Always include:
+    - 'The `primary_deliverable` (i.e., "[primary_deliverable text from JSON]") is completed, reviewed (e.g., by Kin-Caid or peer), and demonstrably meets the quality standards of the Chiron Guild Precision Shell.'
+    - 'All associated `Context Compilations` (decision logs, progress updates, research notes) are finalized, clearly written, and archived in `archives/[PROJECT_ID]-[OP_TYPE_FROM_JSON]-[NUM_ID]/`.'
+Additionally, generate 1-2 more criteria based on `op_type` and `primary_deliverable`:
+    - For `DEV` Ops: 'Code is functional, well-commented, adheres to Guild coding best practices (if established), and includes relevant unit tests verifying core logic as described in the `primary_deliverable`.' or 'The developed module/system ([op_title]) integrates successfully with [mention other components if inferable from sector context or op_title] and performs its specified functions accurately.'
+    - For `DOC` Ops: 'The documentation ("[primary_deliverable text from JSON]") is clear, accurate, comprehensive, internally consistent, and validated against its source material (e.g., Miro board V2.2 rules, existing code, stakeholder input).'
+    - For `QAT` Ops: 'The Quality Assurance test plan covering scenarios outlined in "[primary_deliverable text from JSON]" is fully executed, all findings (bugs, deviations, confirmations) are meticulously documented in the test report, and any critical issues identified are resolved or have an agreed-upon mitigation/deferral plan.'
+    - For `DSN` Ops: 'Design artifacts (e.g., "[primary_deliverable text from JSON]") are finalized, clearly articulate the design solution, address all specified requirements from the `op_title` or `sector_summary`, and have been approved by relevant stakeholders.'
+    - For `STR`, `GOV`, `COM` Ops: 'The strategic plan/governance document/communication material ("[primary_deliverable text from JSON]") is complete, aligns with Guild objectives, and has been presented/ratified/disseminated as appropriate.'
+If the `primary_deliverable` itself implies a very specific test, include that. E.g., for "Verify Integrated Core Mechanics Engine Against V2.2 Rule Set", a criterion could be: 'Successful execution of predefined game scenarios confirms that all calculations and state changes align with the V2.2 Rule Set, as documented in the test report.'
+]
 
 ---
 
@@ -93,6 +106,9 @@ Examples:
 *   "The `[NUM_ID]` is a placeholder 'XXX'. Please update with the correct sequential number."
 *   "Inferred 'foundational-op' label based on sector description."
 *   "If `project_id_for_ops` was not provided, state: '`project_id_for_ops` was not provided in the input; used "PROJECT" as a placeholder. Please update the `[PROJECT_ID]` in the title and relevant sections.'"]
+*   "No assignee_override was provided; the Guild Op will be unassigned." (Add this note if applicable)
+*   "Estimated Effort was inferred as '[Inferred Effort Category]'. Please review for accuracy."
+*   "Verification/Acceptance Criteria were generated based on OP_TYPE and deliverable. Please review and add further specifics if needed."
 ---
 
 Process the user's request (containing `guild_op_data`, `target_op_title`, and optional overrides) provided immediately following this directive to generate the complete Guild Op Brief Markdown.
