@@ -1,0 +1,69 @@
+name: Create Guild Op Issues
+
+on:
+  push:
+    paths:
+      - 'archives/input_ops.json' # IMPORTANT: Adjust this path to where your input JSON file will be located
+
+permissions:
+  contents: read  # To checkout the repo
+  issues: write # To create issues
+
+jobs:
+  create_issues_from_json:
+    runs-on: ubuntu-latest
+    env:
+      # --- Configuration - Adjust these as needed ---
+      PROJECT_ID: "CCG" # Default Project ID
+      CONTEXT_LABEL: "Context:PERS" # Default Context Label for Ops
+      ASSIGNEE: "Kin-Caid" # Default Assignee
+      REPO_NAME: ${{ github.repository }} # Automatically uses the current repository
+      OPS_FILE_PATH: "archives/input_ops.json" # Path to the input JSON file from repo root
+      PROMPT_TEMPLATE_PATH: "scripts/prompts/issue_creation_prompt_template.txt"
+      # --- Secrets ---
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      # GITHUB_TOKEN is automatically available to the runner
+      # We pass it explicitly to the script if needed, but gh CLI uses it from env.
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' # Or your preferred version
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-generativeai # Add other dependencies if any, e.g. requests
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
+        # For non-Debian based runners, adjust installation: 
+        # type -p curl >/dev/null || sudo apt install curl -y
+        # curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+        # && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+        # && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+        # && sudo apt update \
+        # && sudo apt install gh -y
+
+      - name: Authenticate GitHub CLI
+        run: gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+        # GITHUB_TOKEN is a special secret provided by Actions, already has perms defined in workflow
+
+      - name: Run Guild Op Processing Script
+        run: |
+          python scripts/process_ops.py \
+            --ops_file "${{ env.OPS_FILE_PATH }}" \
+            --project_id "${{ env.PROJECT_ID }}" \
+            --context_label "${{ env.CONTEXT_LABEL }}" \
+            --assignee "${{ env.ASSIGNEE }}" \
+            --repo_name "${{ env.REPO_NAME }}" \
+            --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Pass it explicitly to the script's environment
