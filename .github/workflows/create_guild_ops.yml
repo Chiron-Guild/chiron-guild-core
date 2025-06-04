@@ -57,7 +57,7 @@ jobs:
 
       - name: Run Guild Op Processing Script
         run: |
-          python scripts/process_ops.py \
+          python .github/scripts/process_ops.py \
             --ops_file "${{ env.OPS_FILE_PATH }}" \
             --project_id "${{ env.PROJECT_ID }}" \
             --context_label "${{ env.CONTEXT_LABEL }}" \
