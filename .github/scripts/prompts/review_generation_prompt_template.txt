@@ -33,7 +33,7 @@ Generate a JSON object containing the following keys:
     *   Set to "{{ASSIGNEE}}".
 
 4.  **`parent_project` (string):**
-    *   Infer from 'Sector Name' or 'Original Op Title'. If unclear, state "To be determined by Operative."
+    *   Use the value provided in `{{OVERALL_PROJECT_NAME}}` directly.
 
 5.  **`objective` (string):**
     *   Elaborate slightly on the 'Original Op Title' to form a clear objective.
