@@ -1,4 +1,4 @@
-name: Create Guild Op Directory and Log File on Feature Branch
+name: Create Guild Op Directory, Log File, and Apply Project Label
 
 on:
   issues:
@@ -6,61 +6,216 @@ on:
       - opened
 
 permissions:
-  contents: write # IMPORTANT: Grant write permissions for the GITHUB_TOKEN
-  pull-requests: write # Needed if you want the action to create a PR later (optional)
+  contents: write # For checking out, creating branches, committing files
+  issues: write   # For reading issue data and adding labels
 
 jobs:
-  create_directory_and_metadata:
+  create_op_scaffolding:
     runs-on: ubuntu-latest
     steps:
-      - name: Parse Guild Op Info from Issue
-        id: parse_guild_op
-        run: |
-          echo "Parsing Guild Op Info from issue..."
-          # Extract RAW_GUILD_OP_ID (e.g., [CHRN-DEV-001])
-          RAW_GUILD_OP_ID=<span class="math-inline">\(echo "</span>{{ github.event.issue.title }} ${{ github.event.issue.body }}" | grep -oE "\[[A-Z0-9_]+-[A-Z]{3,5}-[0-9]{3,}\]" | head -n 1)
-
-          if [ -z "$RAW_GUILD_OP_ID" ]; then
-            echo "::error::Guild Op ID not found or invalid format in issue title/body! Please include an ID like [PROJECTPREFIX-TYPE-001]."
-            exit 1
-          fi
-          echo "Found Raw Guild Op ID: <span class="math-inline">\{RAW\_GUILD\_OP\_ID\}"
-echo "raw\_guild\_op\_id\=</span>{RAW_GUILD_OP_ID}" >> <span class="math-inline">GITHUB\_ENV
-\# Extract PROJECT\_ID\_PREFIX \(e\.g\., CHRN from \[CHRN\-DEV\-001\]\)
-\# Removes brackets, then takes part before first hyphen
-PROJECT\_ID\_PREFIX\_RAW\=</span>(echo "<span class="math-inline">\{RAW\_GUILD\_OP\_ID\}" \| sed 's/\\\[//g; s/\\\]//g'\) \# Remove brackets
-PROJECT\_ID\_PREFIX\=</span>(echo "${PROJECT_ID_PREFIX_RAW}" | awk -F'-' '{print $1}')
-          
-          if [ -z "$PROJECT_ID_PREFIX" ]; then
-            echo "::error::Could not parse PROJECT_ID_Prefix from Guild Op ID: ${RAW_GUILD_OP_ID}"
-            exit 1
-          fi
-          echo "Found Project ID Prefix: <span class="math-inline">\{PROJECT\_ID\_PREFIX\}"
-echo "project\_id\_prefix\=</span>{PROJECT_ID_PREFIX}" >> <span class="math-inline">GITHUB\_ENV
-\# Extract Project Name Slug from label \(e\.g\., "Guild\-Self\-Assembly" from "Project\-Slug\:Guild\-Self\-Assembly"\)
-PROJECT\_NAME\_SLUG\=</span>(echo "${{ toJSON(github.event.issue.labels) }}" | jq -r '.[] | select(.name | startswith("Project-Slug:")) | .name' | sed 's/Project-Slug://g' | head -n 1)
-
-          if [ -z "$PROJECT_NAME_SLUG" ]; then
-            echo "::error::'Project-Slug:' label not found or is empty on the issue! Example: 'Project-Slug:My-Awesome-Project'"
-            exit 1
-          fi
-          echo "Found Project Name Slug: <span class="math-inline">\{PROJECT\_NAME\_SLUG\}"
-echo "project\_name\_slug\=</span>{PROJECT_NAME_SLUG}" >> <span class="math-inline">GITHUB\_ENV
-echo "GUILD\_OP\_BRANCH\=feature/guild\-op\-</span>{{ github.event.issue.number }}" >> $GITHUB_ENV
-
-      - name: Checkout repository - target main first
+      - name: Checkout main repository
         uses: actions/checkout@v4
         with:
-          ref: main # Checkout main to base the new branch from
+          ref: main # Checkout main to get project_mappings.json and base new branch
+
+      - name: Install jq (JSON processor)
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Parse Guild Op Info and Determine Project Slug
+        id: parse_info
+        env:
+          ISSUE_TITLE: "${{ github.event.issue.title }}"
+          ISSUE_BODY: "${{ github.event.issue.body }}"
+          MAPPINGS_FILE: "project_mappings.json" # Path from repo root
+        run: |
+          echo "Parsing Guild Op Info from issue..."
+          RAW_GUILD_OP_ID=$(echo "$ISSUE_TITLE $ISSUE_BODY" | grep -oE "\[[A-Z0-9_]+-[A-Z]{3,5}-[0-9]{3,}\]" | head -n 1)
+          if [ -z "$RAW_GUILD_OP_ID" ]; then
+            echo "::error::Guild Op ID not found or invalid format. Must be like [PREFIX-TYPE-001]."
+            exit 1
+          fi
+          echo "raw_guild_op_id=$RAW_GUILD_OP_ID" >> $GITHUB_ENV
+
+          PROJECT_ID_PREFIX_RAW=$(echo "$RAW_GUILD_OP_ID" | sed 's/\[//g; s/\]//g')
+          PROJECT_ID_PREFIX=$(echo "$PROJECT_ID_PREFIX_RAW" | awk -F'-' '{print $1}')
+          if [ -z "$PROJECT_ID_PREFIX" ]; then
+            echo "::error::Could not parse PROJECT_ID_Prefix from $RAW_GUILD_OP_ID"
+            exit 1
+          fi
+          echo "project_id_prefix=$PROJECT_ID_PREFIX" >> $GITHUB_ENV
+
+          if [ ! -f "$MAPPINGS_FILE" ]; then
+            echo "::error::Project mappings file '$MAPPINGS_FILE' not found!"
+            exit 1
+          fi
+          FULL_PROJECT_NAME=$(jq -r --arg prefix "$PROJECT_ID_PREFIX" '.[$prefix]' "$MAPPINGS_FILE")
+          if [ -z "$FULL_PROJECT_NAME" ] || [ "$FULL_PROJECT_NAME" == "null" ]; then
+            echo "::error::Full Project Name for prefix '$PROJECT_ID_PREFIX' not found in '$MAPPINGS_FILE'."
+            exit 1
+          fi
+
+          PROJECT_NAME_SLUG=$(echo "$FULL_PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | sed -e 's/[ _:]/-/g' -e 's/[^a-z0-9-]//g' -e 's/--+/-/g')
+          echo "project_name_slug=$PROJECT_NAME_SLUG" >> $GITHUB_ENV
+
+          PROJECT_SLUG_LABEL_NAME="Project-Slug:$PROJECT_NAME_SLUG"
+          echo "project_slug_label_name=$PROJECT_SLUG_LABEL_NAME" >> $GITHUB_ENV
+          
+          echo "GUILD_OP_BRANCH=feature/guild-op-${{ github.event.issue.number }}" >> $GITHUB_ENV
+
+      - name: Create Label if it does not exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABEL_NAME: ${{ env.project_slug_label_name }}
+          LABEL_COLOR: "0E8A16" 
+          LABEL_DESCRIPTION: "Identifies Ops belonging to the ${{ env.project_name_slug }} project."
+        run: |
+          echo "Checking if label '$LABEL_NAME' exists..."
+          if ! gh api "repos/${{ github.repository }}/labels/$LABEL_NAME" --silent > /dev/null 2>&1; then
+            echo "Label '$LABEL_NAME' does not exist. Creating it..."
+            gh label create "$LABEL_NAME" --color "$LABEL_COLOR" --description "$LABEL_DESCRIPTION"
+            echo "Label '$LABEL_NAME' created."
+          else
+            echo "Label '$LABEL_NAME' already exists."
+          fi
+
+      - name: Apply Project Slug Label to Issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABEL_NAME: ${{ env.project_slug_label_name }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          echo "Applying label '$LABEL_NAME' to issue #$ISSUE_NUMBER..."
+          gh issue edit $ISSUE_NUMBER --add-label "$LABEL_NAME"
+          echo "Label '$LABEL_NAME' applied."
+          
+      - name: Checkout repository for branch creation and potential project dir commit
+        uses: actions/checkout@v4
+        with:
+          ref: main 
 
       - name: Create and switch to Guild Op feature branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          if git rev-parse --verify ${{ env.GUILD_OP_BRANCH }} >/dev/null 2>&1; then
-            echo "Branch ${{ env.GUILD_OP_BRANCH }} already exists. Checking it out and pulling latest from main."
-            git checkout ${{ env.GUILD_OP_BRANCH }}
-            # Optional: git pull origin main # To ensure branch is up-to-date if it's an old one
+          if git ls-remote --exit-code --heads origin ${{ env.GUILD_OP_BRANCH }} >/dev/null 2>&1; then
+            echo "Branch ${{ env.GUILD_OP_BRANCH }} already exists on remote. Checking it out."
+            git fetch origin ${{ env.GUILD_OP_BRANCH }}:refs/remotes/origin/${{ env.GUILD_OP_BRANCH }}
+            git checkout -B ${{ env.GUILD_OP_BRANCH }} origin/${{ env.GUILD_OP_BRANCH }}
           else
-            echo
+            echo "Creating new branch: ${{ env.GUILD_OP_BRANCH }} from main"
+            git checkout -b ${{ env.GUILD_OP_BRANCH }} main
+          fi
+      
+      - name: Ensure Parent Project Directory Exists
+        id: ensure_project_dir
+        run: |
+          PARENT_PROJECT_DIR_BASE="PROJECTS & INITIATIVES"
+          PARENT_PROJECT_DIR_NAME="${{ env.project_id_prefix }}-${{ env.project_name_slug }}"
+          FULL_PARENT_PROJECT_PATH="${PARENT_PROJECT_DIR_BASE}/${PARENT_PROJECT_DIR_NAME}"
+          GUILD_OPS_SUBDIR_PATH="${FULL_PARENT_PROJECT_PATH}/Guild Ops"
+          CHANGES_MADE_IN_PROJECT_DIR=false
+
+          echo "Ensuring parent project directory structure exists at: ${FULL_PARENT_PROJECT_PATH}"
+
+          if [ ! -d "$FULL_PARENT_PROJECT_PATH" ]; then
+            echo "Parent project directory '$FULL_PARENT_PROJECT_PATH' does not exist. Creating it."
+            mkdir -p "$FULL_PARENT_PROJECT_PATH"
+            touch "$FULL_PARENT_PROJECT_PATH/.gitkeep"
+            CHANGES_MADE_IN_PROJECT_DIR=true
+            echo "Created $FULL_PARENT_PROJECT_PATH and .gitkeep"
+          else
+            echo "Parent project directory '$FULL_PARENT_PROJECT_PATH' already exists."
+          fi
+
+          if [ ! -d "$GUILD_OPS_SUBDIR_PATH" ]; then
+            echo "'Guild Ops' subdirectory does not exist in '$FULL_PARENT_PROJECT_PATH'. Creating it."
+            mkdir -p "$GUILD_OPS_SUBDIR_PATH"
+            touch "$GUILD_OPS_SUBDIR_PATH/.gitkeep"
+            CHANGES_MADE_IN_PROJECT_DIR=true
+            echo "Created $GUILD_OPS_SUBDIR_PATH and .gitkeep"
+          else
+            echo "'Guild Ops' subdirectory already exists in '$FULL_PARENT_PROJECT_PATH'."
+          fi
+          
+          # If new project directories were created, commit them to the feature branch
+          if [ "$CHANGES_MADE_IN_PROJECT_DIR" = true ]; then
+            if [ -z "$(git status --porcelain "$FULL_PARENT_PROJECT_PATH")" ]; then
+               echo "No git-detectable changes in $FULL_PARENT_PROJECT_PATH to commit, might have been pre-existing empty dirs."
+            else
+               echo "Staging and committing new parent project directory structure..."
+               git add "$FULL_PARENT_PROJECT_PATH" # Add the specific parent project directory
+               git commit -m "feat(project): Scaffold project directory for ${{ env.project_id_prefix }}-${{ env.project_name_slug }}"
+               echo "Committed new project directory structure to branch ${{ env.GUILD_OP_BRANCH }}."
+            fi
+          fi
+          # Output the path to the Guild Ops subdirectory for the next step
+          echo "guild_ops_base_path=${GUILD_OPS_SUBDIR_PATH}" >> $GITHUB_ENV
+
+      - name: Construct Specific Guild Op Directory Path
+        id: construct_op_path
+        run: |
+          OP_DIR_NAME=$(echo "${{ env.raw_guild_op_id }}" | sed 's/\[//g; s/\]//g')
+          # Path is now relative to the Guild Ops subdir of the parent project
+          TARGET_OP_DIR_PATH="${{ env.guild_ops_base_path }}/${OP_DIR_NAME}"
+          echo "Target Op Directory Path: ${TARGET_OP_DIR_PATH}"
+          echo "op_dir_path=${TARGET_OP_DIR_PATH}" >> $GITHUB_ENV
+          echo "op_dir_name=${OP_DIR_NAME}" >> $GITHUB_ENV # Keep this for metadata filename
+
+      - name: Create Specific Guild Op directory and .gitkeep
+        run: |
+          echo "Creating directory for Guild Op: ${{ env.op_dir_path }}"
+          mkdir -p "${{ env.op_dir_path }}"
+          touch "${{ env.op_dir_path }}/.gitkeep"
+          echo "Directory and .gitkeep created: ${{ env.op_dir_path }}"
+
+      - name: Create Metadata File (Operation Log)
+        run: |
+          METADATA_FILE="${{ env.op_dir_path }}/${{ env.op_dir_name }}_operation_log.md"
+          GUILD_OP_ID_FOR_NOTES="${{ env.raw_guild_op_id }}"
+
+          echo "Creating metadata file: ${METADATA_FILE}"
+          cat <<EOF > "${METADATA_FILE}"
+          # Guild Op Metadata: ${GUILD_OP_ID_FOR_NOTES}
+
+          ## Guild Op Details
+          - **Title:** ${{ github.event.issue.title }}
+          - **URL:** ${{ github.event.issue.html_url }}
+          - **Author:** ${{ github.event.issue.user.login }}
+          - **Created At:** ${{ github.event.issue.created_at }}
+
+          ## Description
+          ${{ github.event.issue.body }}
+
+          ## Notes
+          - This is a generated log file for tracking Guild Op metadata.
+          - Update this file with progress logs, decisions, and schematics as needed.
+          - Context Compilations for this Op are stored in: \`${{ env.op_dir_path }}\`
+          EOF
+          echo "Metadata file created."
+          
+      - name: Commit and Push Op Scaffolding to Feature Branch
+        run: |
+          # Add only the specific Op directory created in this run, or the parent project if it was just made
+          # The previous step "Ensure Parent Project Directory Exists" handles its own commit if it creates dirs.
+          # This commit is for the Op-specific directory and metadata file.
+          if [ -z "$(git status --porcelain "${{ env.op_dir_path }}")" ]; then
+            echo "No git-detectable changes in ${{ env.op_dir_path }} to commit. Might already exist."
+            # Check if the parent project dir commit happened and if that's all, then we might not need to push again
+            # However, if the branch is new, a push is always needed.
+          else
+            echo "Staging changes for Op scaffolding: ${{ env.op_dir_path }}"
+            git add "${{ env.op_dir_path }}" 
+            git commit -m "feat(guild-op): Scaffold directory and metadata for Op ${{ env.raw_guild_op_id }}"
+            echo "Committed Op scaffolding to branch ${{ env.GUILD_OP_BRANCH }}."
+          fi
+          
+          echo "Attempting to push changes to feature branch ${{ env.GUILD_OP_BRANCH }}..."
+          # Check if branch is new to remote or just needs a normal push
+          if ! git rev-parse --abbrev-ref --symbolic-full-name @{u} > /dev/null 2>&1 || ! git ls-remote --exit-code --heads origin ${{ env.GUILD_OP_BRANCH }} >/dev/null 2>&1; then
+             echo "Setting upstream for new branch or pushing for the first time: ${{ env.GUILD_OP_BRANCH }}"
+             git push -u origin ${{ env.GUILD_OP_BRANCH }}
+          else
+             git push origin ${{ env.GUILD_OP_BRANCH }}
+          fi
+          echo "Changes pushed successfully to feature branch."
