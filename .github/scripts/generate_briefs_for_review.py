@@ -7,7 +7,7 @@ from pathlib import Path
 
 # --- Configuration ---
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_MODEL_NAME = "gemini-1.5-flash-preview-05-20" # Or "gemini-1.5-flash-latest"
+GEMINI_MODEL_NAME = "gemini-2.5-flash-preview-05-20" 
 REQUESTS_PER_MINUTE_LIMIT = 9.5 
 SLEEP_INTERVAL = 60.0 / REQUESTS_PER_MINUTE_LIMIT
 
