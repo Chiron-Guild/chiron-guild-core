@@ -34,72 +34,61 @@ jobs:
       - name: Install jq (JSON Processor)
         run: sudo apt-get install -y jq
 
-      - name: Read Metadata from JSON and Set Environment
-        id: metadata
-        run: |
-          PROJECT_ID_PREFIX=$(jq -r '.project_metadata.project_id_prefix' $OPS_FILE_PATH)
-          echo "PROJECT_ID_FROM_FILE=${PROJECT_ID_PREFIX}" >> $GITHUB_ENV
-          
-          TARGET_DIR_PATH=$(jq -r --arg projid "$PROJECT_ID_PREFIX" '.[$projid].dir_path' $PROJECT_MAPPINGS_FILE)
-          echo "TARGET_DIR_PATH=${TARGET_DIR_PATH}" >> $GITHUB_ENV
-
-      - name: Generate Timestamp
-        id: timestamp
-        run: |
-          echo "TIMESTAMP=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
-
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install google-generativeai 
+          pip install google-generativeai
 
-      # --- THIS STEP IS CORRECTED TO USE STEP OUTPUTS ---
-      - name: Run Brief Generation for Review Script
-        id: generate-script # This ID is crucial
+      # --- THIS IS THE NEW, CONSOLIDATED STEP ---
+      - name: Generate, Prepare, and Move Briefs
+        id: process-briefs
         run: |
-          # Define filenames for this run
+          # --- Part 1: Read Metadata (from previous 'metadata' step) ---
+          PROJECT_ID_PREFIX=$(jq -r '.project_metadata.project_id_prefix' $OPS_FILE_PATH)
+          TARGET_DIR_PATH=$(jq -r --arg projid "$PROJECT_ID_PREFIX" '.[$projid].dir_path' $PROJECT_MAPPINGS_FILE)
+          CONTEXT_LABEL=$(jq -r '.project_metadata.context_label' $OPS_FILE_PATH)
+          ASSIGNEE=$(jq -r '.project_metadata.default_assignee' $OPS_FILE_PATH)
+
+          # --- Part 2: Generate Timestamp (from previous 'timestamp' step) ---
+          TIMESTAMP=$(date +'%Y-%m-%d_%H%M')
+          
+          # --- Part 3: Run Script (from previous 'generate-script' step) ---
+          echo "Running Python script..."
           JSON_FILENAME="${TIMESTAMP}${BASE_OUTPUT_JSON}"
           MD_FILENAME="${TIMESTAMP}${BASE_OUTPUT_MD}"
           
-          # Use Step Outputs to pass filenames to subsequent steps
-          echo "json_filename=${JSON_FILENAME}" >> $GITHUB_OUTPUT
-          echo "md_filename=${MD_FILENAME}" >> $GITHUB_OUTPUT
-          
-          # Run the script
           python .github/scripts/generate_briefs_for_review.py \
             --ops_file "$OPS_FILE_PATH" \
-            --project_id_cli_arg "$PROJECT_ID_FROM_FILE" \
-            --context_label "$(jq -r '.project_metadata.context_label' $OPS_FILE_PATH)" \
-            --assignee "$(jq -r '.project_metadata.default_assignee' $OPS_FILE_PATH)" \
+            --project_id_cli_arg "$PROJECT_ID_PREFIX" \
+            --context_label "$CONTEXT_LABEL" \
+            --assignee "$ASSIGNEE" \
             --prompt_template_path "$PROMPT_TEMPLATE_PATH" \
             --project_mappings_file "$PROJECT_MAPPINGS_FILE" \
             --model_name "$GEMINI_MODEL" \
             --output_json_file "$JSON_FILENAME" \
             --output_md_file "$MD_FILENAME"
-
-      # --- THIS STEP IS CORRECTED TO USE STEP OUTPUTS AND ADDED DEBUGGING ---
-      - name: Prepare and Move Generated Files
-        id: prepare-files
-        run: |
-          # DEBUGGING: List files at the root to see if the Python script created them.
-          echo "--- Listing files at repository root ---"
+          
+          # --- Part 4: Prepare and Move (from previous 'prepare-files' step) ---
+          echo "--- Verifying created files ---"
           ls -l
-          echo "----------------------------------------"
-
+          
           DESTINATION_DIR="${TARGET_DIR_PATH}/Generated Briefs"
           echo "Creating destination directory: $DESTINATION_DIR"
           mkdir -p "$DESTINATION_DIR"
           
-          echo "Moving generated files..."
-          # Access the output from the 'generate-script' step
-          mv "${{ steps.generate-script.outputs.json_filename }}" "$DESTINATION_DIR/"
-          mv "${{ steps.generate-script.outputs.md_filename }}" "$DESTINATION_DIR/"
+          echo "Moving generated files: $JSON_FILENAME and $MD_FILENAME"
+          mv "$JSON_FILENAME" "$DESTINATION_DIR/"
+          mv "$MD_FILENAME" "$DESTINATION_DIR/"
           echo "Files moved successfully."
+          
+          # Pass the final directory path to the commit step
+          echo "commit_path=${DESTINATION_DIR}" >> $GITHUB_OUTPUT
 
       - name: Commit Generated Briefs
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "feat(autogen): Add generated briefs for $PROJECT_ID_FROM_FILE [skip ci]"
+          commit_message: "feat(autogen): Add generated briefs for $(jq -r '.project_metadata.project_id_prefix' $OPS_FILE_PATH) [skip ci]"
           commit_user_name: "Chiron Guild Scribe [bot]"
           commit_user_email: "actions@github.com"
-          file_pattern: "${TARGET_DIR_PATH}/Generated Briefs/*"
+          # The file pattern now uses the output from the consolidated step
+          file_pattern: "${{ steps.process-briefs.outputs.commit_path }}/*"
