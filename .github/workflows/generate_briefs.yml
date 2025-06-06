@@ -3,7 +3,7 @@ name: Generate Guild Op Briefs for Review
 on:
   push:
     paths:
-      - 'PROJECTS & INITIATIVES\input_ops.json' # Path to your input JSON
+      - 'PROJECTS & INITIATIVES/input_ops.json' # Path to your input JSON
 
 permissions:
   contents: read 
@@ -16,7 +16,7 @@ jobs:
       CONTEXT_LABEL: "Context:PERS" 
       ASSIGNEE: "Kin-Caid"
       REPO_NAME: ${{ github.repository }}
-      OPS_FILE_PATH: "PROJECTS & INITIATIVES\input_ops.json" 
+      OPS_FILE_PATH: "PROJECTS & INITIATIVES/input_ops.json" 
       # --- UPDATED TO THE NEW, RICHER PROMPT TEMPLATE ---
       PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/review_generation_prompt_template.txt" 
       OUTPUT_JSON_FILE: "_generated_briefs_to_create.json"
