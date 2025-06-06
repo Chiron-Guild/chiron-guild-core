@@ -1,22 +1,10 @@
 {
-  "CHIRON": { 
-    "name": "Chiron Phase 0: Guild Self Assembly", 
-    "dir_path": "PROJECTS & INITIATIVES/CHIRON-Guild-Self-Assembly" 
+  "CCG": {
+    "name": "Creek Connections Game",
+    "dir_path": "PROJECTS & INITIATIVES/PERSONAL-Projects/creek_connections"
   },
-  "BNTY": { 
-    "name": "Bounty Board Projects", 
-    "dir_path": "PROJECTS & INITIATIVES/BOUNTY-Board-Projects" 
-  },
-  "CLIENT": { 
-    "name": "Client Projects", 
-    "dir_path": "PROJECTS & INITIATIVES/CLIENT-Projects" 
-  },
-  "PERS": { 
-    "name": "Personal Projects", 
-    "dir_path": "PROJECTS & INITIATIVES/PERSONAL-Projects" 
-  },
-  "CCG": { 
-    "name": "Creek Connections Game", 
-    "dir_path": "PERSONAL-Projects/creek_connections" 
+  "CHIRON": {
+    "name": "Chiron Guild Core Infrastructure",
+    "dir_path": "PROJECTS & INITIATIVES/CHIRON-Guild-Self-Assembly"
   }
 }
