@@ -15,6 +15,7 @@ jobs:
     # Environment variables that are static or configuration for the workflow itself
     env:
       OPS_FILE_PATH: "PROJECTS & INITIATIVES/input_ops.json" 
+      GEMINI_MODEL: "gemini-2.5-flash-preview-05-20"
       PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/review_generation_prompt_template.txt" 
       OUTPUT_JSON_FILE: "_generated_briefs_to_create.json"
       OUTPUT_MD_FILE: "_generated_briefs_for_review.md"
@@ -61,7 +62,8 @@ jobs:
             --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}" \
             --output_json_file "${{ env.OUTPUT_JSON_FILE }}" \
             --output_md_file "${{ env.OUTPUT_MD_FILE }}" \
-            --project_mappings_file "${{ env.PROJECT_MAPPINGS_FILE }}"
+            --project_mappings_file "${{ env.PROJECT_MAPPINGS_FILE }}" \
+            --model_name "${{ env.GEMINI_MODEL }}"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
