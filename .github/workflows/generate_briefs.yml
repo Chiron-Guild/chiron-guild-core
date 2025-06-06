@@ -37,17 +37,10 @@ jobs:
       - name: Read Metadata from JSON and Set Environment
         id: metadata
         run: |
-          # This step correctly adds more variables to the job's environment for subsequent steps
-          PROJECT_ID_PREFIX=$(jq -r '.project_metadata.project_id_prefix' ${{ env.OPS_FILE_PATH }})
+          PROJECT_ID_PREFIX=$(jq -r '.project_metadata.project_id_prefix' $OPS_FILE_PATH)
           echo "PROJECT_ID_FROM_FILE=${PROJECT_ID_PREFIX}" >> $GITHUB_ENV
           
-          CONTEXT_LABEL=$(jq -r '.project_metadata.context_label' ${{ env.OPS_FILE_PATH }})
-          echo "CONTEXT_LABEL_FROM_FILE=${CONTEXT_LABEL}" >> $GITHUB_ENV
-          
-          ASSIGNEE=$(jq -r '.project_metadata.default_assignee' ${{ env.OPS_FILE_PATH }})
-          echo "ASSIGNEE_FROM_FILE=${ASSIGNEE}" >> $GITHUB_ENV
-          
-          TARGET_DIR_PATH=$(jq -r --arg projid "$PROJECT_ID_PREFIX" '.[$projid].dir_path' ${{ env.PROJECT_MAPPINGS_FILE }})
+          TARGET_DIR_PATH=$(jq -r --arg projid "$PROJECT_ID_PREFIX" '.[$projid].dir_path' $PROJECT_MAPPINGS_FILE)
           echo "TARGET_DIR_PATH=${TARGET_DIR_PATH}" >> $GITHUB_ENV
 
       - name: Generate Timestamp
@@ -60,31 +53,48 @@ jobs:
           python -m pip install --upgrade pip
           pip install google-generativeai 
 
+      # --- THIS STEP IS CORRECTED TO USE STEP OUTPUTS ---
       - name: Run Brief Generation for Review Script
-        id: generate-script
+        id: generate-script # This ID is crucial
         run: |
-          TIMESTAMPED_JSON="${TIMESTAMP}${BASE_OUTPUT_JSON}"
-          TIMESTAMPED_MD="${TIMESTAMP}${BASE_OUTPUT_MD}"
-          echo "TIMESTAMPED_JSON_OUTPUT=${TIMESTAMPED_JSON}" >> $GITHUB_ENV
-          echo "TIMESTAMPED_MD_OUTPUT=${TIMESTAMPED_MD}" >> $GITHUB_ENV
+          # Define filenames for this run
+          JSON_FILENAME="${TIMESTAMP}${BASE_OUTPUT_JSON}"
+          MD_FILENAME="${TIMESTAMP}${BASE_OUTPUT_MD}"
           
+          # Use Step Outputs to pass filenames to subsequent steps
+          echo "json_filename=${JSON_FILENAME}" >> $GITHUB_OUTPUT
+          echo "md_filename=${MD_FILENAME}" >> $GITHUB_OUTPUT
+          
+          # Run the script
           python .github/scripts/generate_briefs_for_review.py \
             --ops_file "$OPS_FILE_PATH" \
             --project_id_cli_arg "$PROJECT_ID_FROM_FILE" \
-            --context_label "$CONTEXT_LABEL_FROM_FILE" \
-            --assignee "$ASSIGNEE_FROM_FILE" \
+            --context_label "$(jq -r '.project_metadata.context_label' $OPS_FILE_PATH)" \
+            --assignee "$(jq -r '.project_metadata.default_assignee' $OPS_FILE_PATH)" \
             --prompt_template_path "$PROMPT_TEMPLATE_PATH" \
             --project_mappings_file "$PROJECT_MAPPINGS_FILE" \
             --model_name "$GEMINI_MODEL" \
-            --output_json_file "$TIMESTAMPED_JSON" \
-            --output_md_file "$TIMESTAMPED_MD"
+            --output_json_file "$JSON_FILENAME" \
+            --output_md_file "$MD_FILENAME"
 
+      # --- THIS STEP IS CORRECTED TO USE STEP OUTPUTS AND ADDED DEBUGGING ---
       - name: Prepare and Move Generated Files
+        id: prepare-files
         run: |
+          # DEBUGGING: List files at the root to see if the Python script created them.
+          echo "--- Listing files at repository root ---"
+          ls -l
+          echo "----------------------------------------"
+
           DESTINATION_DIR="${TARGET_DIR_PATH}/Generated Briefs"
+          echo "Creating destination directory: $DESTINATION_DIR"
           mkdir -p "$DESTINATION_DIR"
-          mv "$TIMESTAMPED_JSON_OUTPUT" "$DESTINATION_DIR/"
-          mv "$TIMESTAMPED_MD_OUTPUT" "$DESTINATION_DIR/"
+          
+          echo "Moving generated files..."
+          # Access the output from the 'generate-script' step
+          mv "${{ steps.generate-script.outputs.json_filename }}" "$DESTINATION_DIR/"
+          mv "${{ steps.generate-script.outputs.md_filename }}" "$DESTINATION_DIR/"
+          echo "Files moved successfully."
 
       - name: Commit Generated Briefs
         uses: stefanzweifel/git-auto-commit-action@v5
