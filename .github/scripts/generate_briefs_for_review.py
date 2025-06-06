@@ -7,7 +7,6 @@ from pathlib import Path
 
 # --- Configuration ---
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_MODEL_NAME = "gemini-2.5-flash-preview-05-20" 
 REQUESTS_PER_MINUTE_LIMIT = 9.5 
 SLEEP_INTERVAL = 60.0 / REQUESTS_PER_MINUTE_LIMIT
 
@@ -43,15 +42,15 @@ def load_prompt_template(template_path):
         print(f"ERROR: Prompt template not found at {template_path}. Please ensure the path is correct.")
         exit(1)
 
-def call_gemini_api(prompt_text):
+def call_gemini_api(prompt_text, model_name):
     """Calls the Gemini API with the given prompt text and returns parsed JSON response."""
     try:
         model = genai.GenerativeModel(
-            model_name=GEMINI_MODEL_NAME,
+            model_name=model_name,
             generation_config=generation_config,
             safety_settings=safety_settings
         )
-        print(f"Sending request to Gemini model: {GEMINI_MODEL_NAME}")
+        print(f"Sending request to Gemini model: {model_name}")
         response = model.generate_content(prompt_text)
         
         raw_json_text = None
@@ -91,6 +90,7 @@ def main():
     parser.add_argument("--output_json_file", default="_generated_briefs_to_create.json", help="Output JSON file for machine processing.")
     parser.add_argument("--output_md_file", default="_generated_briefs_for_review.md", help="Output Markdown file for human review.")
     parser.add_argument("--project_mappings_file", default="project_mappings.json", help="Path to the project_mappings.json file, relative to repo root.")
+    parser.add_argument("--model_name", required=True, help="The Gemini model name to use for generation.")
 
     args = parser.parse_args()
 
@@ -187,7 +187,7 @@ def main():
     all_generated_briefs_json = []
     all_generated_briefs_md_parts = []
 
-    print(f"Processing {len(all_individual_ops_with_context)} individual Guild Ops for review generation using model {GEMINI_MODEL_NAME}...")
+    print(f"Processing {len(all_individual_ops_with_context)} individual Guild Ops for review generation using model {args.model_name}...")
 
     for i, op_details in enumerate(all_individual_ops_with_context):
         print(f"\n--- Generating brief for Op {i+1}/{len(all_individual_ops_with_context)}: {op_details.get('op_title', 'N/A')} ---")
@@ -208,7 +208,7 @@ def main():
                                         .replace("{{ASSIGNEE}}", args.assignee) \
                                         .replace("{{NUM_ID}}", num_id)
         
-        llm_response_data = call_gemini_api(current_prompt)
+        llm_response_data = call_gemini_api(current_prompt, args.model_name)
 
         json_entry_for_output = {
             "original_op_input_details": op_details,
