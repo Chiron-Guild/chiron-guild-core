@@ -3,7 +3,7 @@ name: Generate Guild Op Briefs for Review
 on:
   push:
     paths:
-      - 'archives/input_ops.json'
+      - 'PROJECTS & INITIATIVES/input_ops.json'
 
 permissions:
   contents: read 
@@ -14,7 +14,7 @@ jobs:
     
     # Environment variables that are static or configuration for the workflow itself
     env:
-      OPS_FILE_PATH: "archives/input_ops.json" 
+      OPS_FILE_PATH: "PROJECTS & INITIATIVES/input_ops.json" 
       PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/review_generation_prompt_template.txt" 
       OUTPUT_JSON_FILE: "_generated_briefs_to_create.json"
       OUTPUT_MD_FILE: "_generated_briefs_for_review.md"
