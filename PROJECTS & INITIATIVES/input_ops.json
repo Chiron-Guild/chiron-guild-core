@@ -68,12 +68,7 @@
             "op_title": "Develop Interactive Watershed Map Renderer Component",
             "op_type": "DEV",
             "primary_deliverable": "A functional JavaScript component rendering the game's watershed map with user interaction capabilities."
-        },
-        {
-            "sector_name": "3. Campaign Progression & Content Integration",
-            "op_title": "Define Data Structures for Campaign Phases & Event Cards",
-            "op_type": "DOC",
-            "primary_deliverable": "A technical document specifying data structures for multi-phase campaign progression and Event Card format/content."
+
         }
     ]
 }
