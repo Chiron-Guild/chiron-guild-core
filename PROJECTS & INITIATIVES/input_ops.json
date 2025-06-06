@@ -68,7 +68,6 @@
             "op_title": "Develop Interactive Watershed Map Renderer Component",
             "op_type": "DEV",
             "primary_deliverable": "A functional JavaScript component rendering the game's watershed map with user interaction capabilities."
-
         }
     ]
 }
