@@ -39,22 +39,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install google-generativeai
 
-      # --- THIS IS THE NEW, CONSOLIDATED STEP ---
       - name: Generate, Prepare, and Move Briefs
         id: process-briefs
         run: |
-          set -e
-          # --- Part 1: Read Metadata (from previous 'metadata' step) ---
+          # --- DEBUGGING: Initial Working Directory and Contents ---
+          echo "--- DEBUG: Current Working Directory for 'process-briefs' step ---"
+          pwd
+          echo "--- DEBUG: Contents of repository root before file generation ---"
+          ls -l
+          echo "-----------------------------------------------------------------"
+
+          # --- Part 1: Read Metadata ---
           PROJECT_ID_PREFIX=$(jq -r '.project_metadata.project_id_prefix' $OPS_FILE_PATH)
           TARGET_DIR_PATH=$(jq -r --arg projid "$PROJECT_ID_PREFIX" '.[$projid].dir_path' $PROJECT_MAPPINGS_FILE)
           CONTEXT_LABEL=$(jq -r '.project_metadata.context_label' $OPS_FILE_PATH)
           ASSIGNEE=$(jq -r '.project_metadata.default_assignee' $OPS_FILE_PATH)
 
-          # --- Part 2: Generate Timestamp (from previous 'timestamp' step) ---
+          # --- Part 2: Generate Timestamp ---
           TIMESTAMP=$(date +'%Y-%m-%d_%H%M')
           
-          # --- Part 3: Run Script (from previous 'generate-script' step) ---
-          echo "Running Python script..."
+          # --- Part 3: Run Script ---
+          echo "Running Python script to generate briefs..."
           JSON_FILENAME="${TIMESTAMP}${BASE_OUTPUT_JSON}"
           MD_FILENAME="${TIMESTAMP}${BASE_OUTPUT_MD}"
           
@@ -68,21 +73,34 @@ jobs:
             --model_name "$GEMINI_MODEL" \
             --output_json_file "$JSON_FILENAME" \
             --output_md_file "$MD_FILENAME"
-          echo "After script run:"
+          echo "Python script finished."
+
+          # --- DEBUGGING: Contents of repository root AFTER file generation ---
+          echo "--- DEBUG: Contents of repository root AFTER file generation ---"
           ls -l
-                    
-          # --- Part 4: Prepare and Move (from previous 'prepare-files' step) ---
-          echo "--- Verifying created files ---"
-          ls -l
-          
-          DESTINATION_DIR="${TARGET_DIR_PATH}/Generated Briefs"
+          echo "-----------------------------------------------------------------"
+
+          # --- Part 4: Prepare and Move ---
+          # Make sure the target path for project_mappings.json is correct for your setup
+          # Example: Projects/personal/creek_connections
+          echo "DEBUG: TARGET_DIR_PATH resolved from project_mappings.json: '$TARGET_DIR_PATH'"
+
+          DESTINATION_DIR="${TARGET_DIR_PATH}/generated_briefs"
           echo "Creating destination directory: $DESTINATION_DIR"
-          mkdir -p "$DESTINATION_DIR"
-          
-          echo "Moving generated files: $JSON_FILENAME and $MD_FILENAME"
+          mkdir -p "$DESTINATION_DIR" # Ensures the directory exists
+
+          echo "Attempting to move generated files to '$DESTINATION_DIR/'"
           mv "$JSON_FILENAME" "$DESTINATION_DIR/"
           mv "$MD_FILENAME" "$DESTINATION_DIR/"
-          echo "Files moved successfully."
+          echo "mv commands executed. Checking results..."
+
+          # --- DEBUGGING: Verify files are gone from root and present in destination ---
+          echo "--- DEBUG: Contents of repository root AFTER move (should be empty of brief files) ---"
+          ls -l
+          echo "-----------------------------------------------------------------"
+          echo "--- DEBUG: Contents of destination directory ('$DESTINATION_DIR') ---"
+          ls -l "$DESTINATION_DIR"
+          echo "-----------------------------------------------------------------"
           
           # Pass the final directory path to the commit step
           echo "commit_path=${DESTINATION_DIR}" >> $GITHUB_OUTPUT
@@ -93,5 +111,4 @@ jobs:
           commit_message: "feat(autogen): Add generated briefs for $(jq -r '.project_metadata.project_id_prefix' $OPS_FILE_PATH) [skip ci]"
           commit_user_name: "Chiron Guild Scribe [bot]"
           commit_user_email: "actions@github.com"
-          # The file pattern now uses the output from the consolidated step
           file_pattern: "${{ steps.process-briefs.outputs.commit_path }}/*"
