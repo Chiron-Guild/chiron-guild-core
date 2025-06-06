@@ -15,11 +15,12 @@ jobs:
     
     env:
       OPS_FILE_PATH: "Projects/input_ops.json"
-      GEMINI_MODEL: "gemini-1.5-flash-preview-05-20"
+      GEMINI_MODEL: "gemini-2.5-flash-preview-05-20"
       PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/review_generation_prompt_template.txt" 
       PROJECT_MAPPINGS_FILE: "project_mappings.json"
       BASE_OUTPUT_JSON: "_generated_briefs_to_create.json"
       BASE_OUTPUT_MD: "_generated_briefs_for_review.md"
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
     steps:
       - name: Checkout Repository
@@ -36,6 +37,7 @@ jobs:
       - name: Read Metadata from JSON and Set Environment
         id: metadata
         run: |
+          # This step correctly adds more variables to the job's environment for subsequent steps
           PROJECT_ID_PREFIX=$(jq -r '.project_metadata.project_id_prefix' ${{ env.OPS_FILE_PATH }})
           echo "PROJECT_ID_FROM_FILE=${PROJECT_ID_PREFIX}" >> $GITHUB_ENV
           
@@ -67,29 +69,22 @@ jobs:
           echo "TIMESTAMPED_MD_OUTPUT=${TIMESTAMPED_MD}" >> $GITHUB_ENV
           
           python .github/scripts/generate_briefs_for_review.py \
-            --ops_file "${{ env.OPS_FILE_PATH }}" \
-            # CORRECTED SYNTAX: Using $VAR for step-generated variables
+            --ops_file "$OPS_FILE_PATH" \
             --project_id_cli_arg "$PROJECT_ID_FROM_FILE" \
             --context_label "$CONTEXT_LABEL_FROM_FILE" \
             --assignee "$ASSIGNEE_FROM_FILE" \
-            --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}" \
-            --project_mappings_file "${{ env.PROJECT_MAPPINGS_FILE }}" \
-            --model_name "${{ env.GEMINI_MODEL }}" \
+            --prompt_template_path "$PROMPT_TEMPLATE_PATH" \
+            --project_mappings_file "$PROJECT_MAPPINGS_FILE" \
+            --model_name "$GEMINI_MODEL" \
             --output_json_file "$TIMESTAMPED_JSON" \
             --output_md_file "$TIMESTAMPED_MD"
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Prepare and Move Generated Files
         run: |
           DESTINATION_DIR="${TARGET_DIR_PATH}/Generated Briefs"
-          echo "Creating destination directory: $DESTINATION_DIR"
           mkdir -p "$DESTINATION_DIR"
-          
-          echo "Moving generated files..."
           mv "$TIMESTAMPED_JSON_OUTPUT" "$DESTINATION_DIR/"
           mv "$TIMESTAMPED_MD_OUTPUT" "$DESTINATION_DIR/"
-          echo "Files moved successfully."
 
       - name: Commit Generated Briefs
         uses: stefanzweifel/git-auto-commit-action@v5
