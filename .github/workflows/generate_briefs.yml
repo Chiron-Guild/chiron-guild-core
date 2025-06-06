@@ -15,7 +15,7 @@ jobs:
     
     env:
       OPS_FILE_PATH: "Projects/input_ops.json"
-      GEMINI_MODEL: "gemini-2.5-flash-preview-05-20"
+      GEMINI_MODEL: "gemini-1.5-flash-preview-05-20"
       PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/review_generation_prompt_template.txt" 
       PROJECT_MAPPINGS_FILE: "project_mappings.json"
       BASE_OUTPUT_JSON: "_generated_briefs_to_create.json"
@@ -36,9 +36,15 @@ jobs:
       - name: Read Metadata from JSON and Set Environment
         id: metadata
         run: |
-          echo "Reading metadata from ${{ env.OPS_FILE_PATH }}"
           PROJECT_ID_PREFIX=$(jq -r '.project_metadata.project_id_prefix' ${{ env.OPS_FILE_PATH }})
           echo "PROJECT_ID_FROM_FILE=${PROJECT_ID_PREFIX}" >> $GITHUB_ENV
+          
+          CONTEXT_LABEL=$(jq -r '.project_metadata.context_label' ${{ env.OPS_FILE_PATH }})
+          echo "CONTEXT_LABEL_FROM_FILE=${CONTEXT_LABEL}" >> $GITHUB_ENV
+          
+          ASSIGNEE=$(jq -r '.project_metadata.default_assignee' ${{ env.OPS_FILE_PATH }})
+          echo "ASSIGNEE_FROM_FILE=${ASSIGNEE}" >> $GITHUB_ENV
+          
           TARGET_DIR_PATH=$(jq -r --arg projid "$PROJECT_ID_PREFIX" '.[$projid].dir_path' ${{ env.PROJECT_MAPPINGS_FILE }})
           echo "TARGET_DIR_PATH=${TARGET_DIR_PATH}" >> $GITHUB_ENV
 
@@ -55,13 +61,20 @@ jobs:
       - name: Run Brief Generation for Review Script
         id: generate-script
         run: |
-          TIMESTAMPED_JSON="${{ steps.timestamp.outputs.TIMESTAMP }}${{ env.BASE_OUTPUT_JSON }}"
-          TIMESTAMPED_MD="${{ steps.timestamp.outputs.TIMESTAMP }}${{ env.BASE_OUTPUT_MD }}"
+          TIMESTAMPED_JSON="${TIMESTAMP}${BASE_OUTPUT_JSON}"
+          TIMESTAMPED_MD="${TIMESTAMP}${BASE_OUTPUT_MD}"
           echo "TIMESTAMPED_JSON_OUTPUT=${TIMESTAMPED_JSON}" >> $GITHUB_ENV
           echo "TIMESTAMPED_MD_OUTPUT=${TIMESTAMPED_MD}" >> $GITHUB_ENV
           
           python .github/scripts/generate_briefs_for_review.py \
-            # ... all script arguments ...
+            --ops_file "${{ env.OPS_FILE_PATH }}" \
+            # CORRECTED SYNTAX: Using $VAR for step-generated variables
+            --project_id_cli_arg "$PROJECT_ID_FROM_FILE" \
+            --context_label "$CONTEXT_LABEL_FROM_FILE" \
+            --assignee "$ASSIGNEE_FROM_FILE" \
+            --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}" \
+            --project_mappings_file "${{ env.PROJECT_MAPPINGS_FILE }}" \
+            --model_name "${{ env.GEMINI_MODEL }}" \
             --output_json_file "$TIMESTAMPED_JSON" \
             --output_md_file "$TIMESTAMPED_MD"
         env:
@@ -69,19 +82,19 @@ jobs:
 
       - name: Prepare and Move Generated Files
         run: |
-          DESTINATION_DIR="${{ env.TARGET_DIR_PATH }}/Generated Briefs"
+          DESTINATION_DIR="${TARGET_DIR_PATH}/Generated Briefs"
           echo "Creating destination directory: $DESTINATION_DIR"
           mkdir -p "$DESTINATION_DIR"
           
           echo "Moving generated files..."
-          mv "${{ env.TIMESTAMPED_JSON_OUTPUT }}" "$DESTINATION_DIR/"
-          mv "${{ env.TIMESTAMPED_MD_OUTPUT }}" "$DESTINATION_DIR/"
+          mv "$TIMESTAMPED_JSON_OUTPUT" "$DESTINATION_DIR/"
+          mv "$TIMESTAMPED_MD_OUTPUT" "$DESTINATION_DIR/"
           echo "Files moved successfully."
 
       - name: Commit Generated Briefs
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "feat(autogen): Add generated briefs for ${{ env.PROJECT_ID_FROM_FILE }} [skip ci]"
+          commit_message: "feat(autogen): Add generated briefs for $PROJECT_ID_FROM_FILE [skip ci]"
           commit_user_name: "Chiron Guild Scribe [bot]"
           commit_user_email: "actions@github.com"
-          file_pattern: "${{ env.TARGET_DIR_PATH }}/Generated Briefs/*"
+          file_pattern: "${TARGET_DIR_PATH}/Generated Briefs/*"
