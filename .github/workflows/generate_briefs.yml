@@ -3,7 +3,7 @@ name: Generate Guild Op Briefs for Review
 on:
   push:
     paths:
-      - 'PROJECTS & INITIATIVES/input_ops.json' # Path to your input JSON
+      - 'archives/input_ops.json' # FIX #1: Correct trigger path
 
 permissions:
   contents: read 
@@ -12,16 +12,18 @@ jobs:
   generate_for_review:
     runs-on: ubuntu-latest
     env:
-      PROJECT_ID: "CCG" 
+      # NOTE: PROJECT_ID is now set here for this specific project. 
+      # For other projects, you'd change this value or make the workflow more dynamic.
+      PROJECT_ID_PREFIX: "CCG" 
       CONTEXT_LABEL: "Context:PERS" 
       ASSIGNEE: "Kin-Caid"
-      REPO_NAME: ${{ github.repository }}
-      OPS_FILE_PATH: "PROJECTS & INITIATIVES/input_ops.json" 
-      # --- UPDATED TO THE NEW, RICHER PROMPT TEMPLATE ---
+      # FIX #1: Correct file path variable
+      OPS_FILE_PATH: "archives/input_ops.json" 
       PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/review_generation_prompt_template.txt" 
       OUTPUT_JSON_FILE: "_generated_briefs_to_create.json"
       OUTPUT_MD_FILE: "_generated_briefs_for_review.md"
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      # PROJECT_MAPPINGS_FILE is needed by the script, defaults to root
+      PROJECT_MAPPINGS_FILE: "project_mappings.json"
 
     steps:
       - name: Checkout Repository
@@ -38,16 +40,19 @@ jobs:
           pip install google-generativeai 
 
       - name: Run Brief Generation for Review Script
+        id: generate-script
         run: |
           python .github/scripts/generate_briefs_for_review.py \
             --ops_file "${{ env.OPS_FILE_PATH }}" \
-            --project_id "${{ env.PROJECT_ID }}" \
+            --project_id_cli_arg "${{ env.PROJECT_ID_PREFIX }}" \
             --context_label "${{ env.CONTEXT_LABEL }}" \
             --assignee "${{ env.ASSIGNEE }}" \
             --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}" \
             --output_json_file "${{ env.OUTPUT_JSON_FILE }}" \
-            --output_md_file "${{ env.OUTPUT_MD_FILE }}"
+            --output_md_file "${{ env.OUTPUT_MD_FILE }}" \
+            --project_mappings_file "${{ env.PROJECT_MAPPINGS_FILE }}"
         env:
+          # Secret is passed directly to the step's environment
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Upload Generated Briefs for Review (JSON)
