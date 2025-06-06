@@ -1,51 +1,85 @@
 {
-  "project_metadata": {
-    "project_id_prefix": "CCG",
-    "context_label": "Context:PERS",
-    "default_assignee": "Kin-Caid"
-    "version": "1.0.1" 
-  },
-  "project_name": "Creek Connections - JavaScript Game Development",
-  "meta_objectives": [
-    {
-      "id": "M1",
-      "text": "To empower effective community engagement and data-driven strategic planning for watershed resilience through the delivery of an interactive, automated digital game."
-    }
-    // ... rest of meta_objectives ...
-  ],
-  "project_sectors": [
-    {
-      "sector_id": 1,
-      "sector_name": "Core Game Mechanics Automation",
-      "sector_summary": "Implement the fundamental game logic, rules engine, and automated calculations (such as water flow, O&M, and scoring) as defined in the V2.2 feature set.",
-      "alignment_with_meta_objectives": "This directly supports the 'automated digital game' aspect critical to M1, M2, M3, and M4, forming the 'robust' engineering backbone (M4)."
-    }
-    // ... rest of project_sectors ...
-  ],
-  "guild_ops": [
-    {
-      "sector_id": 1,
-      "op_title": "Formalize V2.2 Core Game Mechanics & Calculation Rules from Miro",
-      "op_type": "DOC",
-      "primary_deliverable": "A comprehensive technical specification document translating Miro rules into pseudo-code/algorithmic descriptions."
+    "project_metadata": {
+        "project_id_prefix": "CCG",
+        "context_label": "Context:PERS",
+        "default_assignee": "Kin-Caid",
+        "version": "1.0.1"
     },
-    {
-      "sector_id": 1,
-      "op_title": "Codify Core Game Data & Infrastructure Parameters (GameData Module)",
-      "op_type": "DEV",
-      "primary_deliverable": "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data as constants."
-    },
-    {
-      "sector_id": 2,
-      "op_title": "Develop Interactive Watershed Map Renderer Component",
-      "op_type": "DEV",
-      "primary_deliverable": "A functional JavaScript component rendering the game's watershed map with user interaction capabilities."
-    },
-    {
-      "sector_id": 3,
-      "op_title": "Define Data Structures for Campaign Phases & Event Cards",
-      "op_type": "DOC",
-      "primary_deliverable": "A technical document specifying data structures for multi-phase campaign progression and Event Card format/content."
-    }
-  ]
+    "project_name": "Creek Connections - JavaScript Game Development",
+    "meta_objectives": [
+        {
+            "id": "M1",
+            "text": "To empower effective community engagement and data-driven strategic planning for watershed resilience through the delivery of an interactive, automated digital game."
+        },
+        {
+            "id": "M2",
+            "text": "To solidify the Chiron Guild's leadership in civic technology by delivering an automated digital game that effectively educates stakeholders and generates actionable insights for sustainable infrastructure."
+        },
+        {
+            "id": "M3",
+            "text": "To pioneer a replicable model for interactive policy engagement by creating a scalable, automated digital game that translates complex systems into accessible learning experiences for diverse stakeholders."
+        },
+        {
+            "id": "M4",
+            "text": "To showcase the Chiron Guild's 'Precision Shell' by engineering a robust, automated digital game that revolutionizes stakeholder education on infrastructure management, thereby supplanting less effective traditional engagement methods."
+        }
+    ],
+    "project_sectors": [
+        {
+            "sector_id": 1,
+            "sector_name": "Core Game Mechanics Automation",
+            "sector_summary": "Implement the fundamental game logic, rules engine, and automated calculations (such as water flow, O&M, and scoring) as defined in the V2.2 feature set.",
+            "alignment_with_meta_objectives": "This directly supports the 'automated digital game' aspect critical to M1, M2, M3, and M4, forming the 'robust' engineering backbone (M4)."
+        },
+        {
+            "sector_id": 2,
+            "sector_name": "Interactive User Interface & Experience (UI/UX)",
+            "sector_summary": "Develop the dynamic visual interface, interactive map, and user controls that allow players to engage intuitively with the game and receive real-time feedback.",
+            "alignment_with_meta_objectives": "This enables 'interactive' engagement (M1, M3), 'educates stakeholders' (M2), and translates 'complex systems into accessible learning experiences' (M3)."
+        },
+        {
+            "sector_id": 3,
+            "sector_name": "Campaign Progression & Content Integration",
+            "sector_summary": "Implement the multi-phase campaign structure, manage game state across phases, and integrate all specific game content such as event cards and phase-specific objectives.",
+            "alignment_with_meta_objectives": "This structures the 'learning experiences' (M3) and ensures the game effectively 'educates stakeholders' (M2) on 'infrastructure management' (M4) through a complete gameplay cycle."
+        },
+        {
+            "sector_id": 4,
+            "sector_name": "Gameplay Data Logging & Analytics Framework",
+            "sector_summary": "Establish robust systems for automatically collecting, storing, and enabling the export of player actions and game outcome data to support analysis and insights.",
+            "alignment_with_meta_objectives": "This is crucial for 'data-driven strategic planning' (M1) and generating 'actionable insights' (M2), showcasing a tangible output beyond just the game itself."
+        },
+        {
+            "sector_id": 5,
+            "sector_name": "Finalization, Accessibility, & Deployment",
+            "sector_summary": "Refine the game through comprehensive testing, ensure adherence to accessibility standards for broader public use, and prepare the application for stable web-based deployment.",
+            "alignment_with_meta_objectives": "This ensures 'effective community engagement' (M1) through a polished and 'accessible' (M3) product, solidifying 'Chiron Guild's leadership' (M2) and showcasing the 'Precision Shell' (M4) through a high-quality deliverable."
+        }
+    ],
+    "guild_ops": [
+        {
+            "sector_id": 1,
+            "op_title": "Formalize V2.2 Core Game Mechanics & Calculation Rules from Miro",
+            "op_type": "DOC",
+            "primary_deliverable": "A comprehensive technical specification document translating Miro rules into pseudo-code/algorithmic descriptions."
+        },
+        {
+            "sector_id": 1,
+            "op_title": "Codify Core Game Data & Infrastructure Parameters (GameData Module)",
+            "op_type": "DEV",
+            "primary_deliverable": "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data as constants."
+        },
+        {
+            "sector_id": 2,
+            "op_title": "Develop Interactive Watershed Map Renderer Component",
+            "op_type": "DEV",
+            "primary_deliverable": "A functional JavaScript component rendering the game's watershed map with user interaction capabilities."
+        },
+        {
+            "sector_id": 3,
+            "op_title": "Define Data Structures for Campaign Phases & Event Cards",
+            "op_type": "DOC",
+            "primary_deliverable": "A technical document specifying data structures for multi-phase campaign progression and Event Card format/content."
+        }
+    ]
 }
