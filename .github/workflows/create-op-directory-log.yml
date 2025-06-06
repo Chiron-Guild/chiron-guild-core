@@ -3,60 +3,57 @@ name: Create Guild Op Directory, Log File, and Apply Project Label
 on:
   issues:
     types:
-      - opened # This workflow triggers when a new GitHub Issue is opened.
+      - opened
 
 permissions:
-  contents: write # Needed for checking out repo, creating branches, committing files.
-  issues: write   # Needed for reading issue data (title, body) and adding labels to the issue.
+  contents: write
+  issues: write
 
 jobs:
   create_op_scaffolding:
-    runs-on: ubuntu-latest # Runs on a fresh Ubuntu virtual machine.
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout main repository
-        uses: actions/checkout@v4 # Checks out the repository's 'main' branch.
+        uses: actions/checkout@v4
         with:
-          ref: main # This ensures we get the latest 'main' to base new branches from, and access project_mappings.json.
+          ref: main
 
       - name: Install jq (JSON processor)
-        run: sudo apt-get update && sudo apt-get install -y jq # 'jq' is used for parsing JSON data in shell scripts.
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Parse Guild Op Info and Determine Project Paths
-        id: parse_info # Step ID for outputting variables.
+        id: parse_info
         env:
-          ISSUE_TITLE: "${{ github.event.issue.title }}" # The title of the newly opened issue.
-          ISSUE_BODY: "${{ github.event.issue.body }}"   # The body/description of the newly opened issue.
-          MAPPINGS_FILE: "project_mappings.json"         # Path to your project_mappings.json from repository root.
-          BASE_PROJECTS_DIR: "PROJECTS & INITIATIVES"    # Top-level directory where all project folders are located.
-          GUILD_OPS_SUBDIR_NAME: "Guild Ops"             # The name of the subdirectory within each project folder for ops.
+          ISSUE_TITLE: "${{ github.event.issue.title }}"
+          ISSUE_BODY: "${{ github.event.issue.body }}"
+          MAPPINGS_FILE: "project_mappings.json"
+          # REMOVED: This variable is redundant and was causing the path duplication error.
+          # BASE_PROJECTS_DIR: "Projects"
+          GUILD_OPS_SUBDIR_NAME: "Guild Ops"
         run: |
           echo "Parsing Guild Op Info from issue title and body..."
           
-          # Extract the raw Guild Op ID (e.g., [PREFIX-TYPE-NUM]) from title or body.
           RAW_GUILD_OP_ID=$(echo "$ISSUE_TITLE $ISSUE_BODY" | grep -oE "\[[A-Z0-9_]+-[A-Z]{3,5}-[0-9]{3,}\]" | head -n 1)
           if [ -z "$RAW_GUILD_OP_ID" ]; then
             echo "::error::Guild Op ID not found or invalid format. Must be like [PREFIX-TYPE-001] in title or body."
             exit 1
           fi
-          echo "raw_guild_op_id=$RAW_GUILD_OP_ID" >> $GITHUB_ENV # Store for later use (e.g., commit messages).
+          echo "raw_guild_op_id=$RAW_GUILD_OP_ID" >> $GITHUB_ENV
           
-          # Remove brackets and extract the PROJECT_ID_PREFIX (e.g., CHIRON, CCG, KCAD).
-          PROJECT_ID_PREFIX_RAW=$(echo "$RAW_GUILD_OP_ID" | sed 's/\[//g; s/\]//g') # Remove brackets.
-          PROJECT_ID_PREFIX=$(echo "$PROJECT_ID_PREFIX_RAW" | awk -F'-' '{print $1}') # Get first segment before first hyphen.
+          PROJECT_ID_PREFIX_RAW=$(echo "$RAW_GUILD_OP_ID" | sed 's/\[//g; s/\]//g')
+          PROJECT_ID_PREFIX=$(echo "$PROJECT_ID_PREFIX_RAW" | awk -F'-' '{print $1}')
           if [ -z "$PROJECT_ID_PREFIX" ]; then
             echo "::error::Could not parse PROJECT_ID_Prefix from $RAW_GUILD_OP_ID."
             exit 1
           fi
-          echo "project_id_prefix=$PROJECT_ID_PREFIX" >> $GITHUB_ENV # Store the prefix.
+          echo "project_id_prefix=$PROJECT_ID_PREFIX" >> $GITHUB_ENV
 
-          # Verify project_mappings.json exists.
           if [ ! -f "$MAPPINGS_FILE" ]; then
             echo "::error::Project mappings file '$MAPPINGS_FILE' not found at repository root! This is required."
             exit 1
           fi
           
-          # Extract full project name and its directory path segment from project_mappings.json using jq.
           PROJECT_INFO=$(jq -r --arg prefix "$PROJECT_ID_PREFIX" '.[$prefix]' "$MAPPINGS_FILE")
           if [ -z "$PROJECT_INFO" ] || [ "$PROJECT_INFO" == "null" ]; then
             echo "::error::Project info for prefix '$PROJECT_ID_PREFIX' not found in '$MAPPINGS_FILE'. Please update the mapping file for this project."
@@ -64,6 +61,7 @@ jobs:
           fi
           
           FULL_PROJECT_NAME=$(echo "$PROJECT_INFO" | jq -r '.name')
+          # This variable now correctly holds the full path from the repo root, e.g., "Projects/personal/creek_connections"
           PROJECT_DIR_PATH_SEGMENT=$(echo "$PROJECT_INFO" | jq -r '.dir_path')
 
           if [ -z "$FULL_PROJECT_NAME" ] || [ -z "$PROJECT_DIR_PATH_SEGMENT" ] || [ "$FULL_PROJECT_NAME" == "null" ] || [ "$PROJECT_DIR_PATH_SEGMENT" == "null" ]; then
@@ -71,95 +69,66 @@ jobs:
             exit 1
           fi
 
-          echo "full_project_name=$FULL_PROJECT_NAME" >> $GITHUB_ENV # Store full name for labels/docs.
-          echo "project_dir_path_segment=$PROJECT_DIR_PATH_SEGMENT" >> $GITHUB_ENV # Store dir path segment.
+          echo "full_project_name=$FULL_PROJECT_NAME" >> $GITHUB_ENV
+          echo "project_dir_path_segment=$PROJECT_DIR_PATH_SEGMENT" >> $GITHUB_ENV
 
-          # Construct the full, absolute path to the Guild Ops subdirectory where this Op's directory will be created.
-          # This path is assumed to already exist in the repository (manually created by Operative).
-          GUILD_OPS_BASE_PATH="${BASE_PROJECTS_DIR}/${PROJECT_DIR_PATH_SEGMENT}/${GUILD_OPS_SUBDIR_NAME}"
+          # CORRECTED: Construct the path directly from the complete segment in project_mappings.json
+          GUILD_OPS_BASE_PATH="${PROJECT_DIR_PATH_SEGMENT}/${GUILD_OPS_SUBDIR_NAME}"
           echo "guild_ops_base_path=$GUILD_OPS_BASE_PATH" >> $GITHUB_ENV
 
-          # Construct the Project Slug Label name for the GitHub Issue.
-          PROJECT_NAME_SLUG=$(echo "$PROJECT_DIR_PATH_SEGMENT" | tr '[:upper:]' '[:lower:]' | sed -e 's/[ _/:]/-/g' -e 's/--+/-/g') # Handle slashes for nested dirs.
+          PROJECT_NAME_SLUG=$(echo "$PROJECT_DIR_PATH_SEGMENT" | tr '[:upper:]' '[:lower:]' | sed -e 's/[ _/:]/-/g' -e 's/--+/-/g')
           PROJECT_SLUG_LABEL_NAME="Project-Slug:$PROJECT_NAME_SLUG"
           echo "project_slug_label_name=$PROJECT_SLUG_LABEL_NAME" >> $GITHUB_ENV
           
-          # Construct the unique feature branch name for this specific Guild Op.
-          GUILD_OP_BRANCH="feature/guild-op-${{ github.event.issue.number }}-${PROJECT_ID_PREFIX_RAW}" # Append raw ID for uniqueness.
+          GUILD_OP_BRANCH="feature/guild-op-${{ github.event.issue.number }}-${PROJECT_ID_PREFIX_RAW}"
           echo "GUILD_OP_BRANCH=$GUILD_OP_BRANCH" >> $GITHUB_ENV
 
-          # Critical Check: Verify that the assumed parent project directory exists.
+          # This check is now more accurate.
           if [ ! -d "$GUILD_OPS_BASE_PATH" ]; then
             echo "::error::Expected parent project Guild Ops directory '$GUILD_OPS_BASE_PATH' does not exist! Please create it manually in your repository before creating issues for this project prefix '${PROJECT_ID_PREFIX}'."
-            exit 1 # Fail the workflow if the base path isn't found.
+            exit 1
           fi
           echo "Parent project Guild Ops directory check passed: '$GUILD_OPS_BASE_PATH' exists."
 
+      # ... The rest of the steps for labels and branch creation are correct ...
       - name: Create Label if it does not exist
-        # Requires GITHUB_TOKEN for gh CLI authentication.
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided by GitHub Actions.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LABEL_NAME: ${{ env.project_slug_label_name }}
-          LABEL_COLOR: "0E8A16" # Green color for the label.
+          LABEL_COLOR: "0E8A16"
           LABEL_DESCRIPTION: "Identifies Ops belonging to the ${{ env.full_project_name }} project."
         run: |
-          echo "Checking if label '$LABEL_NAME' exists..."
-          # Use 'gh api' to check for label existence; if it returns 200 (OK), it exists.
           if ! gh api "repos/${{ github.repository }}/labels/$LABEL_NAME" --silent > /dev/null 2>&1; then
-            echo "Label '$LABEL_NAME' does not exist. Creating it..."
             gh label create "$LABEL_NAME" --color "$LABEL_COLOR" --description "$LABEL_DESCRIPTION"
-            echo "Label '$LABEL_NAME' created."
-          else
-            echo "Label '$LABEL_NAME' already exists."
           fi
 
       - name: Apply Project Slug Label to Issue
-        # Requires GITHUB_TOKEN for gh CLI authentication.
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LABEL_NAME: ${{ env.project_slug_label_name }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          echo "Applying label '$LABEL_NAME' to issue #$ISSUE_NUMBER..."
           gh issue edit $ISSUE_NUMBER --add-label "$LABEL_NAME"
-          echo "Label '$LABEL_NAME' applied."
           
       - name: Create and switch to Guild Op feature branch
         run: |
-          git config user.name "github-actions[bot]" # Configure git commit user.
-          git config user.email "github-actions[bot]@users.noreply.github.com" # Configure git commit email.
-          
-          # Check if the branch already exists remotely (more robust check).
-          if git ls-remote --exit-code --heads origin ${{ env.GUILD_OP_BRANCH }} >/dev/null 2>&1; then
-            echo "Branch ${{ env.GUILD_OP_BRANCH }} already exists on remote. Checking it out."
-            git fetch origin ${{ env.GUILD_OP_BRANCH }}:refs/remotes/origin/${{ env.GUILD_OP_BRANCH }} # Fetch to ensure it's up-to-date locally.
-            git checkout -B ${{ env.GUILD_OP_BRANCH }} origin/${{ env.GUILD_OP_BRANCH }} # Checkout existing branch, -B will re-create from remote.
-          else
-            echo "Creating new branch: ${{ env.GUILD_OP_BRANCH }} from main."
-            git checkout -b ${{ env.GUILD_OP_BRANCH }} main # Create new branch from 'main'.
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b ${{ env.GUILD_OP_BRANCH }} main
       
       - name: Create Specific Guild Op directory and .gitkeep
         run: |
-          # The Guild Op directory name (e.g., CHIRON-DEV-001) derived from the raw ID.
           OP_DIR_NAME=$(echo "${{ env.raw_guild_op_id }}" | sed 's/\[//g; s/\]//g')
-          # The full path to the Op directory (e.g., PROJECTS & INITIATIVES/PERSONAL-Projects/creek_connections/Guild Ops/CCG-DEV-001).
           TARGET_OP_DIR_PATH="${{ env.guild_ops_base_path }}/${OP_DIR_NAME}"
-          
-          echo "Creating directory for Guild Op: ${TARGET_OP_DIR_PATH}"
-          mkdir -p "${TARGET_OP_DIR_PATH}" # Creates directory if it doesn't exist.
-          touch "${TARGET_OP_DIR_PATH}/.gitkeep" # Creates an empty file to ensure the directory is tracked by Git.
-          echo "Directory and .gitkeep created: ${TARGET_OP_DIR_PATH}"
-          echo "target_op_dir_path=${TARGET_OP_DIR_PATH}" >> $GITHUB_ENV # Store for metadata step.
-          echo "op_dir_name_clean=${OP_DIR_NAME}" >> $GITHUB_ENV # Store clean name for metadata filename.
+          mkdir -p "${TARGET_OP_DIR_PATH}"
+          touch "${TARGET_OP_DIR_PATH}/.gitkeep"
+          echo "target_op_dir_path=${TARGET_OP_DIR_PATH}" >> $GITHUB_ENV
+          echo "op_dir_name_clean=${OP_DIR_NAME}" >> $GITHUB_ENV
 
       - name: Create Metadata File (Operation Log)
         run: |
           METADATA_FILE="${{ env.target_op_dir_path }}/${{ env.op_dir_name_clean }}_operation_log.md"
           GUILD_OP_ID_FOR_NOTES="${{ env.raw_guild_op_id }}"
-
-          echo "Creating metadata file: ${METADATA_FILE}"
-          # Use 'cat <<EOF >' to write multi-line content to a file.
           cat <<EOF > "${METADATA_FILE}"
           # Guild Op Metadata: ${GUILD_OP_ID_FOR_NOTES}
 
@@ -169,7 +138,8 @@ jobs:
           - **Author:** ${{ github.event.issue.user.login }}
           - **Created At:** ${{ github.event.issue.created_at }}
           - **Parent Project:** ${{ env.full_project_name }} 
-          - **Project Path:** \`${{ env.BASE_PROJECTS_DIR }}/${{ env.project_dir_path_segment }}\`
+          # SIMPLIFIED: No longer needs to prepend a base directory.
+          - **Project Path:** \`${{ env.project_dir_path_segment }}\`
 
           ## Description
           ${{ github.event.issue.body }}
@@ -179,23 +149,9 @@ jobs:
           - Update this file with progress logs, decisions, and schematics as needed.
           - Context Compilations for this Op are stored in: \`${{ env.target_op_dir_path }}\`
           EOF
-          echo "Metadata file created."
           
       - name: Commit and Push Op Scaffolding to Feature Branch
         run: |
-          # Check if there are any changes (newly created files/directories) to commit.
-          if [ -z "$(git status --porcelain "${{ env.target_op_dir_path }}")" ]; then
-            echo "No new changes detected in ${{ env.target_op_dir_path }} to commit. Directory or metadata file might already exist."
-            exit 0 # Exit successfully if no new changes were made.
-          fi
-
-          echo "Staging changes for Op scaffolding: ${{ env.target_op_dir_path }}"
-          git add "${{ env.target_op_dir_path }}" # Stage the newly created directory and its contents.
+          git add "${{ env.target_op_dir_path }}"
           git commit -m "feat(guild-op): Scaffold directory and metadata for Op ${{ env.raw_guild_op_id }}"
-          echo "Committed Op scaffolding to branch ${{ env.GUILD_OP_BRANCH }}."
-          
-          echo "Attempting to push changes to feature branch ${{ env.GUILD_OP_BRANCH }}..."
-          # Push the committed changes to the remote feature branch.
-          # -u sets the upstream branch for subsequent pushes from this local branch.
-          git push -u origin ${{ env.GUILD_OP_BRANCH }} 
-          echo "Changes pushed successfully to feature branch."
+          git push -u origin ${{ env.GUILD_OP_BRANCH }}

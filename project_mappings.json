@@ -1,10 +1,10 @@
 {
   "CCG": {
     "name": "Creek Connections Game",
-    "dir_path": "PROJECTS & INITIATIVES/PERSONAL-Projects/creek_connections"
+    "dir_path": "Projects/personal/creek_connections"
   },
   "CHIRON": {
     "name": "Chiron Guild Core Infrastructure",
-    "dir_path": "PROJECTS & INITIATIVES/CHIRON-Guild-Self-Assembly"
+    "dir_path": "Projects/chiron/phase_0"
   }
 }

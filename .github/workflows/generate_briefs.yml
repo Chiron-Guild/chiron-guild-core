@@ -3,23 +3,23 @@ name: Generate Guild Op Briefs for Review
 on:
   push:
     paths:
-      - 'PROJECTS & INITIATIVES/input_ops.json'
+      # Updated to the new, simplified path
+      - 'Projects/input_ops.json'
 
 permissions:
   contents: write
 
 jobs:
   generate_for_review:
-    # NEW: Prevent infinite loops. If the commit is from this bot, don't run.
     if: "contains(github.event.head_commit.message, '[skip ci]') == false"
     runs-on: ubuntu-latest
     
     env:
-      OPS_FILE_PATH: "PROJECTS & INITIATIVES/input_ops.json"
+      # Updated to the new, simplified path
+      OPS_FILE_PATH: "Projects/input_ops.json"
       GEMINI_MODEL: "gemini-2.5-flash-preview-05-20"
       PROMPT_TEMPLATE_PATH: ".github/scripts/prompts/review_generation_prompt_template.txt" 
       PROJECT_MAPPINGS_FILE: "project_mappings.json"
-      # The base filenames are now defined here
       BASE_OUTPUT_JSON: "_generated_briefs_to_create.json"
       BASE_OUTPUT_MD: "_generated_briefs_for_review.md"
 
@@ -35,7 +35,6 @@ jobs:
       - name: Install jq (JSON Processor)
         run: sudo apt-get install -y jq
 
-      # UPDATED: Now reads project_id AND the target directory path
       - name: Read Metadata from JSON and Set Environment
         id: metadata
         run: |
@@ -45,11 +44,11 @@ jobs:
           echo "CONTEXT_LABEL_FROM_FILE=$(jq -r '.project_metadata.context_label' ${{ env.OPS_FILE_PATH }})" >> $GITHUB_ENV
           echo "ASSIGNEE_FROM_FILE=$(jq -r '.project_metadata.default_assignee' ${{ env.OPS_FILE_PATH }})" >> $GITHUB_ENV
           
-          # NEW: Read the target directory path from project_mappings.json
           TARGET_DIR_PATH=$(jq -r --arg projid "$PROJECT_ID_PREFIX" '.[$projid].dir_path' ${{ env.PROJECT_MAPPINGS_FILE }})
           echo "TARGET_DIR_PATH=${TARGET_DIR_PATH}" >> $GITHUB_ENV
 
-      # NEW: Generate a timestamp for the filenames
+      # ... The rest of the workflow (timestamp, python install, script run, commit) remains the same ...
+      # The 'Commit Generated Briefs' step will work perfectly as it uses the TARGET_DIR_PATH variable we set above.
       - name: Generate Timestamp
         id: timestamp
         run: |
@@ -61,19 +60,17 @@ jobs:
           pip install google-generativeai 
 
       - name: Run Brief Generation for Review Script
+        # ... this step does not need changes ...
         id: generate-script
         run: |
-          # Construct timestamped filenames
           TIMESTAMPED_JSON="${{ steps.timestamp.outputs.TIMESTAMP }}${{ env.BASE_OUTPUT_JSON }}"
           TIMESTAMPED_MD="${{ steps.timestamp.outputs.TIMESTAMP }}${{ env.BASE_OUTPUT_MD }}"
-
           echo "--- Script Inputs ---"
           echo "Project ID Prefix: ${{ env.PROJECT_ID_FROM_FILE }}"
           echo "Target Directory:  ${{ env.TARGET_DIR_PATH }}"
           echo "Output JSON file:  $TIMESTAMPED_JSON"
           echo "Output MD file:    $TIMESTAMPED_MD"
           echo "---------------------"
-          
           python .github/scripts/generate_briefs_for_review.py \
             --ops_file "${{ env.OPS_FILE_PATH }}" \
             --project_id_cli_arg "${{ env.PROJECT_ID_FROM_FILE }}" \
@@ -82,39 +79,25 @@ jobs:
             --prompt_template_path "${{ env.PROMPT_TEMPLATE_PATH }}" \
             --project_mappings_file "${{ env.PROJECT_MAPPINGS_FILE }}" \
             --model_name "${{ env.GEMINI_MODEL }}" \
-            # UPDATED: Pass the new timestamped filenames to the script
             --output_json_file "$TIMESTAMPED_JSON" \
             --output_md_file "$TIMESTAMPED_MD"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-      # UPDATED: This step is now replaced by the auto-commit action below
-      # We no longer upload artifacts, we commit them directly.
-
-      # NEW: Commit generated brief files to the project directory
       - name: Commit Generated Briefs
+        # ... this step also does not need changes ...
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          # REQUIRED: The commit message
           commit_message: "feat(autogen): Add generated briefs for ${{ env.PROJECT_ID_FROM_FILE }} [skip ci]"
-          
-          # The directory to commit. We will create it first.
           commit_user_name: "Chiron Guild Scribe [bot]"
           commit_user_email: "actions@github.com"
-          
-          # Define the file pattern to commit.
-          # First, create the destination directory and move the files there.
-          # The shell command runs before the commit action looks for files.
           prepare_for_commit: |
             DESTINATION_DIR="${{ env.TARGET_DIR_PATH }}/Generated Briefs"
             echo "Creating destination directory: $DESTINATION_DIR"
             mkdir -p "$DESTINATION_DIR"
-            
             echo "Moving generated files..."
             TIMESTAMPED_JSON="${{ steps.timestamp.outputs.TIMESTAMP }}${{ env.BASE_OUTPUT_JSON }}"
             TIMESTAMPED_MD="${{ steps.timestamp.outputs.TIMESTAMP }}${{ env.BASE_OUTPUT_MD }}"
             mv "$TIMESTAMPED_JSON" "$DESTINATION_DIR/"
             mv "$TIMESTAMPED_MD" "$DESTINATION_DIR/"
-
-          # The pattern of files to add to the commit.
           file_pattern: "${{ env.TARGET_DIR_PATH }}/Generated Briefs/*"
