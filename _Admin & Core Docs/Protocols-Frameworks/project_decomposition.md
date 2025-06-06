@@ -1,8 +1,8 @@
 # Protocol: LLM-Assisted Project Decomposition for the Chiron Guild
 
 **Operative:** Kin-Caid
-**Version: 1.1**
-**Date: 2025-06-04**
+**Version: 1.2** # UPDATED VERSION
+**Date: 2025-06-06** # UPDATED DATE
 **Objective:** To provide a standardized, LLM-augmented process for decomposing complex projects into a structured JSON format (input_ops.json). This JSON will define meta-objectives, project sectors, and discrete `Guild Ops`, suitable for input into automated brief generation systems. This protocol leverages a "Mythic Core, Precision Shell" approach.
 
 ---
@@ -17,32 +17,30 @@ This structured lifecycle ensures clarity, provides opportunities for review, an
 *   **Stage 1: LLM Priming (Operative & LLM)**
     *   Establish foundational context for the LLM regarding Chiron Guild terminology and ethos.
 *   **Stage 2: Project Definition & High-Level Structuring (Operative & LLM)**
-    *   **Task 2.1. Meta-Objective Definition:** Distill the project's core purpose into 3-5 Meta-Objectives (output: JSON snippet).
-    *   **Task 2.2. Strategic Chunking & Sector Definition:** Break down the project into 3-5 major Project Sectors, aligning them with Meta-Objectives (output: JSON snippet).
+    *   **Task 2.1. Meta-Objective Definition:** Distill the project's core purpose into 3-5 Meta-Objectives (output: JSON snippet). **(Utilize `decomposition_stage_2.1_meta_objectives.ipynb`)**
+    *   **Task 2.2. Strategic Chunking & Sector Definition:** Break down the project into 3-5 major Project Sectors, aligning them with Meta-Objectives (output: JSON snippet). **(Utilize `decomposition_stage_2.2_chunking_and_sectors.ipynb`)**
 *   **Stage 3: Granular Guild Op Identification (Operative & LLM - Iterative per Sector)**
-    *   For each defined Project Sector, generate a list of 5-10 discrete Guild Ops (output: JSON snippet per sector).
+    *   For each defined Project Sector, generate a list of 5-10 discrete Guild Ops (output: JSON snippet per sector). **(Utilize `decomp_task_3_granular_op_id.ipynb`)**
 *   **Stage 4: Assembling the `input_ops.json` File (Operative Task)**
-    *   Consolidate the project name, and the JSON outputs from Tasks 2.1, 2.2, and 3.1 into a single, canonical `archives/input_ops.json` file. This file serves as the master input for automated brief generation.
+    *   Consolidate the project name, project metadata, and the JSON outputs from Tasks 2.1, 2.2, and 3.1 into a single, canonical `Projects/input_ops.json` file. This file serves as the master input for automated brief generation.
 *   **Stage 5: Automated Brief Generation for Review (Operative Task & GitHub Action)**
-    *   The Operative pushes the `archives/input_ops.json` file to the repository.
+    *   The Operative pushes the `Projects/input_ops.json` file to the repository.
     *   This triggers the `Generate Guild Op Briefs for Review` GitHub Action (`generate_briefs.yml`).
     *   The Action uses an LLM to generate detailed brief proposals for each Op in `input_ops.json`.
-    *   The Action outputs two artifacts for download:
-        *   `_generated_briefs_for_review.md` (human-readable).
-        *   `_generated_briefs_to_create.json` (machine-readable, containing full proposed issue details).
-    *   The Operative reviews these artifacts and refines `_generated_briefs_to_create.json` if necessary.
-    *   The Operative cleans the processed Ops from `archives/input_ops.json`.
+    *   The Action **automatically commits** the generated briefs (e.g., `_generated_briefs_for_review.md` and `_generated_briefs_to_create.json`) to the specific project's `generated_briefs` directory (e.g., `Projects/personal/creek_connections/generated_briefs/`).
+    *   The Operative reviews these generated files directly in the repository and refines `_generated_briefs_to_create.json` if necessary.
+    *   The Operative cleans the processed Ops from `Projects/input_ops.json`.
 *   **Stage 6: Guild Op Brief Instantiation on GitHub Board (Issue Creation & Automated Archival)**
-    *   The Operative uses the finalized data from `_generated_briefs_to_create.json` to create new GitHub Issues (manually or via a future local script).
+    *   The Operative uses the finalized data from `_generated_briefs_to_create.json` (from the project's `generated_briefs` directory) to create new GitHub Issues (manually or via a future local script).
     *   The creation of each GitHub Issue automatically triggers the `Create Guild Op Directory and Log` GitHub Action (`create-op-directory-log.yml`).
-    *   This second Action scaffolds the `archives/[GUILD_OP_ID]/` directory and initial log file on a new feature branch for that Guild Op.
+    *   This second Action scaffolds the `Projects/[ProjectID-Slug]/Guild Ops/[GUILD_OP_ID]/` directory and initial log file on a new feature branch for that Guild Op.
 ---
 
 ## Stage 1. LLM Priming Protocol (Execute Once Per Session or As Needed)
 
 **Purpose:** To establish foundational context for the LLM, ensuring its responses align with Chiron Guild terminology, objectives, and operational ethos.
 
-**Prompt:**
+**LLM Prompt:**
 
 ```text
 You are an expert project decomposition assistant and strategic analyst for Operative Kin-Caid of the Chiron Guild.
@@ -249,7 +247,7 @@ Your goal is to assist Operative Kin-Caid by generating a list of 5-10 potential
     *   The overall **Project Meta-Objective(s)** (for broader context).
     *   The **Current Sector ID** (integer).
     *   The **Current Sector Name**.
-    *   The **Current Sector Summary**.
+    *   The **Current Sector Summary**.(edited)
 2.  For the specified Sector, generate a list of 5-10 potential granular Guild Ops.
 3.  **Output Format:** Generate your response as a **JSON array**. Each object in the array should represent a single Guild Op and MUST contain the following keys:
     *   `"sector_id"` (integer): The **Current Sector ID** provided in the input. This links the Op to its parent sector.
@@ -314,7 +312,9 @@ Task: Generate the JSON array of Guild Ops for this sector.
 
 **Operative Action for Stage 3:** 
 
-Run Task 3.1 for each Project Sector defined in Task 2.2. Collect all the JSON arrays of Guild Ops.
+1. Run Task 3.1 for each Project Sector defined in Task 2.2.
+2. Collect all the JSON arrays of Guild Ops.
+3. Utilize notebooks/decomp_task_3_granular_op_id.ipynb for interactive execution and review of this task.
 
 ## 4. Assembling the Final input_ops.json (Operative Task)
 
@@ -322,18 +322,25 @@ Run Task 3.1 for each Project Sector defined in Task 2.2. Collect all the JSON a
 
 **Process:**
 1. Create input_ops.json: Start a new JSON file.
-2. Add project_name: Define the top-level project_name string. This might be based on the initial user input for Task 2.1, potentially with a PROJECT_ID suffix if desired (e.g., "Creek Connections Game - CCG").
-3. Add meta_objectives: Copy the finalized JSON array of meta-objective objects from Task 2.1 and place it as the value for the meta_objectives key.
-4. Add project_sectors: Copy the finalized JSON array of project sector objects from Task 2.2 and place it as the value for the project_sectors key.
-5. Add guild_ops:
-6. Create an empty array as the value for the guild_ops key.
-7. Take all the individual JSON arrays of Guild Op objects generated from Task 3.1 (one array per sector).
-8. Concatenate these arrays into a single, flat list of Guild Op objects. This combined list becomes the value for the top-level guild_ops key.
+2. Add project_metadata: Include the top-level project_metadata object (e.g., project_id_prefix, context_label, default_assignee, version). This is the configuration for this project.
+3. Add project_name: Define the top-level project_name string.
+4. Add meta_objectives: Copy the finalized JSON array of meta-objective objects from Task 2.1 and place it as the value for the meta_objectives key.
+5. Add project_sectors: Copy the finalized JSON array of project sector objects from Task 2.2 and place it as the value for the project_sectors key.
+6. Add guild_ops:
+7. Create an empty array as the value for the guild_ops key.
+8. Take all the individual JSON arrays of Guild Op objects generated from Task 3.1 (one array per sector).
+9. Concatenate these arrays into a single, flat list of Guild Op objects. This combined list becomes the value for the top-level guild_ops key.
 
 **Target input_ops.json Schema:**
 
 ```text
 {
+  "project_metadata": {
+    "project_id_prefix": "string (e.g., CCG)",
+    "context_label": "string (e.g., Context:PERS)",
+    "default_assignee": "string (e.g., Kin-Caid)",
+    "version": "string (e.g., 1.0.0)"
+  },
   "project_name": "string (e.g., Creek Connections - JavaScript Game Development)",
   "meta_objectives": [
     {
@@ -367,6 +374,12 @@ Run Task 3.1 for each Project Sector defined in Task 2.2. Collect all the JSON a
 
 ```text
 {
+  "project_metadata": {
+    "project_id_prefix": "CHRN",
+    "context_label": "Context:CORE",
+    "default_assignee": "Kin-Caid",
+    "version": "1.0.0"
+  },
   "project_name": "Chiron Guild Internal Communications Hub - CHRN_COMMS_HUB",
   "meta_objectives": [
     { "id": "M1", "text": "To establish a secure, integrated..." }
@@ -389,7 +402,7 @@ Run Task 3.1 for each Project Sector defined in Task 2.2. Collect all the JSON a
 }
 ```
 
-**This input_ops.json file is now ready to be used by the generate_briefs_for_review.py script.**
+**TThis input_ops.json file, now located at Projects/input_ops.json, is ready to be used by the generate_briefs_for_review.py script.**
 
 
 
