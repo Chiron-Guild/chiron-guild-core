@@ -70,12 +70,12 @@ jobs:
             --output_md_file "$MD_FILENAME"
           echo "After script run:"
           ls -l
-                    
+
           # --- Part 4: Prepare and Move (from previous 'prepare-files' step) ---
           echo "--- Verifying created files ---"
           ls -l
           
-          DESTINATION_DIR="${TARGET_DIR_PATH}/Generated Briefs"
+          DESTINATION_DIR="${TARGET_DIR_PATH}/generated_briefs"
           echo "Creating destination directory: $DESTINATION_DIR"
           mkdir -p "$DESTINATION_DIR"
           
@@ -87,7 +87,7 @@ jobs:
           # Pass the final directory path to the commit step
           echo "commit_path=${DESTINATION_DIR}" >> $GITHUB_OUTPUT
 
-      - name: Commit Generated Briefs
+      - name: Commit generated-briefs
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "feat(autogen): Add generated briefs for $(jq -r '.project_metadata.project_id_prefix' $OPS_FILE_PATH) [skip ci]"
