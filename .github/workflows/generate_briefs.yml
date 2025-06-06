@@ -43,6 +43,7 @@ jobs:
       - name: Generate, Prepare, and Move Briefs
         id: process-briefs
         run: |
+          set -e
           # --- Part 1: Read Metadata (from previous 'metadata' step) ---
           PROJECT_ID_PREFIX=$(jq -r '.project_metadata.project_id_prefix' $OPS_FILE_PATH)
           TARGET_DIR_PATH=$(jq -r --arg projid "$PROJECT_ID_PREFIX" '.[$projid].dir_path' $PROJECT_MAPPINGS_FILE)
@@ -67,7 +68,9 @@ jobs:
             --model_name "$GEMINI_MODEL" \
             --output_json_file "$JSON_FILENAME" \
             --output_md_file "$MD_FILENAME"
-          
+          echo "After script run:"
+          ls -l
+                    
           # --- Part 4: Prepare and Move (from previous 'prepare-files' step) ---
           echo "--- Verifying created files ---"
           ls -l
