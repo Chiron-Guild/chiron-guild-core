@@ -3,7 +3,7 @@
         "project_id_prefix": "CCG",
         "context_label": "Context:PERS",
         "default_assignee": "Kin-Caid",
-        "version": "1.0.1"
+        "version": "1.0.2"
     },
     "project_name": "Creek Connections - JavaScript Game Development",
     "meta_objectives": [
