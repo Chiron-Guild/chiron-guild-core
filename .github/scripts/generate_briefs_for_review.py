@@ -130,14 +130,21 @@ def main():
 
 
     overall_project_name_for_briefs = project_data_from_input_ops.get("project_name")
+    
+    # FIX #3: Correctly parse the new project_mappings.json structure
     if not overall_project_name_for_briefs:
-        overall_project_name_for_briefs = project_mappings.get(args.project_id_cli_arg)
-        if not overall_project_name_for_briefs:
-            overall_project_name_for_briefs = f"Project: {args.project_id_cli_arg}"
-            print(f"WARNING: Using fallback Parent Project name: '{overall_project_name_for_briefs}'. Define 'project_name' in '{args.ops_file}' or map '{args.project_id_cli_arg}' in '{args.project_mappings_file}'.")
+        # Get the mapping object for the project ID, default to empty dict if not found
+        project_mapping_object = project_mappings.get(args.project_id_cli_arg, {})
+        # Get the 'name' from that object
+        overall_project_name_for_briefs = project_mapping_object.get("name")
+
+    if not overall_project_name_for_briefs:
+        overall_project_name_for_briefs = f"Project: {args.project_id_cli_arg}"
+        print(f"WARNING: Using fallback Parent Project name: '{overall_project_name_for_briefs}'. Define 'project_name' in '{args.ops_file}' or map '{args.project_id_cli_arg}' in '{args.project_mappings_file}'.")
     
     print(f"Using Overall Parent Project Name for briefs: '{overall_project_name_for_briefs}'")
 
+    
     sector_name_lookup = {}
     if "project_sectors" in project_data_from_input_ops and isinstance(project_data_from_input_ops["project_sectors"], list):
         for sector in project_data_from_input_ops["project_sectors"]:
