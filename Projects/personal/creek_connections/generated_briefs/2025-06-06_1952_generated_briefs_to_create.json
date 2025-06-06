@@ -1,0 +1,194 @@
+[
+  {
+    "original_op_input_details": {
+      "sector_id": 1,
+      "op_title": "Formalize V2.2 Core Game Mechanics & Calculation Rules from Miro",
+      "op_type": "DOC",
+      "primary_deliverable": "A comprehensive technical specification document translating Miro rules into pseudo-code/algorithmic descriptions.",
+      "sector_name_for_prompt": "Core Game Mechanics Automation"
+    },
+    "llm_generated_data": {
+      "issue_title": "CCG-DOC-001 Formalize V2.2 Core Game Mechanics from Miro",
+      "issue_labels": [
+        "doc",
+        "Context:PERS",
+        "personal-dev",
+        "help wanted",
+        "foundational-op",
+        "game-mechanics",
+        "technical-spec"
+      ],
+      "assignee": "Kin-Caid",
+      "parent_project": "Creek Connections - JavaScript Game Development",
+      "objective": "To formally document and translate the V2.2 Core Game Mechanics and Calculation Rules from Miro boards into a structured technical specification, ensuring clarity and precision for implementation.",
+      "deliverables": [
+        "Comprehensive technical specification document for V2.2 Core Game Mechanics.",
+        "Pseudo-code/algorithmic descriptions for all core game calculations.",
+        "Clear mapping of Miro board elements to documented rules and logic."
+      ],
+      "associated_skills": [
+        "Technical Writing",
+        "Algorithmic Design",
+        "Game Design Documentation",
+        "Miro Board Navigation",
+        "Pseudo-code Generation"
+      ],
+      "awarded_guild_seal": "GS-DOC-Formalize-V2-2-Core-Game-Mechanics-Miro-v1",
+      "context_background": "This operation is critical for solidifying the foundational ruleset of the V2.2 core game, transitioning informal Miro board discussions into a formal, actionable technical specification for development.",
+      "estimated_effort": "Medium",
+      "verification_criteria": [
+        "All V2.2 core game mechanics and calculation rules from Miro are accurately translated and documented.",
+        "Pseudo-code/algorithmic descriptions are clear, unambiguous, and ready for direct implementation.",
+        "The document is structured logically and adheres to established technical specification standards."
+      ],
+      "notes_for_operatives": "Ensure all work is committed to a dedicated feature branch (e.g., `feature/guild-op-[ISSUE_NUMBER]`). Document progress in `Context Compilations` within `archives/CCG-DOC-001/`. Close this issue upon completion to trigger associated Guild automations.",
+      "scribes_generation_notes": "Deliverables expanded from primary to capture explicit and implied outcomes. Context and skills inferred from title and primary deliverable. Parent project value used directly as specified.",
+      "full_markdown_body": "# Guild Op: CCG-DOC-001 Formalize V2.2 Core Game Mechanics from Miro\n\n## Category: DOC\n## Parent Project: Creek Connections - JavaScript Game Development\n## Assignees: @Kin-Caid\n\n## Objective:\nTo formally document and translate the V2.2 Core Game Mechanics and Calculation Rules from Miro boards into a structured technical specification, ensuring clarity and precision for implementation.\n\n## Deliverables:\n- Comprehensive technical specification document for V2.2 Core Game Mechanics.\n- Pseudo-code/algorithmic descriptions for all core game calculations.\n- Clear mapping of Miro board elements to documented rules and logic.\n\n## Associated Skills:\n- Technical Writing\n- Algorithmic Design\n- Game Design Documentation\n- Miro Board Navigation\n- Pseudo-code Generation\n\n## Awarded Guild Seal:\nGS-DOC-Formalize-V2-2-Core-Game-Mechanics-Miro-v1\n\n## Context & Background:\nThis operation is critical for solidifying the foundational ruleset of the V2.2 core game, transitioning informal Miro board discussions into a formal, actionable technical specification for development.\n\n## Estimated Effort:\nMedium\n\n## Verification/Acceptance Criteria:\n- All V2.2 core game mechanics and calculation rules from Miro are accurately translated and documented.\n- Pseudo-code/algorithmic descriptions are clear, unambiguous, and ready for direct implementation.\n- The document is structured logically and adheres to established technical specification standards.\n\n---\n\n## Notes for Operatives:\n- Ensure all work is committed to a dedicated feature branch (e.g., `feature/guild-op-[ISSUE_NUMBER]`). Document progress in `Context Compilations` within `archives/CCG-DOC-001/`. Close this issue upon completion to trigger associated Guild automations."
+    },
+    "generation_status": "success"
+  },
+  {
+    "original_op_input_details": {
+      "sector_id": 1,
+      "op_title": "Codify Core Game Data & Infrastructure Parameters (GameData Module)",
+      "op_type": "DEV",
+      "primary_deliverable": "A functional JavaScript module (`GameData.js`) containing all V2.2 static game data as constants.",
+      "sector_name_for_prompt": "Core Game Mechanics Automation"
+    },
+    "llm_generated_data": {
+      "issue_title": "CCG-DEV-001 Codify Core Game Data Module",
+      "issue_labels": [
+        "dev",
+        "Context:PERS",
+        "personal-dev",
+        "help wanted",
+        "foundational-op",
+        "javascript",
+        "game-data"
+      ],
+      "assignee": "Kin-Caid",
+      "parent_project": "Creek Connections - JavaScript Game Development",
+      "objective": "To establish a robust and centralized JavaScript module (`GameData.js`) containing all V2.2 static game data and core infrastructure parameters, ensuring consistency and ease of access for future game development.",
+      "deliverables": [
+        "Functional GameData.js module containing all V2.2 static game data as constants.",
+        "Data within GameData.js is clearly organized and logically structured.",
+        "All constants within GameData.js are correctly typed and formatted for consumption."
+      ],
+      "associated_skills": [
+        "JavaScript (ES6+) Development",
+        "Data Modeling & Structuring",
+        "Module Export/Import Patterns",
+        "Git Version Control",
+        "Technical Documentation"
+      ],
+      "awarded_guild_seal": "GS-DEV-Game-Data-Module-Codification-v1",
+      "context_background": "This operation is foundational for the 'Core Game Mechanics Automation' sector, centralizing critical game data for future development and automation efforts within the Creek Connections project.",
+      "estimated_effort": "Medium",
+      "verification_criteria": [
+        "GameData.js module is functional and exports all V2.2 specified static data as constants.",
+        "Data structures within GameData.js are logically organized and easily accessible by other modules.",
+        "Module adheres to established coding standards and passes linting checks."
+      ],
+      "notes_for_operatives": "Ensure all work is committed to a dedicated feature branch (e.g., `feature/guild-op-[ISSUE_NUMBER]`). Document progress in `Context Compilations` within `archives/CCG-DEV-001/`. Close this issue upon completion to trigger associated Guild automations.",
+      "scribes_generation_notes": "Generated based on provided input. Deliverables and associated skills expanded from primary. Parent project value used directly as specified in instructions.",
+      "full_markdown_body": "# Guild Op: CCG-DEV-001 Codify Core Game Data Module\n\n## Category: DEV\n## Parent Project: Creek Connections - JavaScript Game Development\n## Assignees: @Kin-Caid\n\n## Objective:\nTo establish a robust and centralized JavaScript module (`GameData.js`) containing all V2.2 static game data and core infrastructure parameters, ensuring consistency and ease of access for future game development.\n\n## Deliverables:\n- Functional GameData.js module containing all V2.2 static game data as constants.\n- Data within GameData.js is clearly organized and logically structured.\n- All constants within GameData.js are correctly typed and formatted for consumption.\n\n## Associated Skills:\n- JavaScript (ES6+) Development\n- Data Modeling & Structuring\n- Module Export/Import Patterns\n- Git Version Control\n- Technical Documentation\n\n## Awarded Guild Seal:\nGS-DEV-Game-Data-Module-Codification-v1\n\n## Context & Background:\nThis operation is foundational for the 'Core Game Mechanics Automation' sector, centralizing critical game data for future development and automation efforts within the Creek Connections project.\n\n## Estimated Effort:\nMedium\n\n## Verification/Acceptance Criteria:\n- GameData.js module is functional and exports all V2.2 specified static data as constants.\n- Data structures within GameData.js are logically organized and easily accessible by other modules.\n- Module adheres to established coding standards and passes linting checks.\n\n---\n\n## Notes for Operatives:\n- Ensure all work is committed to a dedicated feature branch (e.g., `feature/guild-op-[ISSUE_NUMBER]`). Document progress in `Context Compilations` within `archives/CCG-DEV-001/`. Close this issue upon completion to trigger associated Guild automations."
+    },
+    "generation_status": "success"
+  },
+  {
+    "original_op_input_details": {
+      "sector_id": 2,
+      "op_title": "Develop Interactive Watershed Map Renderer Component",
+      "op_type": "DEV",
+      "primary_deliverable": "A functional JavaScript component rendering the game's watershed map with user interaction capabilities.",
+      "sector_name_for_prompt": "Interactive User Interface & Experience (UI/UX)"
+    },
+    "llm_generated_data": {
+      "issue_title": "CCG-DEV-002 Develop Interactive Watershed Map Renderer",
+      "issue_labels": [
+        "dev",
+        "Context:PERS",
+        "personal-dev",
+        "help wanted",
+        "foundational-op",
+        "ui-ux",
+        "javascript"
+      ],
+      "assignee": "Kin-Caid",
+      "parent_project": "Creek Connections - JavaScript Game Development",
+      "objective": "To design, develop, and integrate a robust JavaScript component capable of interactively rendering the game's watershed map, enabling comprehensive user interaction and data visualization for environmental systems.",
+      "deliverables": [
+        "A functional JavaScript component capable of rendering the game's watershed map.",
+        "Implemented user interaction features (e.g., pan, zoom, layer toggles) for the map.",
+        "Clear documentation for component integration and usage within the game client."
+      ],
+      "associated_skills": [
+        "JavaScript",
+        "Front-end Development",
+        "UI/UX Design",
+        "Data Visualization",
+        "Web Graphics Libraries"
+      ],
+      "awarded_guild_seal": "GS-DEV-Interactive-Watershed-Map-Renderer-v1",
+      "context_background": "This foundational component is essential for enhancing player engagement by providing a dynamic and informative visual representation of the game's environmental systems, falling under the Interactive User Interface & Experience (UI/UX) sector.",
+      "estimated_effort": "Large",
+      "verification_criteria": [
+        "The watershed map component renders accurately and efficiently across various display configurations.",
+        "All specified user interaction functionalities (e.g., pan, zoom, layer toggles) operate correctly and intuitively.",
+        "The component integrates seamlessly into the game's existing front-end architecture without conflicts."
+      ],
+      "notes_for_operatives": "Ensure all work is committed to a dedicated feature branch (e.g., `feature/guild-op-[ISSUE_NUMBER]`). Document progress in `Context Compilations` within `archives/CCG-DEV-002/`. Close this issue upon completion to trigger associated Guild automations.",
+      "scribes_generation_notes": "Deliverables and associated skills expanded from primary input. Estimated effort assessed as Large.",
+      "full_markdown_body": "# Guild Op: CCG-DEV-002 Develop Interactive Watershed Map Renderer\n\n## Category: DEV\n## Parent Project: Creek Connections - JavaScript Game Development\n## Assignees: @Kin-Caid\n\n## Objective:\nTo design, develop, and integrate a robust JavaScript component capable of interactively rendering the game's watershed map, enabling comprehensive user interaction and data visualization for environmental systems.\n\n## Deliverables:\n- A functional JavaScript component capable of rendering the game's watershed map.\n- Implemented user interaction features (e.g., pan, zoom, layer toggles) for the map.\n- Clear documentation for component integration and usage within the game client.\n\n## Associated Skills:\n- JavaScript\n- Front-end Development\n- UI/UX Design\n- Data Visualization\n- Web Graphics Libraries\n\n## Awarded Guild Seal:\nGS-DEV-Interactive-Watershed-Map-Renderer-v1\n\n## Context & Background:\nThis foundational component is essential for enhancing player engagement by providing a dynamic and informative visual representation of the game's environmental systems, falling under the Interactive User Interface & Experience (UI/UX) sector.\n\n## Estimated Effort:\nLarge\n\n## Verification/Acceptance Criteria:\n- The watershed map component renders accurately and efficiently across various display configurations.\n- All specified user interaction functionalities (e.g., pan, zoom, layer toggles) operate correctly and intuitively.\n- The component integrates seamlessly into the game's existing front-end architecture without conflicts.\n\n---\n\n## Notes for Operatives:\n- Ensure all work is committed to a dedicated feature branch (e.g., `feature/guild-op-[ISSUE_NUMBER]`). Document progress in `Context Compilations` within `archives/CCG-DEV-002/`. Close this issue upon completion to trigger associated Guild automations."
+    },
+    "generation_status": "success"
+  },
+  {
+    "original_op_input_details": {
+      "sector_id": 3,
+      "op_title": "Define Data Structures for Campaign Phases & Event Cards",
+      "op_type": "DOC",
+      "primary_deliverable": "A technical document specifying data structures for multi-phase campaign progression and Event Card format/content.",
+      "sector_name_for_prompt": "Campaign Progression & Content Integration"
+    },
+    "llm_generated_data": {
+      "issue_title": "CCG-DOC-002 Define Campaign & Event Card Data Structures",
+      "issue_labels": [
+        "doc",
+        "Context:PERS",
+        "personal-dev",
+        "help wanted",
+        "foundational-op",
+        "game-design",
+        "data-modeling"
+      ],
+      "assignee": "Kin-Caid",
+      "parent_project": "Creek Connections - JavaScript Game Development",
+      "objective": "To clearly define and document the foundational data structures required for multi-phase campaign progression and the content/format of Event Cards within the game system.",
+      "deliverables": [
+        "A comprehensive technical document detailing data structures for multi-phase campaign progression.",
+        "A comprehensive technical document detailing data structures for Event Card format and content.",
+        "Example data structure definitions (e.g., JSON, TypeScript interfaces, or pseudocode) for key entities."
+      ],
+      "associated_skills": [
+        "data-modeling",
+        "technical-documentation",
+        "game-design-principles",
+        "conceptual-design",
+        "markdown-documentation"
+      ],
+      "awarded_guild_seal": "GS-DOC-Data-Structures-Campaign-Phases-Event-Cards-v1",
+      "context_background": "This operation is foundational to establishing the core game mechanics and content delivery system for 'Creek Connections', specifically regarding how campaign progression and individual event cards are structured and managed.",
+      "estimated_effort": "Medium",
+      "verification_criteria": [
+        "The technical document is complete, clearly defines data structures for multi-phase campaign progression, and details Event Card format/content.",
+        "Data structure definitions are consistent, logical, and align with anticipated game mechanics and content needs.",
+        "The document includes actionable examples or schema definitions for key data entities (e.g., CampaignPhase, EventCard)."
+      ],
+      "notes_for_operatives": "Ensure all work is committed to a dedicated feature branch (e.g., `feature/guild-op-[ISSUE_NUMBER]`). Document progress in `Context Compilations` within `archives/CCG-DOC-002/`. Close this issue upon completion to trigger associated Guild automations.",
+      "scribes_generation_notes": "Generated based on provided input. Deliverables expanded to cover distinct aspects of the primary deliverable. Inferred 'game-design' and 'data-modeling' labels.",
+      "full_markdown_body": "# Guild Op: CCG-DOC-002 Define Campaign & Event Card Data Structures\n\n## Category: DOC\n## Parent Project: Creek Connections - JavaScript Game Development\n## Assignees: @Kin-Caid\n\n## Objective:\nTo clearly define and document the foundational data structures required for multi-phase campaign progression and the content/format of Event Cards within the game system.\n\n## Deliverables:\n- A comprehensive technical document detailing data structures for multi-phase campaign progression.\n- A comprehensive technical document detailing data structures for Event Card format and content.\n- Example data structure definitions (e.g., JSON, TypeScript interfaces, or pseudocode) for key entities.\n\n## Associated Skills:\n- data-modeling\n- technical-documentation\n- game-design-principles\n- conceptual-design\n- markdown-documentation\n\n## Awarded Guild Seal:\nGS-DOC-Data-Structures-Campaign-Phases-Event-Cards-v1\n\n## Context & Background:\nThis operation is foundational to establishing the core game mechanics and content delivery system for 'Creek Connections', specifically regarding how campaign progression and individual event cards are structured and managed.\n\n## Estimated Effort:\nMedium\n\n## Verification/Acceptance Criteria:\n- The technical document is complete, clearly defines data structures for multi-phase campaign progression, and details Event Card format/content.\n- Data structure definitions are consistent, logical, and align with anticipated game mechanics and content needs.\n- The document includes actionable examples or schema definitions for key data entities (e.g., CampaignPhase, EventCard).\n\n---\n\n## Notes for Operatives:\n- Ensure all work is committed to a dedicated feature branch (e.g., `feature/guild-op-[ISSUE_NUMBER]`). Document progress in `Context Compilations` within `archives/CCG-DOC-002/`. Close this issue upon completion to trigger associated Guild automations."
+    },
+    "generation_status": "success"
+  }
+]
