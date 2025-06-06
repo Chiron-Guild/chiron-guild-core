@@ -14,10 +14,10 @@ Each Guild Op is assigned a unique, three-vector identifier: `[PROJECT_ID]-[OP_T
 **Purpose:** Identifies the larger strategic initiative or client contract to which the Guild Op belongs. This vector ensures that all related directives are grouped under a common banner.
 
 *   **For Internal Guild Self-Assembly:**
-    *   `CHIRON`: Denotes core development and foundational forging of the Chiron Guild platform itself.
+    *   `CHIRON`: Denotes core development and foundational forging of the Chiron Guild platform itself. (Corresponds to `Projects/chiron`)
 
 *   **For Future Client Engagements:**
-    *   `[CLIENT_ALIAS]`: (e.g., `ACME` for the Acme Corporation, `CYBERD` for Cyberdyne Systems).
+    *   `[CLIENT_ALIAS]`: (e.g., `ACME` for the Acme Corporation, `CYBERD` for Cyberdyne Systems). (Corresponds to `Projects/client/[client_name]`)
     *   `[PROJECT_CODE]`: (e.g., `PROJ1`, `XFNL`).
     *   `[SEASON_ID]`: (e.g., `S25Q1` for 2025, Q1).
 
@@ -61,8 +61,8 @@ Each Guild Op is assigned a unique, three-vector identifier: `[PROJECT_ID]-[OP_T
 
 ## 3. Transmission & Usage Protocol
 
-*   **Guild Op Briefs:** All Guild Op Briefs (located in the Guild Archives) will prominently display their full Guild Op ID.
-*   **Context Compilations:** All compiled context documents related to a Guild Op will include the Guild Op ID in their file names and within their content for immediate traceability.
+*   **Guild Op Briefs:** All Guild Op Briefs (primary content directly within GitHub Issues) will prominently display their full Guild Op ID. **Generated brief drafts are committed to `Projects/[ProjectID-Slug]/generated_briefs/`.**
+*   **Context Compilations:** All compiled context documents related to a Guild Op will include the Guild Op ID in their file names and within their content for immediate traceability. **These are stored within `Projects/[ProjectID-Slug]/Guild Ops/[GuildOpID]/`**.
 *   **GitHub Issues:** Each GitHub Issue representing a Guild Op will clearly state its Guild Op ID in the title or description.
 
 This structured identification system is integral to the Guild's operational efficiency, ensuring that every contribution is tracked, every skill is cataloged, and every piece of knowledge feeds the collective intelligence.
