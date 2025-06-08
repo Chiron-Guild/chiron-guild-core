@@ -1,3 +1,5 @@
+# .github/workflows/log-op-to-registry.yml
+
 name: Log Guild Op to Registry on Issue Close
 
 on:
@@ -59,12 +61,15 @@ jobs:
 
       - name: Commit and push registry changes
         run: |
+          # Define the file path with quotes to handle spaces
+          REGISTRY_FILE_PATH="_Admin & Core Docs/registry/operative_registry.json"
+
           git config user.name "Chiron Guild Bot"
           git config user.email "actions@github.com"
           
-          # Use a more robust check for changes
-          if ! git diff --quiet "registry/operative_registry.json"; then
-            git add "registry/operative_registry.json"
+          # Use the quoted variable to check for changes and add the file
+          if ! git diff --quiet "$REGISTRY_FILE_PATH"; then
+            git add "$REGISTRY_FILE_PATH"
             git commit -m "Forge Seal: Logged Guild Op #${{ env.issue_number }} to Registry"
             git push
             echo "Operative Registry updated successfully."
