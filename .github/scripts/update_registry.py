@@ -7,24 +7,13 @@ from datetime import datetime
 from shutil import copyfile
 
 def extract_section(issue_body, section_name, is_single_line=False):
-    """
-    Extracts content from a specific markdown section.
-    This version uses a more flexible and robust regex pattern.
-    """
     if not issue_body:
         return "" if is_single_line else []
-        
-    # --- THE DEFINITIVE REGEX FIX ---
-    # This pattern is much more flexible:
-    #   - `##+`: Matches two or more '#' characters.
-    #   - `\s*`: Matches any whitespace.
-    #   - `\n?`: Makes the newline after the header optional.
-    #   - `(?=\n##+|\Z)`: Stops at the next header or the end of the string.
+    
     pattern = re.compile(
         rf"^##+\s*{section_name}[:\s]*\n?(.*?)(?=\n##+|\Z)",
         re.DOTALL | re.IGNORECASE | re.MULTILINE
     )
-
     match = pattern.search(issue_body)
 
     if not match:
@@ -38,32 +27,29 @@ def extract_section(issue_body, section_name, is_single_line=False):
     return [line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()]
 
 def main():
-    # Read all data from environment variables
-    issue_number = os.getenv("ISSUE_NUMBER")
-    issue_title = os.getenv("ISSUE_TITLE")
-    issue_body = os.getenv("ISSUE_BODY", "")
-    assignees_json_str = os.getenv("ASSIGNEES_JSON")
-    issue_url = os.getenv("ISSUE_URL")
-    closed_at = os.getenv("CLOSED_AT")
-
-    # --- START OF DIAGNOSTIC CODE ---
-    print("--- DEBUG: Full issue_body content as received by Python ---")
-    print(repr(issue_body)) # repr() shows hidden characters like \r \n
-    print("--- END OF DIAGNOSTIC CODE ---")
-    # --- END OF DIAGNOSTIC CODE ---
-
-    if not issue_number:
-        print("Error: ISSUE_NUMBER environment variable not set.")
+    # Read the entire issue payload from a single environment variable
+    payload_str = os.getenv("ISSUE_PAYLOAD")
+    if not payload_str:
+        print("Error: ISSUE_PAYLOAD environment variable not set.")
+        return
+    
+    try:
+        issue = json.loads(payload_str)
+    except json.JSONDecodeError:
+        print("Error: Could not decode ISSUE_PAYLOAD JSON.")
         return
 
-    try:
-        assignees_json = json.loads(assignees_json_str) if assignees_json_str else []
-        assignees = [a.get("login", "") for a in assignees_json if "login" in a]
-    except Exception as e:
-        print(f"Error loading assignees: {e}")
-        assignees = []
+    # Extract all data from the parsed issue object
+    issue_number = issue.get("number")
+    issue_title = issue.get("title", "")
+    issue_body = issue.get("body", "")
+    assignees_list = issue.get("assignees", [])
+    issue_url = issue.get("html_url", "")
+    closed_at = issue.get("closed_at", "")
 
-    # Extract sections from the issue body using the robust function
+    assignees = [a.get("login", "") for a in assignees_list if a]
+
+    # Extract sections from the issue body
     skills = extract_section(issue_body, "Skills Required|Skills Demonstrated|Associated Skills")
     objective = extract_section(issue_body, "Objective", is_single_line=True)
     deliverables = extract_section(issue_body, "Deliverables")
