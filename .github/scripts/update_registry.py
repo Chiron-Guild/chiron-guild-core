@@ -58,7 +58,7 @@ def main():
     assignees = [a.get("login", "") for a in assignees_list if a]
 
     # The issue_body is now parsed correctly by the robust extract_section function
-    skills = extract_section(issue_body, "Skills Required|Skills Demonstrated|Associated Skills")
+    skills = extract_section(issue_body, "Skills|Skills Required|Skills Demonstrated|Associated Skills")
     objective = extract_section(issue_body, "Objective", is_single_line=True)
     deliverables = extract_section(issue_body, "Deliverables")
     awarded_guild_seal = extract_section(issue_body, "Awarded Guild Seal", is_single_line=True)
