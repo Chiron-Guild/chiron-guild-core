@@ -7,22 +7,41 @@ from datetime import datetime
 from shutil import copyfile
 
 def extract_section(issue_body, section_name, is_single_line=False):
+    """
+    Extracts content from a specific markdown section.
+    This version uses a more flexible and robust regex pattern.
+    """
+    if not issue_body:
+        return "" if is_single_line else []
+        
+    # --- THE DEFINITIVE REGEX FIX ---
+    # This pattern is much more flexible:
+    #   - `##+`: Matches two or more '#' characters.
+    #   - `\s*`: Matches any whitespace.
+    #   - `\n?`: Makes the newline after the header optional.
+    #   - `(?=\n##+|\Z)`: Stops at the next header or the end of the string.
     pattern = re.compile(
-        rf"^###*\s*{section_name}[:\s]*\n(.*?)(?=^###* |\Z)", re.DOTALL | re.IGNORECASE | re.MULTILINE
+        rf"^##+\s*{section_name}[:\s]*\n?(.*?)(?=\n##+|\Z)",
+        re.DOTALL | re.IGNORECASE | re.MULTILINE
     )
+
     match = pattern.search(issue_body)
-    if match:
-        block = match.group(1).strip()
-        if is_single_line:
-            return " ".join([line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()]).strip()
-        return [line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()]
-    return "" if is_single_line else []
+
+    if not match:
+        return "" if is_single_line else []
+
+    block = match.group(1).strip()
+    
+    if is_single_line:
+        return " ".join([line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()])
+    
+    return [line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()]
 
 def main():
     # Read all data from environment variables
     issue_number = os.getenv("ISSUE_NUMBER")
     issue_title = os.getenv("ISSUE_TITLE")
-    issue_body = os.getenv("ISSUE_BODY")
+    issue_body = os.getenv("ISSUE_BODY", "")
     assignees_json_str = os.getenv("ASSIGNEES_JSON")
     issue_url = os.getenv("ISSUE_URL")
     closed_at = os.getenv("CLOSED_AT")
@@ -31,7 +50,6 @@ def main():
         print("Error: ISSUE_NUMBER environment variable not set.")
         return
 
-    # Parse assignees
     try:
         assignees_json = json.loads(assignees_json_str) if assignees_json_str else []
         assignees = [a.get("login", "") for a in assignees_json if "login" in a]
@@ -39,13 +57,13 @@ def main():
         print(f"Error loading assignees: {e}")
         assignees = []
 
-    # Extract sections from the issue body
+    # Extract sections from the issue body using the robust function
     skills = extract_section(issue_body, "Skills Required|Skills Demonstrated|Associated Skills")
     objective = extract_section(issue_body, "Objective", is_single_line=True)
     deliverables = extract_section(issue_body, "Deliverables")
     awarded_guild_seal = extract_section(issue_body, "Awarded Guild Seal", is_single_line=True)
     estimated_effort = extract_section(issue_body, "Estimated Effort", is_single_line=True)
-    acceptance_criteria = extract_section(issue_body, "Acceptance Criteria")
+    acceptance_criteria = extract_section(issue_body, "Acceptance Criteria|Verification/Acceptance Criteria")
 
     # Prepare the registry entry
     entry = {
