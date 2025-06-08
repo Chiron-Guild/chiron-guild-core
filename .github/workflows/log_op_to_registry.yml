@@ -28,24 +28,36 @@ jobs:
       - name: Get Closed Issue Details
         id: get_issue_details
         run: |
-          # Use an intermediate file to handle multi-line body
-          echo "${{ toJSON(github.event.issue) }}" > issue_payload.json
-          ISSUE_NUMBER=$(jq -r .number issue_payload.json)
-          ISSUE_TITLE=$(jq -r .title issue_payload.json)
-          ISSUE_BODY=$(jq -r .body issue_payload.json)
-          ASSIGNEES=$(jq -r .assignees issue_payload.json)
-          LABELS=$(jq -r .labels issue_payload.json)
-          ISSUE_URL=$(jq -r .html_url issue_payload.json)
-          CLOSED_AT=$(jq -r .closed_at issue_payload.json)
+          echo '${{ toJSON(github.event.issue) }}' > issue_payload.json
+          {
+            echo 'issue_number<<EOF'
+            jq -r .number issue_payload.json
+            echo 'EOF'
 
-          echo "issue_number=${ISSUE_NUMBER}" >> $GITHUB_ENV
-          echo "issue_title=${ISSUE_TITLE}" >> $GITHUB_ENV
-          echo "assignees=${ASSIGNEES}" >> $GITHUB_ENV
-          echo "labels=${LABELS}" >> $GITHUB_ENV
-          echo "issue_url=${ISSUE_URL}" >> $GITHUB_ENV
-          echo "closed_at=${CLOSED_AT}" >> $GITHUB_ENV
-          # Special handling for the body to pass to the script
-          echo "$ISSUE_BODY" > issue_body_content.md
+            echo 'issue_title<<EOF'
+            jq -r .title issue_payload.json
+            echo 'EOF'
+
+            echo 'issue_body<<EOF'
+            jq -r .body issue_payload.json
+            echo 'EOF'
+            
+            echo 'assignees<<EOF'
+            jq -c .assignees issue_payload.json 
+            echo 'EOF'
+
+            echo 'labels<<EOF'
+            jq -c .labels issue_payload.json 
+            echo 'EOF'
+
+            echo 'issue_url<<EOF'
+            jq -r .html_url issue_payload.json
+            echo 'EOF'
+
+            echo 'closed_at<<EOF'
+            jq -r .closed_at issue_payload.json
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
 
       - name: Update Operative Registry
         run: |
