@@ -1,5 +1,46 @@
 [
   {
+    "issue_number": 69,
+    "issue_title": "[CHIRON-GOV-002] Establish Rapid Op Instantiation Protocol",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/69",
+    "assignees": [
+      "Kin-Caid"
+    ],
+    "Objective": "To establish a low-friction \"Rapid Op Instantiation\" protocol by creating a standardized GitHub Issue Template. This will enable Operatives to quickly and efficiently log pre-defined or in-progress tasks as Guild Ops, increasing the velocity of `Reputation Matrix` population without the overhead of the full project decomposition ceremony.",
+    "Deliverables": [
+      "1.  **`quick_op.yml` Issue Template:**",
+      "A new YAML file named `quick_op.yml` will be created in the `.github/ISSUE_TEMPLATE/` directory.",
+      "This file will define a GitHub Issue Form with the following fields:",
+      "Title:** A text input for the full Op title (e.g., `[CCG-DEV-005] Implement Player Score Display`).",
+      "Project Prefix:** A dropdown menu allowing the Operative to select the relevant project prefix (e.g., `CHIRON`, `CCG`, `PERS`). This will be used to automatically apply the correct `Project-Slug:` label.",
+      "Primary Deliverable(s):** A markdown-enabled textarea for a concise list of the Op's outcomes.",
+      "Skills Demonstrated:** A text input for a comma-separated list of skills utilized or demonstrated by completing the Op.",
+      "Op Type:** A dropdown menu to select the op type (e.g., `DEV`, `DOC`, `DSN`, `GOV`, etc.) to apply the correct `Op-Type:` label.",
+      "2.  **Updated `GUILD_OP_PROTOCOLS.md`:**",
+      "A new section added to the `GUILD_OP_PROTOCOLS.md` document titled \"Operational Cadence: Full Decomposition vs. Rapid Instantiation.\"",
+      "This section will clearly define the use cases for each method, guiding Operatives on when to use the full `project_decomposition.md` protocol versus the new \"Quick Op\" template.",
+      "3.  **Completed Context Compilation for `CHIRON-GOV-002`:**",
+      "A comprehensive operational log for this Guild Op, detailing the design and implementation process for the new protocol."
+    ],
+    "skills": [
+      "GitHub Workflow Syntax (YAML for Issue Forms)",
+      "Protocol Design",
+      "Technical Writing",
+      "Operational Efficiency Analysis"
+    ],
+    "Estimated Effort": "Small (1-2 hours)",
+    "Acceptance Criteria": [
+      "[ ] A file named `quick_op.yml` exists in the `.github/ISSUE_TEMPLATE/` directory.",
+      "[ ] When creating a new issue on the Guild Board, \"Quick Op\" is presented as a template option.",
+      "[ ] Selecting the \"Quick Op\" template presents a form with all the fields specified in Deliverable 1.",
+      "[ ] Submitting the form successfully creates a new GitHub Issue, populating its body with the provided inputs and applying the correct `Project-Slug:` and `Op-Type:` labels.",
+      "[ ] The `GUILD_OP_PROTOCOLS.md` document contains the new section explaining when to use the template.",
+      "[ ] The `_operation_log.md` for `CHIRON-GOV-002` is complete and archived."
+    ],
+    "Awarded Guild Seal": "`GS-GOV-RapidOpTemplate-v1`",
+    "closed_at": "2025-06-08T05:33:14Z"
+  },
+  {
     "issue_number": 56,
     "issue_title": "[CHIRON-QAT-001] - End-to-End Test Execution for Guild Op Automation Suite",
     "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/56",
