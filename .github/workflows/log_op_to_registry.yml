@@ -1,0 +1,73 @@
+name: Log Guild Op to Registry on Issue Close
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  contents: write # To commit and push the updated registry file
+  issues: read   # To fetch details from the closed issue
+
+jobs:
+  log-to-registry:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.issue.labels.*.name, 'guild-op')" # IMPORTANT: Only run for issues with the 'guild-op' label
+
+    steps:
+      - name: Check out main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main # We need to update the registry file on the main branch
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Get Closed Issue Details
+        id: get_issue_details
+        run: |
+          # Use an intermediate file to handle multi-line body
+          echo "${{ toJSON(github.event.issue) }}" > issue_payload.json
+          ISSUE_NUMBER=$(jq -r .number issue_payload.json)
+          ISSUE_TITLE=$(jq -r .title issue_payload.json)
+          ISSUE_BODY=$(jq -r .body issue_payload.json)
+          ASSIGNEES=$(jq -r .assignees issue_payload.json)
+          LABELS=$(jq -r .labels issue_payload.json)
+          ISSUE_URL=$(jq -r .html_url issue_payload.json)
+          CLOSED_AT=$(jq -r .closed_at issue_payload.json)
+
+          echo "issue_number=${ISSUE_NUMBER}" >> $GITHUB_ENV
+          echo "issue_title=${ISSUE_TITLE}" >> $GITHUB_ENV
+          echo "assignees=${ASSIGNEES}" >> $GITHUB_ENV
+          echo "labels=${LABELS}" >> $GITHUB_ENV
+          echo "issue_url=${ISSUE_URL}" >> $GITHUB_ENV
+          echo "closed_at=${CLOSED_AT}" >> $GITHUB_ENV
+          # Special handling for the body to pass to the script
+          echo "$ISSUE_BODY" > issue_body_content.md
+
+      - name: Update Operative Registry
+        run: |
+          python .github/scripts/update_registry.py \
+            --issue-number "${{ env.issue_number }}" \
+            --issue-title "${{ env.issue_title }}" \
+            --issue-body "$(cat issue_body_content.md)" \
+            --assignees '${{ env.assignees }}' \
+            --labels '${{ env.labels }}' \
+            --issue-url "${{ env.issue_url }}" \
+            --closed-at "${{ env.closed_at }}"
+
+      - name: Commit and push registry changes
+        run: |
+          git config user.name "Chiron Guild Bot"
+          git config user.email "actions@github.com"
+          
+          # Use a more robust check for changes
+          if ! git diff --quiet "registry/operative_registry.json"; then
+            git add "registry/operative_registry.json"
+            git commit -m "Forge Seal: Logged Guild Op #${{ env.issue_number }} to Registry"
+            git push
+            echo "Operative Registry updated successfully."
+          else
+            echo "No changes detected in the registry file. Skipping commit."
+          fi
