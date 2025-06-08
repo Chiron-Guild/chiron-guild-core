@@ -5,7 +5,7 @@
 
 ## Context for Compilation
 Refer to the following Guild Protocols, currently open in this Nexus workspace (or within the repository context):
-*   `GUILD_OP_PROTOCOLS.md` (for Guild Op ID structure: `[PROJECT_ID]-[OP_TYPE]-[NUM_ID]` and `OP_TYPE` definitions: `DEV`, `DSN`, `DOC`, `GOV`, `STR`, `QAT`, `COM`).
+*   `Directive Naming & Categorization Protocol.md` (for Guild Op ID structure: `[PROJECT_ID]-[OP_TYPE]-[NUM_ID]` and `OP_TYPE` definitions: `DEV`, `DSN`, `DOC`, `GOV`, `STR`, `QAT`, `COM`).
 *   `Context_Compilation_Protocol.md` (for general documentation standards).
 *   `README.md` and `GUILD_MANIFESTO.md` (for Guild tone and vision).
 
