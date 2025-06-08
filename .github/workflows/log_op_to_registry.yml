@@ -7,8 +7,8 @@ on:
     types: [closed]
 
 permissions:
-  contents: write # To commit and push the updated registry file
-  issues: read   # To fetch details from the closed issue
+  contents: write
+  issues: read
 
 jobs:
   log-to-registry:
@@ -26,43 +26,28 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Get Issue Data via github-script
-        id: get_issue_data # We will reference this ID in the next step
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const issue = context.payload.issue;
-            core.setOutput('issue_number', issue.number);
-            core.setOutput('issue_title', issue.title);
-            core.setOutput('issue_body', issue.body);
-            core.setOutput('issue_url', issue.html_url);
-            core.setOutput('closed_at', issue.closed_at);
-            // Convert the assignees/labels arrays into a JSON string for passing
-            core.setOutput('assignees', JSON.stringify(issue.assignees));
-            core.setOutput('labels', JSON.stringify(issue.labels));
-
       - name: Update Operative Registry
+        # This 'env' block makes all issue data available to the Python script
+        # as environment variables. This is the most robust method.
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          CLOSED_AT: ${{ github.event.issue.closed_at }}
+          ASSIGNEES_JSON: ${{ toJSON(github.event.issue.assignees) }}
         run: |
-          python .github/scripts/update_registry.py \
-            --issue-number "${{ steps.get_issue_data.outputs.issue_number }}" \
-            --issue-title "${{ steps.get_issue_data.outputs.issue_title }}" \
-            --issue-body "${{ steps.get_issue_data.outputs.issue_body }}" \
-            --assignees '${{ steps.get_issue_data.outputs.assignees }}' \
-            --labels '${{ steps.get_issue_data.outputs.labels }}' \
-            --issue-url "${{ steps.get_issue_data.outputs.issue_url }}" \
-            --closed-at "${{ steps.get_issue_data.outputs.closed_at }}"
-
+          python .github/scripts/update_registry.py
+          
       - name: Commit and push registry changes
         run: |
-          # Define the file path with quotes to handle spaces
           REGISTRY_FILE_PATH="_Admin & Core Docs/registry/operative_registry.json"
-
           git config user.name "Chiron Guild Bot"
           git config user.email "actions@github.com"
           
           if ! git diff --quiet "$REGISTRY_FILE_PATH"; then
             git add "$REGISTRY_FILE_PATH"
-            git commit -m "Forge Seal: Logged Guild Op #${{ steps.get_issue_data.outputs.issue_number }} to Registry"
+            git commit -m "Forge Seal: Logged Guild Op #${{ github.event.issue.number }} to Registry"
             git push
             echo "Operative Registry updated successfully."
           else
