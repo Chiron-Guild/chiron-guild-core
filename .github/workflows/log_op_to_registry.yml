@@ -64,7 +64,7 @@ jobs:
           python .github/scripts/update_registry.py \
             --issue-number "${{ env.issue_number }}" \
             --issue-title "${{ env.issue_title }}" \
-            --issue-body "$(cat issue_body_content.md)" \
+            --issue-body "${{ env.issue_body }}" \
             --assignees '${{ env.assignees }}' \
             --labels '${{ env.labels }}' \
             --issue-url "${{ env.issue_url }}" \
