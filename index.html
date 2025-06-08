@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operative Kin-Caid // Chiron Guild Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: #00f0ff;
+            --secondary-glow: #7a3cff;
+            --background-dark: #121212;
+            --background-med: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 3rem;
+            color: var(--primary-glow);
+            text-shadow: 0 0 5px var(--primary-glow), 0 0 10px var(--primary-glow);
+            margin: 0;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        main h2 {
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--primary-glow);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        
+        .section-title-wrapper {
+            text-align: center;
+        }
+
+        #ops-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .op-card {
+            background-color: var(--background-med);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary-glow);
+            padding: 1.5rem;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .op-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .op-card h3 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.25rem;
+            margin-top: 0;
+            color: var(--text-primary);
+        }
+
+        .op-objective {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            flex-grow: 1; /* Pushes skills/seal to the bottom */
+            margin-bottom: 1rem;
+        }
+
+        .op-skills {
+            margin-top: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .op-skills span {
+            background-color: rgba(0, 240, 255, 0.1);
+            color: var(--primary-glow);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .op-seal {
+            margin-top: 1rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-align: right;
+        }
+        
+        .op-seal a {
+            color: var(--primary-glow);
+            text-decoration: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Operative Kin-Caid</h1>
+            <p>Architect of the Chiron Guild // Forging a New Future of Work</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="section-title-wrapper">
+            <h2>Reputation Matrix // Verified Operations</h2>
+        </div>
+
+        <!-- 
+            THIS IS THE TARGET FOR AUTOMATION.
+            A future script will clear this container and dynamically
+            populate it with op-card elements based on operative_registry.json.
+        -->
+        <div id="ops-container">
+
+            <!-- Placeholder Card 1 -->
+            <article class="op-card">
+                <h3>[CHIRON-GOV-002] Rapid Op Instantiation Protocol</h3>
+                <p class="op-objective">Established a low-friction protocol by creating a standardized GitHub Issue Template to enable rapid logging of tasks to the Reputation Matrix.</p>
+                <div class="op-skills">
+                    <span>GitHub Actions</span>
+                    <span>YAML</span>
+                    <span>Protocol Design</span>
+                    <span>Technical Writing</span>
+                </div>
+                <p class="op-seal">🛡️ Awarded Guild Seal: <a href="https://github.com/Chiron-Guild/chiron-guild-core/issues/69" target="_blank" rel="noopener noreferrer">GS-GOV-RapidOpTemplate-v1</a></p>
+            </article>
+
+            <!-- Placeholder Card 2 -->
+            <article class="op-card">
+                <h3>[CHIRON-QAT-001] End-to-End Test for Automation Suite</h3>
+                <p class="op-objective">Rigorously tested and verified the functionality and reliability of the automated GitHub Actions workflows for the Guild Op lifecycle.</p>
+                <div class="op-skills">
+                    <span>Quality Assurance</span>
+                    <span>Testing</span>
+                    <span>GitHub Actions</span>
+                    <span>Automation</span>
+                </div>
+                <p class="op-seal">🛡️ Awarded Guild Seal: <a href="https://github.com/Chiron-Guild/chiron-guild-core/issues/56" target="_blank" rel="noopener noreferrer">GS-QAT-WorkflowVerified-v1</a></p>
+            </article>
+            
+            <!-- Placeholder Card 3 -->
+            <article class="op-card">
+                <h3>[CHIRON-DEV-001] GitHub Nexus Initialization</h3>
+                <p class="op-objective">Established the primary code repository, populating it with foundational documents and configuring it for future development and collaboration.</p>
+                <div class="op-skills">
+                    <span>GitHub Administration</span>
+                    <span>Version Control</span>
+                    <span>Infrastructure</span>
+                </div>
+                <p class="op-seal">🛡️ Awarded Guild Seal: <a href="https://github.com/Chiron-Guild/chiron-guild-core/issues/40" target="_blank" rel="noopener noreferrer">GS-DEV-NexusInit-v1</a></p>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© [Current Year] Chiron Guild. Forged, not fabricated.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
