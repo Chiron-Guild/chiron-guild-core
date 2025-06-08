@@ -1,0 +1,68 @@
+name: Quick Op Instantiation
+description: A rapid instantiation form for pre-defined tasks.
+title: "[PROJECT-TYPE-XXX] Your Task Title"
+labels: ["guild-op", "status:open"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Chiron Guild: Rapid Op Instantiation
+        Use this form for well-defined tasks that do not require the full decomposition ceremony.
+
+  - type: dropdown
+    id: project-prefix
+    attributes:
+      label: Project Prefix
+      description: Select the project this Op belongs to. This will apply the correct project label.
+      options:
+        - CHIRON (Guild Core Infrastructure)
+        - CCG (Creek Connections Game)
+        - PERS (Personal/Work Task)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: op-type
+    attributes:
+      label: Op Type
+      description: Select the primary category of work for this Guild Op.
+      options:
+        - DEV
+        - DSN
+        - DOC
+        - GOV
+        - STR
+        - QAT
+        - COM
+        - LRN
+        - CRAFT
+        - PRAC
+        - PROJ
+    validations:
+      required: true
+
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Primary Deliverable(s)
+      description: List the concise, verifiable outcomes of this Op.
+      placeholder: |
+        - A new feature implemented...
+        - A final document delivered to...
+        - A bug resolved and verified...
+      render: markdown
+    validations:
+      required: true
+
+  - type: input
+    id: skills
+    attributes:
+      label: Skills Demonstrated
+      description: List the skills utilized or demonstrated by completing this Op (comma-separated).
+      placeholder: "e.g., JavaScript, Protocol Design, Technical Writing"
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        *Upon submission, this will create a new Guild Op on the board. The `update_operative_registry` workflow will process it upon closure.*
