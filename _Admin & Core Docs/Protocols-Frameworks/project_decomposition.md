@@ -54,7 +54,7 @@ The Chiron Guild is a worker-owned, AI-augmented digital cooperative. Our ethos 
 *   **Project Sector:** A major logical phase or component of the project. Each has a unique `sector_id`.
 *   **Guild Op:** A granular, actionable task within a Project Sector. Each Op is designed to be a discrete unit of work.
 *   **`op_title`:** The concise, action-oriented title of a Guild Op.
-*   **`op_type`:** The category of work for a Guild Op (e.g., `DEV`, `DOC`, `STR`).
+*   **`op_type`:** The category of work for a Guild Op. The official types are DEV, DSN, DOC, GOV, STR, QAT, COM, and for PERS Ops, we also use LRN, CRAFT, PRAC, and PROJ.
 *   **`primary_deliverable`:** The main verifiable outcome of a Guild Op.
 *   **`input_ops.json`:** The target structured JSON file this decomposition process aims to create.
 *   **Chironian:** A member of the Chiron Guild.
@@ -64,6 +64,9 @@ The Chiron Guild is a worker-owned, AI-augmented digital cooperative. Our ethos 
 
 **Your Role:**
 Your primary function is to assist Operative Kin-Caid in breaking down complex Project Briefs into a structured JSON format. You will guide the definition of meta-objectives, the identification of project sectors, and the granulation of work into Guild Ops for each sector. Your responses must be structured as requested (often JSON), precise, and focused on verifiable outcomes, embodying the 'Precision Shell.'
+
+**Operational Context / Tone:**
+Your responses must adapt to the context provided by the Operative. If the context is "Mythic Core," use Guild-specific lore and tone. If the context is "Professional/Agile," use standard industry terminology (e.g., "Tasks" instead of "Guild Ops," "Backlog" instead of "Guild Board"). You will be given this context with the initial project brief.
 ```
 
 ## Stage 2. LLM-Assisted Meta-Objective Definition
@@ -95,8 +98,7 @@ Your goal is to assist Operative Kin-Caid in drafting 3-5 concise, compelling Me
     *   `"id"` (string): A short identifier (e.g., "M1", "M2", "M3").
     *   `"text"` (string): The concise Meta-Objective statement.
 
-**Chiron Guild Context Reminder:**
-The Chiron Guild is a worker-owned, AI-augmented digital cooperative with a 'Mythic Core, Precision Shell' ethos. Your analysis should align with this mission.
+Reminder: Adhere to the specified Operational Context / Tone ("Mythic Core" or "Professional/Agile") for this project in all your generated text.
 ```
 
 **Example User Input for Task 2.1:**
@@ -161,8 +163,7 @@ Your goal is to assist Operative Kin-Caid in breaking down the project into 3-5 
     *   `"sector_summary"` (string): A 1-2 sentence summary of the Sector's primary focus and objectives.
     *   `"alignment_with_meta_objectives"` (string): Briefly explain how this Sector contributes to achieving one or more of the overall Project Meta-Objectives.
 
-**Chiron Guild Context Reminder:**
-Focus on logical, comprehensive breakdowns that enable efficient project execution through subsequent Guild Op definition.
+Reminder: Adhere to the specified Operational Context / Tone ("Mythic Core" or "Professional/Agile") for this project in all your generated text.
 ```
 **Example User Input for Task 2.2:**
 
@@ -255,8 +256,7 @@ Your goal is to assist Operative Kin-Caid by generating a list of 5-10 potential
     *   `"op_type"` (string): Its likely **Op Type**. Choose from: `DEV`, `DSN`, `DOC`, `GOV`, `STR`, `QAT`, `COM`, `LRN`, `CRAFT`, `PRAC`, `PROJ`.
     *   `"primary_deliverable"` (string): A brief, verifiable statement of the primary outcome or artifact produced by completing the Op.
 
-**Chiron Guild Context Reminder:**
-Guild Ops are fundamental. Ensure precision and actionability. The `sector_id` is crucial.
+Reminder: Adhere to the specified Operational Context / Tone ("Mythic Core" or "Professional/Agile") for this project in all your generated text.
 ```
 
 **Example User Input for Task 3.1 (for a single sector):**
@@ -318,7 +318,7 @@ Task: Generate the JSON array of Guild Ops for this sector.
 
 ## 4. Assembling the Final input_ops.json (Operative Task)
 
-**Purpose:** To consolidate the outputs from Tasks 2.1, 2.2, and 3.1 into the single, canonical input_ops.json file.
+**Purpose:** To consolidate the outputs from Tasks 2.1, 2.2, and 3.1 into a single input_ops.json file, saved within the specific project's directory (e.g., Projects/personal/creek_connections/input_ops.json).
 
 **Process:**
 1. Create input_ops.json: Start a new JSON file.
@@ -337,7 +337,7 @@ Task: Generate the JSON array of Guild Ops for this sector.
 {
   "project_metadata": {
     "project_id_prefix": "string (e.g., CCG)",
-    "context_label": "string (e.g., Context:PERS)",
+    "context_label": "string (e.g., Context:PERS, Context:CORE). This MUST align with the Primary Guild Op Categories defined in taxonomy_framework.md.",
     "default_assignee": "string (e.g., Kin-Caid)",
     "version": "string (e.g., 1.0.0)"
   },
@@ -402,7 +402,7 @@ Task: Generate the JSON array of Guild Ops for this sector.
 }
 ```
 
-**TThis input_ops.json file, now located at Projects/input_ops.json, is ready to be used by the generate_briefs_for_review.py script.**
+**This project-specific input_ops.json file is now ready to be used by the generate_briefs_for_review.py script.**
 
 
 
