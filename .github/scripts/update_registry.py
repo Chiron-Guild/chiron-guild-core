@@ -77,7 +77,7 @@ def main():
         "closed_at": args.closed_at or datetime.utcnow().isoformat() + "Z",
     }
 
-    registry_path = os.path.join("registry", "operative_registry.json")
+    registry_path = os.path.join("_Admin & Core Docs", "registry", "operative_registry.json")
     if not os.path.exists("registry"):
         os.makedirs("registry")
 
