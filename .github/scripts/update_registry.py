@@ -47,6 +47,12 @@ def main():
     issue_url = issue.get("html_url", "")
     closed_at = issue.get("closed_at", "")
 
+        # --- START OF DIAGNOSTIC PRINT ---
+    print("--- GROUND TRUTH: Raw 'issue_body' variable ---")
+    print(repr(issue_body))
+    print("--- END OF GROUND TRUTH ---")
+    # --- END OF DIAGNOSTIC PRINT ---
+    
     assignees = [a.get("login", "") for a in assignees_list if a]
 
     # Extract sections from the issue body
