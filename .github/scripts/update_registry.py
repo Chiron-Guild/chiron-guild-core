@@ -16,8 +16,7 @@ def extract_section(issue_body, section_name, is_single_line=False):
     )
     match = pattern.search(issue_body)
 
-    # Safeguard against NoneType
-    if not match or not match.group(1):
+    if not match:
         return "" if is_single_line else []
 
     block = match.group(1).strip()
@@ -26,7 +25,7 @@ def extract_section(issue_body, section_name, is_single_line=False):
         return " ".join([line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()])
     
     return [line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()]
-    
+
 def main():
     # Read the entire issue payload from a single environment variable
     payload_str = os.getenv("ISSUE_PAYLOAD")
