@@ -7,19 +7,29 @@ from datetime import datetime
 from shutil import copyfile
 
 def extract_section(issue_body, section_name, is_single_line=False):
+    """
+    Extracts content from a specific markdown section.
+    This version uses a flexible regex that accounts for optional markdown bolding.
+    """
     if not issue_body:
         return "" if is_single_line else []
-    
+        
+    # --- THE DEFINITIVE REGEX FIX ---
+    # This pattern now handles optional bolding (e.g., **Skills Required**) around the section name.
+    # `(?:\*\*)?` is a non-capturing group for an optional, escaped `**`.
     pattern = re.compile(
-        rf"^##+\s*{section_name}[:\s]*\n?(.*?)(?=\n##+|\Z)",
+        rf"^##+\s*(?:\*\*)?({section_name})(?:\*\*)?[:\s]*\n?(.*?)(?=\n##+|\Z)",
         re.DOTALL | re.IGNORECASE | re.MULTILINE
     )
+    # --- END OF FIX ---
+
     match = pattern.search(issue_body)
 
     if not match:
         return "" if is_single_line else []
 
-    block = match.group(1).strip()
+    # We now use group(2) because the section_name itself is in the first capture group
+    block = match.group(2).strip()
     
     if is_single_line:
         return " ".join([line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()])
@@ -27,7 +37,6 @@ def extract_section(issue_body, section_name, is_single_line=False):
     return [line.lstrip("-•* ").strip() for line in block.splitlines() if line.strip()]
 
 def main():
-    # Read the entire issue payload from a single environment variable
     payload_str = os.getenv("ISSUE_PAYLOAD")
     if not payload_str:
         print("Error: ISSUE_PAYLOAD environment variable not set.")
@@ -39,7 +48,6 @@ def main():
         print("Error: Could not decode ISSUE_PAYLOAD JSON.")
         return
 
-    # Extract all data from the parsed issue object
     issue_number = issue.get("number")
     issue_title = issue.get("title", "")
     issue_body = issue.get("body", "")
@@ -47,15 +55,9 @@ def main():
     issue_url = issue.get("html_url", "")
     closed_at = issue.get("closed_at", "")
 
-        # --- START OF DIAGNOSTIC PRINT ---
-    print("--- GROUND TRUTH: Raw 'issue_body' variable ---")
-    print(repr(issue_body))
-    print("--- END OF GROUND TRUTH ---")
-    # --- END OF DIAGNOSTIC PRINT ---
-    
     assignees = [a.get("login", "") for a in assignees_list if a]
 
-    # Extract sections from the issue body
+    # The issue_body is now parsed correctly by the robust extract_section function
     skills = extract_section(issue_body, "Skills Required|Skills Demonstrated|Associated Skills")
     objective = extract_section(issue_body, "Objective", is_single_line=True)
     deliverables = extract_section(issue_body, "Deliverables")
@@ -63,7 +65,6 @@ def main():
     estimated_effort = extract_section(issue_body, "Estimated Effort", is_single_line=True)
     acceptance_criteria = extract_section(issue_body, "Acceptance Criteria|Verification/Acceptance Criteria")
 
-    # Prepare the registry entry
     entry = {
         "issue_number": int(issue_number),
         "issue_title": issue_title,
@@ -83,7 +84,6 @@ def main():
     if not os.path.exists(registry_dir):
         os.makedirs(registry_dir)
 
-    # Load existing registry
     registry = []
     if os.path.isfile(registry_path):
         with open(registry_path, "r", encoding="utf-8") as f:
@@ -93,12 +93,10 @@ def main():
                 print(f"Warning: Could not decode JSON from {registry_path}. Starting fresh.")
                 registry = []
 
-    # Update or add the entry
     registry = [e for e in registry if e.get("issue_number") != entry["issue_number"]]
     registry.append(entry)
     registry.sort(key=lambda x: x["issue_number"], reverse=True)
 
-    # Write back to the file
     with open(registry_path, "w", encoding="utf-8") as f:
         json.dump(registry, f, indent=2, ensure_ascii=False)
     
