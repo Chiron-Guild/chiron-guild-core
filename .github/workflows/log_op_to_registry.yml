@@ -1,4 +1,3 @@
-# .github/workflows/log-op-to-registry.yml
 
 name: Log Guild Op to Registry on Issue Close
 
