@@ -1,3 +1,4 @@
+# .github/workflows/log-op-to-registry.yml
 
 name: Log Guild Op to Registry on Issue Close
 
@@ -12,63 +13,44 @@ permissions:
 jobs:
   log-to-registry:
     runs-on: ubuntu-latest
-    if: "contains(github.event.issue.labels.*.name, 'guild-op')" # IMPORTANT: Only run for issues with the 'guild-op' label
+    if: "contains(github.event.issue.labels.*.name, 'guild-op')"
 
     steps:
       - name: Check out main branch
         uses: actions/checkout@v4
         with:
-          ref: main # We need to update the registry file on the main branch
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
-      - name: Get Closed Issue Details
-        id: get_issue_details
-        run: |
-          echo '${{ toJSON(github.event.issue) }}' > issue_payload.json
-          {
-            echo 'issue_number<<EOF'
-            jq -r .number issue_payload.json
-            echo 'EOF'
-
-            echo 'issue_title<<EOF'
-            jq -r .title issue_payload.json
-            echo 'EOF'
-
-            echo 'issue_body<<EOF'
-            jq -r .body issue_payload.json
-            echo 'EOF'
-            
-            echo 'assignees<<EOF'
-            jq -c .assignees issue_payload.json 
-            echo 'EOF'
-
-            echo 'labels<<EOF'
-            jq -c .labels issue_payload.json 
-            echo 'EOF'
-
-            echo 'issue_url<<EOF'
-            jq -r .html_url issue_payload.json
-            echo 'EOF'
-
-            echo 'closed_at<<EOF'
-            jq -r .closed_at issue_payload.json
-            echo 'EOF'
-          } >> "$GITHUB_ENV"
+      - name: Get Issue Data via github-script
+        id: get_issue_data # We will reference this ID in the next step
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            core.setOutput('issue_number', issue.number);
+            core.setOutput('issue_title', issue.title);
+            core.setOutput('issue_body', issue.body);
+            core.setOutput('issue_url', issue.html_url);
+            core.setOutput('closed_at', issue.closed_at);
+            // Convert the assignees/labels arrays into a JSON string for passing
+            core.setOutput('assignees', JSON.stringify(issue.assignees));
+            core.setOutput('labels', JSON.stringify(issue.labels));
 
       - name: Update Operative Registry
         run: |
           python .github/scripts/update_registry.py \
-            --issue-number "${{ env.issue_number }}" \
-            --issue-title "${{ env.issue_title }}" \
-            --issue-body "${{ env.issue_body }}" \
-            --assignees '${{ env.assignees }}' \
-            --labels '${{ env.labels }}' \
-            --issue-url "${{ env.issue_url }}" \
-            --closed-at "${{ env.closed_at }}"
+            --issue-number "${{ steps.get_issue_data.outputs.issue_number }}" \
+            --issue-title "${{ steps.get_issue_data.outputs.issue_title }}" \
+            --issue-body "${{ steps.get_issue_data.outputs.issue_body }}" \
+            --assignees '${{ steps.get_issue_data.outputs.assignees }}' \
+            --labels '${{ steps.get_issue_data.outputs.labels }}' \
+            --issue-url "${{ steps.get_issue_data.outputs.issue_url }}" \
+            --closed-at "${{ steps.get_issue_data.outputs.closed_at }}"
 
       - name: Commit and push registry changes
         run: |
@@ -78,10 +60,9 @@ jobs:
           git config user.name "Chiron Guild Bot"
           git config user.email "actions@github.com"
           
-          # Use the quoted variable to check for changes and add the file
           if ! git diff --quiet "$REGISTRY_FILE_PATH"; then
             git add "$REGISTRY_FILE_PATH"
-            git commit -m "Forge Seal: Logged Guild Op #${{ env.issue_number }} to Registry"
+            git commit -m "Forge Seal: Logged Guild Op #${{ steps.get_issue_data.outputs.issue_number }} to Registry"
             git push
             echo "Operative Registry updated successfully."
           else
