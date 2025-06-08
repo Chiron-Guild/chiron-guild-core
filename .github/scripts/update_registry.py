@@ -46,6 +46,12 @@ def main():
     issue_url = os.getenv("ISSUE_URL")
     closed_at = os.getenv("CLOSED_AT")
 
+    # --- START OF DIAGNOSTIC CODE ---
+    print("--- DEBUG: Full issue_body content as received by Python ---")
+    print(repr(issue_body)) # repr() shows hidden characters like \r \n
+    print("--- END OF DIAGNOSTIC CODE ---")
+    # --- END OF DIAGNOSTIC CODE ---
+
     if not issue_number:
         print("Error: ISSUE_NUMBER environment variable not set.")
         return
