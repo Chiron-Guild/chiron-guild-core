@@ -26,28 +26,10 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: DEBUG - Print Environment Variables
-        run: |
-          echo "--- START OF RAW ISSUE_BODY ENV VAR ---"
-          echo "${{ env.ISSUE_BODY }}"
-          echo "--- END OF RAW ISSUE_BODY ENV VAR ---"
-          echo " "
-          echo "--- START OF JSON-ESCAPED ISSUE_BODY ---"
-          echo '${{ toJSON(github.event.issue.body) }}'
-          echo "--- END OF JSON-ESCAPED ISSUE_BODY ---"
-        env:
-          ISSUE_BODY: ${{ github.event.issue.body }}
-
       - name: Update Operative Registry
-        # This 'env' block makes all issue data available to the Python script
-        # as environment variables. This is the most robust method.
+        # Pass the entire issue object as a single, safe JSON string
         env:
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
-          ISSUE_URL: ${{ github.event.issue.html_url }}
-          CLOSED_AT: ${{ github.event.issue.closed_at }}
-          ASSIGNEES_JSON: ${{ toJSON(github.event.issue.assignees) }}
+          ISSUE_PAYLOAD: ${{ toJSON(github.event.issue) }}
         run: |
           python .github/scripts/update_registry.py
           
