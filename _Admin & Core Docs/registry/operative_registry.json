@@ -1,5 +1,20 @@
 [
   {
+    "issue_number": 69,
+    "issue_title": "[CHIRON-GOV-002] Establish Rapid Op Instantiation Protocol",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/69",
+    "assignees": [
+      "Kin-Caid"
+    ],
+    "Objective": "",
+    "Deliverables": [],
+    "skills": [],
+    "Estimated Effort": "",
+    "Acceptance Criteria": [],
+    "Awarded Guild Seal": "",
+    "closed_at": "2025-06-08T05:21:31Z"
+  },
+  {
     "issue_number": 56,
     "issue_title": "[CHIRON-QAT-001] - End-to-End Test Execution for Guild Op Automation Suite",
     "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/56",
