@@ -5,7 +5,7 @@
   },
   "CHIRON": {
     "name": "Chiron Guild Core Infrastructure",
-    "dir_path": "Projects/chiron/phase_0"
+    "dir_path": "Projects/chiron"
   },
   "PORT": {
     "name": "Automated Portfolio Website",
