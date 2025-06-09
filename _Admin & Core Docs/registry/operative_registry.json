@@ -1,5 +1,27 @@
 [
   {
+    "issue_number": 77,
+    "issue_title": "[[CHIRON-DOC-005] Define LLM Interaction Protocol for Operatives",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/77",
+    "assignees": [
+      "Kin-Caid"
+    ],
+    "Objective": "(s) ```markdown To codify best practices for interacting with AI Co-pilots, including the strategy of maintaining distinct conversational contexts for different types of assistance (e.g., strategic/general vs. technical/coding). ```",
+    "Deliverables": [],
+    "skills": [
+      "```markdown",
+      "AI Collaboration & Workflow Design",
+      "Technical Writing & Process Documentation",
+      "AI Literacy & Resource Management",
+      "Information Architecture & Knowledge Management",
+      "```"
+    ],
+    "Estimated Effort": "",
+    "Acceptance Criteria": [],
+    "Awarded Guild Seal": "",
+    "closed_at": "2025-06-09T14:59:57Z"
+  },
+  {
     "issue_number": 69,
     "issue_title": "[CHIRON-GOV-002] Establish Rapid Op Instantiation Protocol",
     "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/69",
