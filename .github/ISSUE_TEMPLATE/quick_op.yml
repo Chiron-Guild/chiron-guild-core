@@ -59,7 +59,6 @@ body:
       description: Write the Objective Statement for this Op
       placeholder: |
         'To update a document...To create a new workflow...et....'
-      render: markdown
     validations:
       required: true
 
