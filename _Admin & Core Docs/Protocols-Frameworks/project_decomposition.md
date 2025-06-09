@@ -221,6 +221,54 @@ Task: Generate the JSON array of Project Sectors.
 **Operative Action for Stage 2.2:** 
 
 Review the LLM's suggestions. Refine sector names, summaries, and alignments as needed. This JSON array will form the project_sectors part of input_ops.json.
+
+## Task 2.3 Generate Project Requirements Document (PRD)
+
+**Purpose:** To assist the Operative in breaking down the project (based on its finalized Meta-Objectives) into major, distinct Project Sectors, formatted for easy inclusion in input_ops.json.
+
+**User Inputs to LLM:**
+* Overall Project Name/Concept.
+* Finalized Project Meta-Objectives (text or the JSON array from Task 2.1).
+* Finalized Project Sectors (text or the JSON array from Task 2.2).
+* Optional: Additional project context or constraints.
+
+**LLM Prompt:**
+
+```text
+## Persona & Tone
+You are an expert Senior Project Manager and Business Analyst. Your communication style is clear, concise, and professional, adhering strictly to standard agile and lean project management principles. Avoid jargon, but use industry-standard terminology where appropriate (e.g., "scope," "KPIs," "stakeholders"). Your entire output must be grounded in business value and user needs.
+
+## Task
+Your task is to synthesize the provided project inputs into a comprehensive, professional Project Requirements Document (PRD). The output must be a single, complete Markdown document suitable for review by technical and non-technical stakeholders.
+
+## Inputs You Will Receive
+1.  **Project Name:** The official name of the project.
+2.  **Raw Project Description:** The initial, high-level brief from the project owner.
+3.  **Strategic Objectives (JSON):** A JSON array of the project's high-level goals.
+4.  **Project Sectors (JSON):** A JSON array of the major functional areas or phases of the project.
+5.  **project_prd_template.md** A markdown document that defines the PRD template.
+
+## Process
+1.  **Analyze all inputs** to gain a holistic understanding of the project's purpose and structure.
+2.  **Synthesize an Executive Summary and Problem Statement** based on the raw description and objectives. Do not simply copy; interpret and summarize.
+3.  **Populate the PRD structure**, mapping the provided "Strategic Objectives" and "Project Components" to the appropriate sections.
+4.  **Infer and Propose** additional critical sections based on your expertise:
+    *   **User Stories / Key Features:** Propose 3-5 high-level user stories that capture the essence of the project's functionality.
+    *   **Out of Scope:** Suggest 2-3 reasonable items that should be explicitly excluded to maintain focus.
+    *   **Success Metrics / KPIs:** Propose 2-3 measurable KPIs that directly relate to the Strategic Objectives.
+    *   **Assumptions and Dependencies:** Infer at least one reasonable assumption and one potential dependency.
+5.  **Format the entire output** as a clean, professional Markdown document. Use headers, lists, and tables appropriately for maximum clarity.
+
+## Output Format
+* Your final output MUST be a single, complete Markdown document.
+* Do not include any commentary outside of the document itself. Structure your response according to the provided PRD template format.
+
+**Begin generating the PRD now.**
+```
+
+**Operative Action for Stage 2.2:** 
+
+Review the LLM's output, refine as needed and save to the Project directory.
 ---
 
 ## Stage 3. LLM-Assisted Granular Op Identification (Task 3.1 - Run for EACH Sector)
