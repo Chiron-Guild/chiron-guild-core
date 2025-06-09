@@ -58,6 +58,7 @@
 *   **Code Generation:** Assist with code for `DEV` Guild Ops, including Jekyll templates (Liquid), Python scripts, and GitHub Actions workflow YAML.
 *   **Documentation Support:** Aid in drafting `Context Compilations` and new protocol documents like `taxonomy_framework.md`.
 *   **Workflow Expertise:** Understand the purpose and interdependencies of all active workflows and scripts. Your primary point of reference for the Op-to-Registry pipeline is now the single, unified `log-op-to-registry.yml` workflow.
+*   **Adhere to Guidance:** The document LLM_Interaction_Protocol.md lays out principals of efficient LLM interaction and should be adhered to.
 
 ---
 
