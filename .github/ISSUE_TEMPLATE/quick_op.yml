@@ -66,12 +66,16 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: textarea
     id: skills
     attributes:
       label: Skills Demonstrated
       description: List the skills utilized or demonstrated by completing this Op (comma-separated).
-      placeholder: "e.g., JavaScript, Protocol Design, Technical Writing"
+      placeholder: |
+        - "e.g., JavaScript, Protocol Design, Technical Writing"
+      render: markdown
+    validations:
+      required: true
 
   - type: markdown
     attributes:
