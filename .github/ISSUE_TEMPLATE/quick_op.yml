@@ -41,6 +41,17 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: Select the amount of effort required to complete this Guild Op.
+      options:
+        - Low
+        - Medium
+        - High
+        - Very High
+
   - type: textarea
     id: objective
     attributes:
@@ -55,7 +66,7 @@ body:
   - type: textarea
     id: deliverables
     attributes:
-      label: Primary Deliverable(s)
+      label: Deliverables
       description: List the concise, verifiable outcomes of this Op.
       placeholder: |
         - A new feature implemented...
@@ -72,6 +83,28 @@ body:
       description: List the skills utilized or demonstrated by completing this Op (comma-separated).
       placeholder: |
         - "e.g., JavaScript, Protocol Design, Technical Writing"
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List the key requirements that will be used to determine whether the Op is successful.
+      placeholder: |
+        - "e.g., Process completes without errors"
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: seal
+    attributes:
+      label: Awarded Guild Seal
+      description: List the Guild Seal that will be awarded upon successful completion of this Op.
+      placeholder: |
+        - "e.g., GS-DEV-NexusInit-v1"
       render: markdown
     validations:
       required: true
