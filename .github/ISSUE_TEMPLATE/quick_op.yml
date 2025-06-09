@@ -1,6 +1,8 @@
 name: Quick Op Instantiation
 description: A rapid instantiation form for pre-defined tasks.
-title: "[PROJECT-TYPE-XXX] Your Task Title"
+title: 
+ placeholder: |
+        "[PROJECT-TYPE-XXX] Your Task Title"
 labels: ["guild-op", "status:open"]
 body:
   - type: markdown
