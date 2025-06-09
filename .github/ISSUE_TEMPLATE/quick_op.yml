@@ -42,14 +42,26 @@ body:
       required: true
 
   - type: textarea
+    id: objective
+    attributes:
+      label: Objective(s)
+      description: Write the Objective Statement for this Op
+      placeholder: |
+        - A new feature implemented...
+        - A final document delivered to...
+        - A bug resolved and verified...
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
     id: deliverables
     attributes:
       label: Primary Deliverable(s)
       description: List the concise, verifiable outcomes of this Op.
       placeholder: |
-        - A new feature implemented...
-        - A final document delivered to...
-        - A bug resolved and verified...
+        - To update a document...
+        - To create a new workflow...
       render: markdown
     validations:
       required: true
