@@ -131,7 +131,7 @@ This section translates your core motivations into tangible contributions at WPD
 
 *   **Professional Strengths:** Describes how the qualities identified in "The Core Foundation" manifest as practical strengths in a professional context (e.g., "A commitment to community translates into exceptional stakeholder engagement skills").
 *   **Key Skills and Approach:** Connects their preferred learning and problem-solving styles to specific job functions and areas of excellence within WPD (e.g., data analysis, fieldwork, policy development, team leadership).
-*   **Connecting Your Work to WPD's Mission:** Clearly articulates how their unique blend of skills and values directly supports specific WPD goals, such as reducing flood risk, improving water quality, or promoting environmental equity.
+*   **Connecting Your Work to WPD's Mission and Values:** Clearly articulates how their unique blend of skills and values directly supports specific WPD Values and Goals (e.g. reducing flood risk, improving water quality, or promoting equity)
 *   **Collaborative Impact:** Emphasizes how their individual contributions enhance their team's effectiveness and support the department's collaborative culture.
 
 ### **Section 5: A Concluding Reflection**
