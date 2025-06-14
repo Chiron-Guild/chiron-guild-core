@@ -1,0 +1,46 @@
+# .github/workflows/log-quick-task.yml
+name: 'Log Quick Task to Registry'
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  process-quick-log:
+    # Only run if the issue has the 'quick-log' label
+    if: contains(github.event.issue.labels.*.name, 'quick-log')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write # To comment on and close the issue
+      contents: write # To commit the updated registry file
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install langchain openai requests
+
+      - name: Run Quick Log Processor
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For committing changes
+        run: python .github/scripts/quick_log_processor.py
+
+      - name: Post-processing on Issue
+        run: |
+          # The script should write the new OP_ID to a file, e.g., new_op_id.txt
+          NEW_OP_ID=$(cat new_op_id.txt)
+          gh issue comment ${{ github.event.issue.number }} --body "⚡ **Rapid Log Successful.** Task has been logged to the Reputation Matrix as **$NEW_OP_ID**. This issue will now be closed."
+          gh issue close ${{ github.event.issue.number }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
