@@ -1,5 +1,34 @@
 [
   {
+    "issue_number": 82,
+    "issue_title": "[CHIRON-DEV-003] [CHIRON-DEV-003] Implement Automated Rapid Log Entry Workflow",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/82",
+    "assignees": [
+      "Kin-Caid"
+    ],
+    "Objective": "To develop and deploy the \"Rapid Logging Protocol,\" an automated workflow designed to streamline the archival of completed ad-hoc tasks, thereby significantly reducing the friction associated with updating the Reputation Matrix and enhancing its comprehensiveness by capturing high-velocity work.",
+    "Deliverables": [
+      "https://github.com/Chiron-Guild/chiron-guild-core/commit/0421695dc017c294ecac37ea017b3c580acb9a65",
+      "The \"Rapid Logging Protocol\" automated workflow system, comprising the `rapid_log.yml` GitHub Issue Template, `log-rapid-task.yml` GitHub Actions Workflow, and `rapid_log_processor.py` Python script."
+    ],
+    "skills": [
+      "Software Development",
+      "Workflow Automation",
+      "AI/ML Integration",
+      "System Design",
+      "Version Control"
+    ],
+    "Estimated Effort": "X-Large",
+    "Acceptance Criteria": [
+      "[ ] A task is complete when the \"Rapid Logging Protocol\" is fully deployed and accessible as a GitHub Issue Form.",
+      "[ ] A task is complete when submitting a new issue via the `rapid_log.yml` template successfully triggers the `log-rapid-task.yml` GitHub Actions workflow.",
+      "[ ] A task is complete when the `rapid_log_processor.py` script accurately parses, classifies, and commits a new, formatted entry to `operative_registry.json` for a submitted task.",
+      "[ ] A task is complete when the automated workflow demonstrably reduces manual effort and friction in updating the Reputation Matrix."
+    ],
+    "Awarded Guild Seal": "",
+    "closed_at": "2025-06-14T04:07:07.304658Z"
+  },
+  {
     "issue_number": 77,
     "issue_title": "[[CHIRON-DOC-005] Define LLM Interaction Protocol for Operatives",
     "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/77",
