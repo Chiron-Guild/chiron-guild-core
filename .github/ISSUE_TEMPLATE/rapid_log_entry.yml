@@ -1,15 +1,47 @@
-# .github/ISSUE_TEMPLATE/quick_log.yml
+# .github/ISSUE_TEMPLATE/rapid_log.yml
 name: "⚡ Rapid Log Entry"
 description: "Log a completed ad-hoc task directly to the Reputation Matrix."
-title: "[QUICK LOG] Concise description of the task"
-labels: ["quick-log"] # <-- Critical for triggering the correct workflow
+title: "[RAPID LOG] Concise description of the task"
+labels: ["rapid-log"] # Critical label to trigger the correct workflow
 body:
+  - type: dropdown
+    id: project-prefix
+    attributes:
+      label: Project Prefix
+      description: "Select the primary category of the work."
+      # NOTE: You must keep this list in sync with your project_mappings.json
+      options:
+        - CHIRON
+        - KCAD
+        - PERS
+        - BNTY
+        - CLIENT
+    validations:
+      required: true
+  - type: dropdown
+    id: op-type
+    attributes:
+      label: Operation Type
+      description: "Select the specific nature of the work performed."
+      # NOTE: You must keep this list in sync with your taxonomy_framework.md
+      options:
+        - DEV
+        - DSN
+        - DOC
+        - GOV
+        - STR
+        - QAT
+        - COM
+        - LRN
+        - CRAFT
+        - PROJ
+    validations:
+      required: true
   - type: textarea
     id: task-description
     attributes:
       label: "Task Description"
-      description: "Describe what you accomplished. Be detailed enough for the AI to classify it."
-      placeholder: "e.g., I refactored the Jekyll portfolio layout to use CSS Grid for better responsiveness and added a dark mode toggle."
+      description: "Describe what you accomplished. This will become the 'Objective' in the registry."
     validations:
       required: true
   - type: input
@@ -17,6 +49,5 @@ body:
     attributes:
       label: "Deliverable URL"
       description: "Link to the primary result (e.g., a specific commit, PR, file, or live URL)."
-      placeholder: "https://github.com/your-repo/commit/..."
     validations:
       required: true
