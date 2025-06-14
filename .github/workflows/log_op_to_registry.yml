@@ -12,8 +12,10 @@ permissions:
 
 jobs:
   log-to-registry:
+    if: >- # Using >- for multi-line readability
+      contains(github.event.issue.labels.*.name, 'guild-op') &&
+      !contains(github.event.issue.labels.*.name, 'rapid-log')
     runs-on: ubuntu-latest
-    if: "contains(github.event.issue.labels.*.name, 'guild-op')"
 
     steps:
       - name: Check out main branch
