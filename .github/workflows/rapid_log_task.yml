@@ -1,18 +1,17 @@
-# .github/workflows/log-quick-task.yml
-name: 'Log Quick Task to Registry'
+# .github/workflows/log-rapid-task.yml
+name: 'Log Rapid Task to Registry'
 
 on:
   issues:
     types: [opened]
 
 jobs:
-  process-quick-log:
-    # Only run if the issue has the 'quick-log' label
-    if: contains(github.event.issue.labels.*.name, 'quick-log')
+  process-rapid-log:
+    if: contains(github.event.issue.labels.*.name, 'rapid-log')
     runs-on: ubuntu-latest
     permissions:
-      issues: write # To comment on and close the issue
-      contents: write # To commit the updated registry file
+      contents: write
+      issues: write
 
     steps:
       - name: Checkout repository
@@ -32,14 +31,27 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For committing changes
-        run: python .github/scripts/quick_log_processor.py
+        run: python .github/scripts/rapid_log_processor.py
+
+      - name: Commit updated registry
+        run: |
+          git config --global user.name 'Chiron Guild Automata'
+          git config --global user.email 'actions@github.com'
+          git add '${{ env.REGISTRY_PATH }}'
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            NEW_OP_ID=$(cat new_op_id.txt)
+            git commit -m "chore(registry): Log new Guild Op ${NEW_OP_ID} via Rapid Log"
+            git push
+          fi
+        env:
+          REGISTRY_PATH: '_Admin & Core Docs/registry/operative_registry.json'
 
       - name: Post-processing on Issue
         run: |
-          # The script should write the new OP_ID to a file, e.g., new_op_id.txt
           NEW_OP_ID=$(cat new_op_id.txt)
-          gh issue comment ${{ github.event.issue.number }} --body "⚡ **Rapid Log Successful.** Task has been logged to the Reputation Matrix as **$NEW_OP_ID**. This issue will now be closed."
+          gh issue comment ${{ github.event.issue.number }} --body "⚡ **AI-Augmented Log Successful.** Task **$NEW_OP_ID** has been logged to the Reputation Matrix. This issue will now be closed."
           gh issue close ${{ github.event.issue.number }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
