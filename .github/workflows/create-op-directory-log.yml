@@ -13,7 +13,6 @@ jobs:
   create_op_scaffolding:
     if: >-
       github.event.sender.type != 'Bot' &&
-      contains(github.event.issue.labels.*.name, 'guild-op') &&
       !contains(github.event.issue.labels.*.name, 'rapid-log')
     runs-on: ubuntu-latest
 
