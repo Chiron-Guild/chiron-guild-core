@@ -29,6 +29,15 @@ Our external engagement is visionary and professional, grounded in precise execu
 We’re in **Phase 0: the Bootstrapping Era** of Chiron Guild. This is where the legends begin.
 Our first "client project"? To **forge Chiron Guild itself**. Every line of code, every documented workflow, every governance protocol, every tool—it's all built by the very hands and minds that will wield it in the future.
 
+## ⚙️ The Forge: Our Current Toolkit
+
+During Phase 0, we have forged the foundational tools that power the Guild. Our system is not just a concept; it is operational.
+
+*   **Automated Registry Logging:** Our `log-op-to-registry.yml` workflow automatically updates every Operative's `Reputation Matrix` the moment a Guild Op is completed.
+*   **AI-Augmented Project Decomposition:** A standardized protocol using LLMs to systematically break down large, ambiguous goals into a precise backlog of actionable tasks.
+*   **The Guild Interface AI (Prototype):** A Jupyter Notebook-based conversational AI, primed with the Guild's core protocols, that serves as a persistent, strategic "Oracle" for planning and guidance.
+*   **Streamlined Op Creation:** Issue templates that allow for both deep, planned work and the rapid, low-friction creation of Guild Ops for smaller tasks.
+
 ### 🔥 How You Can Enter the Forge Right Now
 
 * **Architect the Codebase:** Help design the underlying protocols, the prompt structures, and the digital infrastructure that will power future Guild Ops.
@@ -37,7 +46,7 @@ Our first "client project"? To **forge Chiron Guild itself**. Every line of code
 * **Engineer the Structure:** Help establish the ironclad governance rules, the licensing terms, and the dynamic engine that assigns Guild Ops.
 * **Amplify the Signal:** Recruit new collaborators, digital mentors, and mission leads to swell our ranks.
 
-> 🛠️ Every contribution during Phase 0 earns **full credit**, feeds directly into your future **reputation score** (your digital standing in the Guild), and lays the foundational bedrock for the Guild's ultimate dominion.
+> 🛠️ Every contribution during Phase 0 earns **full credit**, feeds directly into your future **reputation matrix** (your digital standing in the Guild), and lays the foundational bedrock for the Guild's ultimate dominion.
 >
 > **Chiron Guild begins by forging itself—join us and seize control of the future's framework.**
 
@@ -48,7 +57,7 @@ Our first "client project"? To **forge Chiron Guild itself**. Every line of code
 ### For Contributors: Initiating Your Guild Op
 
 1.  **Intercept the Signal:** Join our secure communication channels and find your first **Guild Op** on the **Guild Board** (GitHub Issues within this Chiron Guild Hub).
-2.  **Arm Yourself:** Utilize the provided templates, AI guidance, and collaboration prompts. *Remember: bring your own LLM to **your Op**—your choice, your power.*
+2.  **Arm Yourself:** Utilize the provided templates, AI guidance, and collaboration prompts. Operatives leverage protocols like our project_decomposition.md for new initiatives or our Rapid Op Instantiation templates for logging daily tasks.*Remember: bring your own LLM to **your Op**—your choice, your power.*
 3.  **Transmit Your Work:** Submit your compiled code via Pull Requests or transmit your designs and documentation as proposals through GitHub.
 
 📘 Review [`CONTRIBUTING.md`](CONTRIBUTING.md) for full initiation protocols.
@@ -62,13 +71,15 @@ To forge an alliance or discuss future opportunities, establish contact via **[T
 
 ---
 
-## 📜 Core Directives & Protocols
+## 📜 Core Protocols & The Guild Codex
 
-* 📄 `LICENSE.md`: The Chiron Guild Community License (v1.0)
-* 📘 **Context Compilation Protocol:** Defines how we document our work, with `Context Compilations` stored in designated `archives/[GuildOpID]/` directories within the **Chiron Guild Hub** (our primary repository). (Link to actual protocol document to be added here)
-* 🏛️ Guild Protocols & Governance (Coming soon—built by us, for us)
-* 🎖️ Guild Seals & Reputation Matrix (Your earned standing)
-* 🤝 Worker Sovereignty & Collective Bargaining Frameworks
+Our operations are guided by a suite of well-defined, living protocols. These documents form our "Precision Shell" and are the source of truth for all Guild activity.
+
+*   **`taxonomy_framework.md`**: The definitive guide to all Guild Op categories (`CORE`, `PERS`) and work types (`DEV`, `DOC`, `PROJ`).
+*   **`project_decomposition.md`**: The master protocol for our AI-augmented process of breaking down large projects into actionable Guild Ops.
+*   **`GUILD_OP_PROTOCOLS.md`**: The rules governing the structure, ID system, and lifecycle of every Guild Op.
+*   **`operative_registry.json`**: Our automated, real-time **Reputation Matrix**, which verifiably logs every completed Guild Op.
+*   **`LLM_Interaction_Protocols.md`**: Best practices for efficient and powerful collaboration between Operatives and AI assistants.
 
 ---
 

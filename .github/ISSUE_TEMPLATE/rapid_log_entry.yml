@@ -1,0 +1,53 @@
+# .github/ISSUE_TEMPLATE/rapid_log.yml
+name: "⚡ Rapid Log Entry"
+description: "Log a completed ad-hoc task directly to the Reputation Matrix."
+title: "[RAPID LOG] Concise description of the task"
+labels: ["rapid-log"] # Critical label to trigger the correct workflow
+body:
+  - type: dropdown
+    id: project-prefix
+    attributes:
+      label: Project Prefix
+      description: "Select the primary category of the work."
+      # NOTE: You must keep this list in sync with your project_mappings.json
+      options:
+        - CHIRON
+        - KCAD
+        - PERS
+        - BNTY
+        - CLIENT
+    validations:
+      required: true
+  - type: dropdown
+    id: op-type
+    attributes:
+      label: Operation Type
+      description: "Select the specific nature of the work performed."
+      # NOTE: You must keep this list in sync with your taxonomy_framework.md
+      options:
+        - DEV
+        - DSN
+        - DOC
+        - GOV
+        - STR
+        - QAT
+        - COM
+        - LRN
+        - CRAFT
+        - PROJ
+    validations:
+      required: true
+  - type: textarea
+    id: task-description
+    attributes:
+      label: "Task Description"
+      description: "Describe what you accomplished. This will become the 'Objective' in the registry."
+    validations:
+      required: true
+  - type: input
+    id: deliverable-url
+    attributes:
+      label: "Deliverable URL"
+      description: "Link to the primary result (e.g., a specific commit, PR, file, or live URL)."
+    validations:
+      required: true

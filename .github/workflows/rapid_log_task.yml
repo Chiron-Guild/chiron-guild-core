@@ -1,0 +1,58 @@
+# .github/workflows/log-rapid-task.yml
+name: 'Log Rapid Task to Registry'
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  process-rapid-log:
+    if: contains(github.event.issue.labels.*.name, 'rapid-log')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install langchain-google-genai pydantic
+
+      - name: Run Rapid Log Processor
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: python .github/scripts/rapid_log_processor.py
+
+      - name: Commit updated registry
+        run: |
+          git config --global user.name 'Chiron Guild Automata'
+          git config --global user.email 'actions@github.com'
+          git add '${{ env.REGISTRY_PATH }}'
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            NEW_OP_ID=$(cat new_op_id.txt)
+            git commit -m "chore(registry): Log new Guild Op ${NEW_OP_ID} via Rapid Log"
+            git push
+          fi
+        env:
+          REGISTRY_PATH: '_Admin & Core Docs/registry/operative_registry.json'
+
+      - name: Post-processing on Issue
+        run: |
+          NEW_OP_ID=$(cat new_op_id.txt)
+          gh issue comment ${{ github.event.issue.number }} --body "⚡ **AI-Augmented Log Successful.** Task **$NEW_OP_ID** has been logged to the Reputation Matrix. This issue will now be closed."
+          gh issue close ${{ github.event.issue.number }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}

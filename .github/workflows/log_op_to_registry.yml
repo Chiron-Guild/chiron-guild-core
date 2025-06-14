@@ -12,8 +12,13 @@ permissions:
 
 jobs:
   log-to-registry:
+    if: >-
+      github.event.sender.type != 'Bot' &&
+      contains(github.event.issue.labels.*.name, 'guild-op') &&
+      !contains(github.event.issue.labels.*.name, 'rapid-log')
     runs-on: ubuntu-latest
-    if: "contains(github.event.issue.labels.*.name, 'guild-op')"
+    permissions:
+      contents: read # This workflow only needs to READ the issue
 
     steps:
       - name: Check out main branch

@@ -11,6 +11,9 @@ permissions:
 
 jobs:
   create_op_scaffolding:
+    if: >-
+      github.event.sender.type != 'Bot' &&
+      !contains(github.event.issue.labels.*.name, 'rapid-log')
     runs-on: ubuntu-latest
 
     steps:
