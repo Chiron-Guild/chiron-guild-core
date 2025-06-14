@@ -73,12 +73,17 @@ Refer to these documents for comprehensive understanding.
 *   **`project_decomposition.md`**: The master protocol for decomposing new, complex projects.
 *   **`GUILD_OP_PROTOCOLS.md`**: Defines the structure, ID system, and lifecycle of a Guild Op.
 
+### **AI Interaction & Prompts**
+*   **`LLM_Interaction_Protocols.md`**: Outlines best practices for efficient Operative-AI interaction (e.g., the Oracle vs. Scribe model).
+*   **`_Admin & Core Docs/Protocols-Frameworks/prompts/guild_oracle_prompt.md`**: An *example* of a specialized persona for strategic guidance.
+
 ### **Automation & Configuration**
 *   **`.github/workflows/log-op-to-registry.yml`**: **(CRITICAL WORKFLOW)** The single, unified workflow that triggers on the closure of a `guild-op` labeled issue and logs it to the `Reputation Matrix`.
 *   **`.github/scripts/update_registry.py`**: The Python script executed by the workflow above. It reads data from environment variables and updates the JSON registry.
 *   **`.github/ISSUE_TEMPLATE/quick_op.yml`**: The "Rapid Op Instantiation" template for creating low-friction Guild Ops.
 *   **`project_mappings.json`**: The configuration file mapping project prefixes to directory paths.
 *   **`_Admin & Core Docs/registry/operative_registry.json`**: The canonical database for the `Reputation Matrix`.
+*   **`notebooks/guild_interface_v1.ipynb`**: The prototype application for persistent, context-aware chat.
 
 ### **Portfolio & Site**
 *   **`index.html`**: The main file for the GitHub Pages portfolio website.
