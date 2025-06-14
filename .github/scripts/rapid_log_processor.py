@@ -1,70 +1,54 @@
 # .github/scripts/rapid_log_processor.py
 #
 # Chiron Guild: Rapid Log Processor
-# Version: 1.1 (Gemini Integration)
+# Version: 1.2 (AI-Augmented)
 #
-# This script is the "brain" of the Rapid Logging Protocol. It is triggered by a GitHub Action
-# when a "Rapid Log" issue is created. It uses Google Gemini via LangChain for classification.
+# This hybrid script uses deterministic user input for classification (Prefix, Type)
+# and a generative LLM (Gemini) to expand a simple description into a rich,
+# structured entry for the Reputation Matrix.
 
 import os
 import json
 import re
 from datetime import datetime, timezone
 
-# --- MODIFICATION: Import the correct LangChain integration ---
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
+from typing import List
 
-# --- Configuration: File Paths (Unchanged) ---
+# --- Configuration: File Paths ---
 REGISTRY_PATH = "_Admin & Core Docs/registry/operative_registry.json"
-TAXONOMY_PATH = "taxonomy_framework.md"
-MAPPINGS_PATH = "project_mappings.json"
 NEW_OP_ID_PATH = "new_op_id.txt"
 
-# --- Pydantic Model for Structured LLM Output (Unchanged) ---
-class TaskClassification(BaseModel):
-    """Defines the structured output for the LLM's classification."""
-    project_id_prefix: str = Field(description="The most appropriate Project Prefix from the provided list.")
-    op_type: str = Field(description="The most appropriate Operation Type from the provided list.")
+# --- Pydantic Model for Structured LLM Generation ---
+class InferredOpDetails(BaseModel):
+    """Defines the structured output for the LLM's generation task."""
+    objective: str = Field(description="A formal, single-paragraph objective statement rewritten from the user's task description.")
+    deliverables: List[str] = Field(description="A list of 1-3 specific, tangible outputs or results. The provided Deliverable URL should be the primary deliverable.")
+    skills: List[str] = Field(description="A list of 3-5 professional skills demonstrated by completing this task.")
+    estimated_effort: str = Field(description="An estimate of the effort using a T-shirt size scale: X-Small (<1 hour), Small (1-3 hours), Medium (4-8 hours), Large (8-16 hours), X-Large (16+ hours).")
+    acceptance_criteria: List[str] = Field(description="A list of 2-4 verifiable criteria that prove the task is complete, written in the format '[ ] A task is complete when...'.")
 
-# --- Helper Functions (Unchanged) ---
-def parse_issue_body(body: str) -> tuple[str, str]:
-    """
-    Extracts the task description and deliverable URL from the GitHub issue body.
-    """
-    try:
-        description_match = re.search(r"### Task Description\s*\n\n(.*?)\s*\n\n### Deliverable URL", body, re.DOTALL)
-        url_match = re.search(r"### Deliverable URL\s*\n\n(.*?)$", body, re.DOTALL)
-        description = description_match.group(1).strip() if description_match else ""
-        url = url_match.group(1).strip() if url_match else ""
-        if not description or not url:
-            raise ValueError("Could not parse description or URL from issue body.")
-        return description, url
-    except Exception as e:
-        print(f"Error parsing issue body: {e}")
-        exit(1)
-
-def load_context_files() -> tuple[str, list[str]]:
-    """
-    Loads the taxonomy framework for context and project prefixes for validation.
-    """
-    try:
-        with open(TAXONOMY_PATH, 'r', encoding='utf-8') as f:
-            taxonomy_context = f.read()
-        with open(MAPPINGS_PATH, 'r', encoding='utf-8') as f:
-            project_mappings = json.load(f)
-            project_prefixes = list(project_mappings.keys())
-        return taxonomy_context, project_prefixes
-    except FileNotFoundError as e:
-        print(f"Error: Required context file not found: {e.filename}")
-        exit(1)
+# --- Helper Functions (parse_issue_body and generate_new_op_id are from previous version) ---
+def parse_issue_body_with_dropdowns(body: str) -> dict:
+    parsed_data = {}
+    pattern = re.compile(r"###\s*(?P<key>.*?)\s*\n\n(?P<value>.*?)(?=\n###|\Z)", re.DOTALL)
+    for match in pattern.finditer(body):
+        key = match.group('key').strip().lower().replace(' ', '_')
+        value = match.group('value').strip()
+        parsed_data[key] = value
+    key_mapping = {'project_prefix': 'project_prefix', 'operation_type': 'op_type', 'task_description': 'task_description', 'deliverable_url': 'deliverable_url'}
+    standardized_data = {}
+    for raw_key, value in parsed_data.items():
+        for standard_key, map_val in key_mapping.items():
+             if standard_key in raw_key:
+                  standardized_data[map_val] = value
+                  break
+    return standardized_data
 
 def generate_new_op_id(registry_data: list, prefix: str) -> tuple[int, str]:
-    """
-    Generates the next sequential numeric ID for a given project prefix.
-    """
     id_pattern = re.compile(rf"\[{re.escape(prefix)}-[A-Z]+-(\d+)\]")
     max_id = 0
     for entry in registry_data:
@@ -78,91 +62,34 @@ def generate_new_op_id(registry_data: list, prefix: str) -> tuple[int, str]:
     formatted_id = f"{new_numeric_id:03d}"
     return new_numeric_id, formatted_id
 
-
 # --- Main Execution Logic ---
 def main():
-    """Main script execution."""
-    print("--- Starting Rapid Log Protocol Processor (Gemini Engine) ---")
+    print("--- Starting Rapid Log Protocol Processor (v1.2 AI-Augmented) ---")
 
-    # 1. Ingest Data from Environment Variables
+    # 1. Ingest and Parse Deterministic Data
     issue_title = os.environ.get("ISSUE_TITLE")
     issue_body = os.environ.get("ISSUE_BODY")
     issue_url = os.environ.get("ISSUE_URL")
-    # --- MODIFICATION: Use the new secret ---
-    google_api_key = os.environ.get("GEMINI_API_KEY")
+    google_api_key = os.environ.get("GOOGLE_API_KEY")
 
     if not all([issue_title, issue_body, issue_url, google_api_key]):
         print("Error: Missing one or more required environment variables.")
         exit(1)
 
     op_name_cleaned = re.sub(r"\[RAPID LOG\]\s*", "", issue_title, flags=re.IGNORECASE).strip()
-    print(f"Processing Task: {op_name_cleaned}")
+    form_data = parse_issue_body_with_dropdowns(issue_body)
+    prefix = form_data.get('project_prefix')
+    op_type = form_data.get('op_type')
+    task_description = form_data.get('task_description')
+    deliverable_url = form_data.get('deliverable_url')
 
-    # 2. Parse Inputs
-    task_description, deliverable_url = parse_issue_body(issue_body)
-    print("Successfully parsed task description and deliverable URL.")
-
-    # 3. Load Guild Context
-    taxonomy_context, project_prefixes = load_context_files()
-    print(f"Loaded Guild Context. Valid prefixes: {project_prefixes}")
-
-    # 4. Build and Execute LangChain Classification Chain with Gemini
-    print("Initiating Gemini LLM classification...")
-    parser = JsonOutputParser(pydantic_object=TaskClassification)
-
-    prompt = ChatPromptTemplate.from_messages([
-        # Gemini handles system prompts differently. We combine it into the human message.
-        ("human", """
-        You are a hyper-competent AI assistant for the Chiron Guild, tasked with classifying completed work.
-        Your job is to analyze a task description and determine its Project Prefix and Operation Type based on the Guild's official taxonomy and project list.
-        You MUST choose from the provided lists. Do not invent new categories.
-
-        **Taxonomy & Project Context:**
-        ---
-        {taxonomy_context}
-        ---
-
-        **Valid Project Prefixes:**
-        {project_prefixes}
-
-        **Instructions:**
-        Analyze the following task description and respond ONLY with a valid JSON object matching the requested format.
-
-        **Task Description:**
-        ---
-        {task_description}
-        ---
-
-        **JSON Output Format:**
-        {format_instructions}
-        """)
-    ])
-    
-    # --- MODIFICATION: Instantiate ChatGoogleGenerativeAI instead of ChatOpenAI ---
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash-preview-05-20",  
-        google_api_key=google_api_key,
-        temperature=0,
-        convert_system_message_to_human=True # Important for models that don't have a native system role
-    )
-    
-    chain = prompt | llm | parser
-
-    try:
-        classification = chain.invoke({
-            "taxonomy_context": taxonomy_context,
-            "project_prefixes": ", ".join(project_prefixes),
-            "task_description": task_description,
-            "format_instructions": parser.get_format_instructions(),
-        })
-        prefix = classification['project_id_prefix']
-        op_type = classification['op_type']
-        print(f"Gemini Classification successful: Prefix='{prefix}', Type='{op_type}'")
-    except Exception as e:
-        print(f"Error during Gemini LLM classification: {e}")
+    if not all([prefix, op_type, task_description, deliverable_url]):
+        print(f"Error: Could not parse all required fields from issue body. Data: {form_data}")
         exit(1)
+        
+    print(f"Parsed data successfully: Prefix='{prefix}', Type='{op_type}'")
 
-    # 5. Load Registry and Generate New Op ID (Unchanged)
+    # 2. Generate New Op ID (Done early for use in commit message)
     try:
         with open(REGISTRY_PATH, 'r', encoding='utf-8') as f:
             registry_data = json.load(f)
@@ -174,33 +101,75 @@ def main():
     full_op_title = f"[{op_id}] {op_name_cleaned}"
     print(f"Generated new Guild Op ID: {op_id}")
 
-    # 6. Assemble Full Registry Entry (Unchanged)
+    # 3. Use LLM to Generate Rich Details
+    print("Initiating Gemini LLM to generate rich details...")
+    parser = JsonOutputParser(pydantic_object=InferredOpDetails)
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("human", """
+        You are a meticulous Guild Scribe AI. Your task is to expand a brief task description from an Operative into a formal, structured entry for our Reputation Matrix.
+        Use the provided information to generate a comprehensive JSON object.
+
+        **Operative's Input:**
+        - Task Description: "{task_description}"
+        - Primary Deliverable URL: "{deliverable_url}"
+
+        **Your Instructions:**
+        1.  **Objective:** Rewrite the user's description into a formal, single-paragraph objective statement.
+        2.  **Deliverables:** List the specific, tangible outputs. The provided URL is always the primary deliverable. Infer any others from the description.
+        3.  **Skills:** Infer a list of 3-5 professional skills demonstrated by this work.
+        4.  **Estimated Effort:** Estimate the effort using this T-shirt scale: X-Small, Small, Medium, Large, X-Large.
+        5.  **Acceptance Criteria:** Create a list of verifiable criteria that prove the task is complete.
+
+        Respond ONLY with a valid JSON object matching the requested format.
+        **JSON Output Format:**
+        {format_instructions}
+        """)
+    ])
+    
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-preview-05-20", google_api_key=google_api_key, temperature=0.5, convert_system_message_to_human=True)
+    chain = prompt | llm | parser
+
+    try:
+        inferred_details = chain.invoke({
+            "task_description": task_description,
+            "deliverable_url": deliverable_url,
+            "format_instructions": parser.get_format_instructions(),
+        })
+        print("Gemini successfully generated rich details.")
+    except Exception as e:
+        print(f"Error during Gemini LLM generation: {e}")
+        # Fallback to a basic entry if AI fails
+        inferred_details = {
+            "objective": task_description,
+            "deliverables": [deliverable_url],
+            "skills": ["Error: AI generation failed"],
+            "estimated_effort": "N/A",
+            "acceptance_criteria": ["[ ] Task is logged."]
+        }
+
+    # 4. Assemble Final Registry Entry
     new_entry = {
         "issue_number": int(issue_url.split('/')[-1]),
         "issue_title": full_op_title,
         "issue_url": issue_url,
         "assignees": ["Kin-Caid"],
-        "Objective": task_description,
-        "Deliverables": [deliverable_url],
-        "skills": [],
-        "Estimated Effort": "N/A (Rapid Log)",
-        "Acceptance Criteria": [],
+        "Objective": inferred_details['objective'],
+        "Deliverables": inferred_details['deliverables'],
+        "skills": inferred_details['skills'],
+        "Estimated Effort": inferred_details['estimated_effort'],
+        "Acceptance Criteria": inferred_details['acceptance_criteria'],
         "Awarded Guild Seal": "",
         "closed_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
     }
-    print("Assembled new registry entry.")
+    print("Assembled new registry entry with AI-augmented details.")
 
-    # 7. Update the Registry File (Unchanged)
+    # 5. Update the Registry File and Handoff File
     registry_data.insert(0, new_entry)
-    try:
-        with open(REGISTRY_PATH, 'w', encoding='utf-8') as f:
-            json.dump(registry_data, f, indent=2)
-        print(f"Successfully updated '{REGISTRY_PATH}'.")
-    except Exception as e:
-        print(f"Error writing to registry file: {e}")
-        exit(1)
+    with open(REGISTRY_PATH, 'w', encoding='utf-8') as f:
+        json.dump(registry_data, f, indent=2)
+    print(f"Successfully updated '{REGISTRY_PATH}'.")
 
-    # 8. Write the new Op ID for the GitHub Action to use (Unchanged)
     with open(NEW_OP_ID_PATH, 'w') as f:
         f.write(op_id)
     print(f"Wrote new Op ID to '{NEW_OP_ID_PATH}' for workflow handoff.")
