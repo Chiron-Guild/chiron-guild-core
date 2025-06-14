@@ -140,7 +140,7 @@ def main():
     
     # --- MODIFICATION: Instantiate ChatGoogleGenerativeAI instead of ChatOpenAI ---
     llm = ChatGoogleGenerativeAI(
-        model="gemini-1.5-pro-latest",  # Or "gemini-pro"
+        model="gemini-2.5-flash-preview-05-20",  
         google_api_key=google_api_key,
         temperature=0,
         convert_system_message_to_human=True # Important for models that don't have a native system role
