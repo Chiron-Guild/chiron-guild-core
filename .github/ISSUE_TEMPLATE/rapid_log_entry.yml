@@ -1,0 +1,22 @@
+# .github/ISSUE_TEMPLATE/quick_log.yml
+name: "⚡ Rapid Log Entry"
+description: "Log a completed ad-hoc task directly to the Reputation Matrix."
+title: "[QUICK LOG] Concise description of the task"
+labels: ["quick-log"] # <-- Critical for triggering the correct workflow
+body:
+  - type: textarea
+    id: task-description
+    attributes:
+      label: "Task Description"
+      description: "Describe what you accomplished. Be detailed enough for the AI to classify it."
+      placeholder: "e.g., I refactored the Jekyll portfolio layout to use CSS Grid for better responsiveness and added a dark mode toggle."
+    validations:
+      required: true
+  - type: input
+    id: deliverable-url
+    attributes:
+      label: "Deliverable URL"
+      description: "Link to the primary result (e.g., a specific commit, PR, file, or live URL)."
+      placeholder: "https://github.com/your-repo/commit/..."
+    validations:
+      required: true
