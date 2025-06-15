@@ -1,5 +1,34 @@
 [
   {
+    "issue_number": 83,
+    "issue_title": "[CHIRON-STR-004] [CHIRON-STR-005] Create the Canonical Neutral Architecture & Source Framework",
+    "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/83",
+    "assignees": [
+      "Kin-Caid"
+    ],
+    "Objective": "To establish the foundational architectural blueprint for the Chiron Guild's knowledge management system by creating a definitive document that outlines the structure of the 'Neutral Canon' and the principles governing the multi-target synthesis engine, thereby ensuring all subsequent development aligns with a robust, scalable, and maintainable master plan.",
+    "Deliverables": [
+      "https://github.com/Chiron-Guild/chiron-guild-core/commit/73210f06ca4a1bb1ba5414e9713f8f434c2e9fc4",
+      "A new Markdown document located at `_Admin & Core Docs/architecture/neutral_canon_architecture.md`."
+    ],
+    "skills": [
+      "Architectural Design",
+      "Technical Documentation",
+      "System Design",
+      "Information Architecture",
+      "Strategic Planning"
+    ],
+    "Estimated Effort": "Large",
+    "Acceptance Criteria": [
+      "[ ] A task is complete when the `neutral_canon_architecture.md` document is created and committed to the `_Admin & Core Docs/architecture/` directory as specified.",
+      "[ ] A task is complete when the `neutral_canon_architecture.md` document includes the finalized 'Table of Contents' for neutral source files and the defined directory structure.",
+      "[ ] A task is complete when the `neutral_canon_architecture.md` document contains a high-level specification for `style_lexicons.json` and a summary of the multi-target synthesis process.",
+      "[ ] A task is complete when the architectural document has been formally reviewed and approved by relevant Guild stakeholders."
+    ],
+    "Awarded Guild Seal": "",
+    "closed_at": "2025-06-14T16:44:15.787035Z"
+  },
+  {
     "issue_number": 82,
     "issue_title": "[CHIRON-DEV-003] [CHIRON-DEV-003] Implement Automated Rapid Log Entry Workflow",
     "issue_url": "https://github.com/Chiron-Guild/chiron-guild-core/issues/82",
