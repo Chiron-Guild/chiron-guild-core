@@ -1,0 +1,33 @@
+{
+  "op_categories": [
+    {
+      "name": "CORE",
+      "description": "Building the Guild itself. Tasks related to the foundational development, governance, and evolution of the cooperative."
+    },
+    {
+      "name": "PERS",
+      "description": "Building the individual member. Tasks for personal skill development, creative projects, or managing professional work."
+    },
+    {
+      "name": "PROD",
+      "description": "Building a new, shared asset. Tasks for the collaborative development of new products, services, or other monetizable assets."
+    },
+    {
+      "name": "CLIENT",
+      "description": "Building for an external client. Tasks undertaken by the cooperative as a collective for external clients or partners."
+    }
+  ],
+  "op_types": [
+    { "type": "DEV", "description": "Development: Writing code, scripts, or automation." },
+    { "type": "DSN", "description": "Design: Visual, UI/UX, or system architecture design." },
+    { "type": "DOC", "description": "Documentation: Writing protocols, guides, or reports." },
+    { "type": "GOV", "description": "Governance: Defining rules, policies, or decision processes." },
+    { "type": "STR", "description": "Strategy: High-level planning, research, and analysis." },
+    { "type": "QAT", "description": "Quality Assurance & Testing: Testing systems, verifying functionality." },
+    { "type": "COM", "description": "Communication: Outreach, marketing, or community engagement." },
+    { "type": "LRN", "description": "Learning: Focused acquisition of new knowledge or theoretical understanding." },
+    { "type": "CRAFT", "description": "Craftsmanship: Physical creation, making, or artistry." },
+    { "type": "PRAC", "description": "Practice: Dedicated practice of a specific skill to improve proficiency." },
+    { "type": "PROJ", "description": "Project Management: Coordinating tasks, managing timelines, and administrative work." }
+  ]
+}
