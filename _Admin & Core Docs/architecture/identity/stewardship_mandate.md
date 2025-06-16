@@ -15,4 +15,6 @@ To ensure that all activities of the organization remain in strict alignment wit
 4.  **The Duty of Collective Resilience:**
 To responsibly manage the collective assets—both financial and intellectual—to ensure the long-term sustainability and independence of the organization. This includes maintaining a healthy treasury, investing in shared infrastructure, and making strategic decisions that benefit the entire cooperative.
 
+**This mandate is put into practice through a set of canonical protocols, including the Project Asset Lifecycle.**
+
 ---

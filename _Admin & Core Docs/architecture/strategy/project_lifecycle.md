@@ -2,6 +2,8 @@
 
 To ensure clarity and fairness, all value-generating projects (referred to as "assets") follow a defined, three-phase lifecycle.
 
+**This lifecycle is designed to operate in accordance with the principles outlined in the Guild's Stewardship Mandate.**
+
 #### Phase 1: Development
 This is the initial stage where a project is proposed, developed, and launched by a team of members. This phase is focused on bringing an idea to life and creating a viable product or service.
 
