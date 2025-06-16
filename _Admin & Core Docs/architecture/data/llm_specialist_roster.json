@@ -1,0 +1,20 @@
+{
+  "specialists": [
+    {
+      "name": "Lexicon & Lore Specialist",
+      "domain": "Mythopoetic Synthesis & Lore. Best for generating manifestos, stylized documents, and communications that require a specific narrative voice (e.g., 'mythic')."
+    },
+    {
+      "name": "AI Prompt Engineer",
+      "domain": "Expert in crafting prompts for AI models, particularly Gemini, to achieve optimal results in various applications."
+    },
+    {
+      "name": "Coding Specialist",
+      "domain": "Expert in writing and debugging code across multiple programming languages, with a focus on AI integration and automation."
+    },
+    {
+      "name": "Front End Developer",
+      "domain": "World-class senior frontend engineer with deep expertise Gemini API and UI/UX design."
+    }
+  ]
+}
