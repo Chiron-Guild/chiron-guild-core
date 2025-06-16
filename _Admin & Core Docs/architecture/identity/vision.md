@@ -1,3 +1,5 @@
+# Chiron Guild Vision
+
 To create a new economic infrastructure for knowledge work, fundamentally shifting the paradigm from extractive employment to collective ownership.
 
 This infrastructure is worker-owned and augmented by artificial intelligence, designed to provide its members with genuine economic leverage, agency, and a more equitable and fulfilling future of work.

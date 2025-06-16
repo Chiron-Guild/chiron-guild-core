@@ -1,3 +1,5 @@
+# Chiron Guild Values
+
 The following principles are the foundational guide for all Guild operations, decisions, and interactions.
 
 *   **Equity & Collective Ownership:** We believe that value should be owned and controlled by those who create it. Our structures and economic models prioritize equitable distribution, with rewards being calculated from an open and auditable record of each member's verifiable contributions. This ensures a direct link between proven work and shared ownership.

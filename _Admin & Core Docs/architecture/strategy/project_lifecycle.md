@@ -1,5 +1,3 @@
-
-
 # The Project Asset Lifecycle
 
 To ensure clarity and fairness, all value-generating projects (referred to as "assets") follow a defined, three-phase lifecycle.

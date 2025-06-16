@@ -1,3 +1,5 @@
+# Chiron Guild Mission
+
 Our mission is to build and operate a worker-owned, AI-augmented digital cooperative.
 
 We achieve this through three primary activities:

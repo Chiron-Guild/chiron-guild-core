@@ -1,3 +1,5 @@
+# The Economic Model
+
 The Guild's economic model is designed for sustainability, equitable wealth distribution, and member-driven innovation. It is built on two core pillars: how we generate value and how we distribute it.
 
 1.  **Value Generation Streams:**

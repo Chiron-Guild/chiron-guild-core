@@ -1,3 +1,4 @@
+# The Stewardship Mandate
 
 The Guild rejects the principle of maximizing profit above all other considerations. In its place, we establish a Stewardship Mandate as the primary, binding obligation for all governing bodies and members in representative capacities. This mandate ensures the organization is managed in holistic service to its members and its mission, composed of four co-equal duties:
 
