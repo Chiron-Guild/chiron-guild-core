@@ -1,6 +1,6 @@
 # Guild Charter
 
-**Version: 1.0**
+**Version: 1.1**
 **Status: Draft**
 
 ## 0. Preamble
@@ -24,16 +24,20 @@ To build and operate a worker-owned, AI-augmented digital cooperative. This is a
 
 ---
 
-## 3. Core Values
+## 3. Core Values & Guiding Mandate
 
-All Guild operations and decisions are guided by the following principles:
+All Guild operations and decisions are guided by a set of core values, which are actively enforced through a binding mandate.
 
-*   **Equity & Collective Ownership:** Value is owned and controlled by those who create it, with rewards directly linked to verifiable contributions.
-*   **Sovereignty & Agency:** Systems are designed to enhance personal agency, data sovereignty, and self-determination.
-*   **Growth & Mastery:** We are committed to perpetual learning and creating structured pathways for skill development.
-*   **Augmentation, Not Replacement:** Technology is used to augment and amplify human creativity and strategic thinking.
-*   **Precision & Clarity:** Ambiguity is actively eliminated through clear definitions, transparent protocols, and meticulous tracking of all work.
-*   **Stewardship of Collective Assets:** The core infrastructure is owned by the cooperative in perpetuity and cannot be leveraged against member interests.
+#### Foundational Principles
+*   Equity & Collective Ownership
+*   Sovereignty & Agency
+*   Growth & Mastery
+*   Augmentation, Not Replacement
+*   Precision & Clarity
+*   Stewardship of Collective Assets
+
+#### The Stewardship Mandate
+These principles are upheld through the **Stewardship Mandate**, a set of four co-equal duties that serve as the primary, binding obligation for all Guild decision-making. The full mandate is defined in `architecture/identity/stewardship_mandate.md`.
 
 ---
 
@@ -42,29 +46,25 @@ All Guild operations and decisions are guided by the following principles:
 The Guild is currently operating in **Phase 0: Foundation**.
 
 *   **Focus:** Core System & Process Development.
-*   **Core Activity:** Building, testing, and refining the initial systems required for cooperative operations, including task management, automation, and the contribution ledger.
-*   **Success Metric:** The system is fully operational and valuable for a single user, enabling them to manage all personal and professional projects within the framework.
+*   **Core Activity:** Building, testing, and refining the initial systems required for cooperative operations.
+*   **Success Metric:** The system is fully operational and valuable for a single user.
 
 ---
 
 ## 5. Economic Model
 
-The Guild's economic model is built on two pillars:
+The Guild's economic model enables value generation through both external client engagements and internal innovation. All revenue flows through a transparent distribution protocol that first reinvests in the collective treasury and then rewards contributing members.
 
-1.  **Value Generation:** Revenue is generated through two streams:
-    *   **External Engagements:** Undertaking projects for clients and partners.
-    *   **Internal Innovation:** Developing and launching self-directed products and services.
-
-2.  **Revenue Distribution:** All revenue is distributed via a transparent protocol:
-    *   **First, Reinvestment:** A portion of revenue is allocated to the cooperative's central treasury to fund operations and growth.
-    *   **Second, Member Rewards:** The remaining revenue is distributed to contributing members based on an auditable record of their verifiable contributions.
+The precise mechanics for how value-generating assets are developed, managed, and monetized are detailed in the **Project Asset Lifecycle**, defined in `architecture/strategy/project_lifecycle.md`.
 
 ---
 
-## 6. Core Operational Protocols
+## 6. Core Canonical Protocols
 
 The Guild's work is structured by a set of standardized, canonical protocols. The primary protocols include:
 
-*   **Task Taxonomy Protocol:** Defines the standardized categories (`CORE`, `PERS`, `PROD`, `CLIENT`) and types (`DEV`, `DOC`, `STR`, etc.) for all units of work.
-*   **Work Breakdown Protocol:** A standardized process for decomposing a complex project into a formal requirements document and a structured plan of actionable tasks.
-*   **Task Lifecycle Protocol:** Defines the four stages for any unit of work: Instantiation, Execution, Verification, and Archival.
+*   **`stewardship_mandate.md`**: Defines the binding duties for Guild governance.
+*   **`project_lifecycle.md`**: Outlines the economic lifecycle for all value-generating assets.
+*   **`work_breakdown_protocol.md`**: Provides a standardized process for decomposing a complex project into actionable tasks.
+*   **`task_lifecycle_protocol.md`**: Defines the standardized lifecycle for a single unit of work, from creation to archival.
+*   **`task_taxonomy_protocol.md`**: Defines the standardized categories and types for all units of work.
