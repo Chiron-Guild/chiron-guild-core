@@ -26,7 +26,7 @@ To build and operate a worker-owned, AI-augmented digital cooperative. This is a
 
 ## 3. Core Values & Guiding Mandate
 
-All Guild operations and decisions are guided by a set of core values, which are actively enforced through a binding mandate.
+All Guild operations and decisions are guided by a set of core values, which are actively enforced through a binding mandate for all leadership actions.
 
 #### Foundational Principles
 *   Equity & Collective Ownership
@@ -35,6 +35,16 @@ All Guild operations and decisions are guided by a set of core values, which are
 *   Augmentation, Not Replacement
 *   Precision & Clarity
 *   Stewardship of Collective Assets
+
+#### The Stewardship Mandate
+To ensure these principles are upheld, all significant leadership decisions are bound by the **Stewardship Mandate**. This consists of four co-equal duties that must be holistically balanced:
+
+1.  **Member Prosperity**
+2.  **Member Growth & Agency**
+3.  **Mission Fidelity**
+4.  **Collective Resilience**
+
+This framework serves as the primary, binding obligation for Guild governance. The full mandate is defined in `architecture/identity/stewardship_mandate.md`.
 
 #### The Stewardship Mandate
 These principles are upheld through the **Stewardship Mandate**, a set of four co-equal duties that serve as the primary, binding obligation for all Guild decision-making. The full mandate is defined in `architecture/identity/stewardship_mandate.md`.
