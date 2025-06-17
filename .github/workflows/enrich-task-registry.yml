@@ -1,0 +1,96 @@
+name: Enrich Task in Registry
+
+on:
+  workflow_run:
+    workflows: ["Log Task to Registry"]
+    types:
+      - completed
+
+jobs:
+  enrich-entry:
+    runs-on: ubuntu-latest
+    # Only run if the initial workflow was successful
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Need history to find the commit
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install pyyaml google-generativeai
+
+      - name: Find Latest Commit Info
+        id: commit_info
+        run: |
+          # The head_commit of the workflow_run event points to the commit that triggered the original workflow
+          COMMIT_SHA=$(echo "${{ github.event.workflow_run.head_commit.id }}")
+          COMMIT_URL="https://github.com/${{ github.repository }}/commit/$COMMIT_SHA"
+          # Get the full commit message
+          COMMIT_MESSAGE=$(git log --format=%B -n 1 $COMMIT_SHA)
+          
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          echo "commit_url=$COMMIT_URL" >> $GITHUB_OUTPUT
+          echo "commit_message<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Run Enrichment Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          COMMIT_URL: ${{ steps.commit_info.outputs.commit_url }}
+          COMMIT_MESSAGE: ${{ steps.commit_info.outputs.commit_message }}
+        run: python .github/scripts/enrich_task_entry.py
+
+      - name: Update Registry with Enrichment Data
+        run: |
+          import json
+          
+          registry_file = '_Admin & Core Docs/registry/operative_registry.json'
+          commit_sha_short = "${{ steps.commit_info.outputs.commit_sha }}"[:8]
+          
+          with open('enrichment_output.json', 'r') as f_in:
+              enrichment_data = json.load(f_in)
+
+          with open(registry_file, 'r+') as f_registry:
+              registry = json.load(f_registry)
+              
+              # Find the task to update
+              task_found = False
+              for task in registry['tasks']:
+                  if task['task_id'] == commit_sha_short:
+                      task['ai_generated_objective'] = enrichment_data.get('objective')
+                      task['ai_summary_of_changes'] = enrichment_data.get('summary_of_changes')
+                      task['ai_critique'] = enrichment_data.get('constructive_critique')
+                      task_found = True
+                      break
+              
+              if not task_found:
+                  print(f"Error: Could not find task with ID {commit_sha_short} in the registry.")
+                  exit(1)
+
+              # Write the updated data back to the file
+              f_registry.seek(0)
+              json.dump(registry, f_registry, indent=2)
+              f_registry.truncate()
+          
+          print(f"Successfully enriched task {commit_sha_short} in the registry.")
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'Chiron Guild Bot'
+          git config --global user.email 'bot@chironguild.com'
+          git add _Admin & Core Docs/registry/operative_registry.json
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "BOT: Enrich registry for task ${{ steps.commit_info.outputs.commit_sha }}"
+            git push
+          else
+            echo "No changes to commit to the registry."
+          fi
