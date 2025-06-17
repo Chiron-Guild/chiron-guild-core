@@ -13,3 +13,5 @@ Second, we *use* the system to perform collective work and generate value. In ad
 3.  **External Distribution:** Third, we *grow* the network to spread the system. We produce and distribute open-source frameworks and protocols that enable individuals and organizations outside the Guild to adopt our methodologies for their own productivity and organizational design.
 
 This three-part mission—Build, Use, Grow—creates a self-reinforcing loop. Using the system provides the economic leverage, which proves the model's value, which in turn attracts more people through the distributed frameworks. This complete cycle provides a clear and effective pathway to **realizing our vision.**
+
+Additionally, the mission functions as a strategic expression of the Plan-Do-Check-Act (PDCA) cycle for continuous improvement. We Build the system (Plan), Use it to create value (Do), Check the results of our work to find efficiencies (Check), and then Grow the network and refine our protocols based on those results (Act).
