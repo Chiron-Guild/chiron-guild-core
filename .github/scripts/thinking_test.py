@@ -1,7 +1,9 @@
 import os
 import google.generativeai as genai
-# CRITICAL ADDITION: Import the 'types' module
+# Import the 'types' module for configuration objects
 from google.genai import types
+# Import the specific exception class to make our error handling more precise
+import google.api_core.exceptions
 
 # --- Configuration ---
 # Ensure you have your GEMINI_API_KEY set as an environment variable
@@ -11,8 +13,6 @@ if not GEMINI_API_KEY:
     print("FATAL: GEMINI_API_KEY environment variable not set. Exiting.")
     exit(1)
 
-# Note: The documentation uses a genai.Client, which is a good practice.
-# We will use that pattern here.
 genai.configure(api_key=GEMINI_API_KEY)
 
 # --- The Test ---
@@ -24,17 +24,15 @@ def run_thinking_test():
     print("--- Running Test: Attempting to invoke thinking on a free-tier account ---")
 
     try:
-        # Use the client interface as shown in the documentation
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        # CORRECTED: Instantiate the model directly using GenerativeModel.
+        model = genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
         
-        print("Client initialized. Sending request with correct GenerateContentConfig...")
+        print("Model initialized. Sending request with correct GenerateContentConfig...")
 
-        # CORRECTED API CALL STRUCTURE
-        response = client.models.generate_content(
-            model='gemini-2.5-flash-preview-05-20',
-            # Pass the prompt to the 'contents' argument
+        # CORRECTED: This is the definitive API call structure.
+        response = model.generate_content(
             contents="What are the primary differences between a cooperative and a corporation?",
-            # Build the nested configuration object as specified in the documentation
+            # Build the nested configuration object as specified in the documentation.
             config=types.GenerateContentConfig(
                 thinking_config=types.ThinkingConfig(
                     include_thoughts=True
@@ -46,7 +44,6 @@ def run_thinking_test():
         thought_summary_found = False
         full_text_response = ""
 
-        # The key check: Does the response contain a 'thought' part?
         for part in response.candidates[0].content.parts:
             if hasattr(part, 'thought') and part.thought:
                 print("\nSUCCESS: A 'thought summary' was found in the response!")
@@ -65,10 +62,16 @@ def run_thinking_test():
             print("\nFull Text Response received:")
             print(full_text_response)
 
-    except Exception as e:
-        print(f"\nFAILURE: The API call failed with an error: {type(e).__name__}")
+    # CORRECTED: Catch a more specific exception for API errors.
+    except google.api_core.exceptions.GoogleAPICallError as e:
+        print(f"\nFAILURE: The API call failed with a specific API error: {type(e).__name__}")
         print(f"Error Details: {e}")
         print("\nCONCLUSION: This strongly suggests that invoking 'thinking' requires a billed account.")
+    # Keep a general exception for truly unexpected problems.
+    except Exception as e:
+        print(f"\nFAILURE: The script failed with an unexpected error: {type(e).__name__}")
+        print(f"Error Details: {e}")
+
 
 if __name__ == "__main__":
     run_thinking_test()
