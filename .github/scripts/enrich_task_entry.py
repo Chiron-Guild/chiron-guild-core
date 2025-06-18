@@ -23,7 +23,7 @@ def initialize_model():
         print("ERROR: GEMINI_API_KEY environment variable not set.")
         return None
     genai.configure(api_key=GEMINI_API_KEY)
-    return genai.GenerativeModel('gemini-2.5-flash-preview-05-20')
+    return genai.GenerativeModel('gemini-2.0-flash')
 
 def get_enrichment_data(model, commit_url, commit_message):
     """

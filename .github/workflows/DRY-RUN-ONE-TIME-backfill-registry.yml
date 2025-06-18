@@ -1,0 +1,130 @@
+name: DRY-RUN - ONE-TIME - Backfill and Enrich Registry
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backfill-dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install google-generativeai
+
+      - name: Backfill Registry Script
+        id: backfill_script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          import json
+          import os
+          import time
+          import subprocess
+
+          # --- CONFIG ---
+          REGISTRY_FILE = '_Admin & Core Docs/registry/operative_registry.json'
+          OPERATIVE_NAME = "Kin-Caid"
+          REPO_URL = "${{ github.server_url }}/${{ github.repository }}"
+          # Respect the 15 RPM limit for the free tier
+          SLEEP_INTERVAL = 5 # (60 seconds / 15 requests)
+
+          # --- 1. Load existing registry ---
+          if os.path.exists(REGISTRY_FILE):
+              with open(REGISTRY_FILE, 'r') as f:
+                  registry_data = json.load(f)
+          else:
+              registry_data = {"tasks": []}
+          
+          existing_ids = {task['task_id'] for task in registry_data['tasks']}
+          print(f"Found {len(existing_ids)} existing tasks.")
+
+          # --- 2. Get all commits by the target operative ---
+          git_log_command = [
+              'git', 'log',
+              '--author=' + OPERATIVE_NAME,
+              '--pretty=format:%H||%s||%b' # SHA, subject, body separated by ||
+          ]
+          result = subprocess.run(git_log_command, capture_output=True, text=True)
+          commits = result.stdout.strip().split('\n')
+          print(f"Found {len(commits)} total commits by {OPERATIVE_NAME}.")
+
+          # --- 3. Process each commit ---
+          new_tasks_added = 0
+          for commit_line in commits:
+              try:
+                  sha, subject, body = commit_line.split('||', 2)
+                  commit_message = f"{subject}\n\n{body}".strip()
+                  commit_id_short = sha[:8]
+
+                  if commit_id_short in existing_ids:
+                      continue
+
+                  print(f"\n--- Processing new commit: {commit_id_short} ---")
+
+                  # --- 4. Call enrichment script ---
+                  commit_url = f"{REPO_URL}/commit/{sha}"
+                  subprocess.run(
+                      [
+                          'python', '.github/scripts/enrich_task_entry.py',
+                          '--commit-url', commit_url,
+                          '--commit-message', commit_message
+                      ],
+                      check=True # This will raise an error if the script fails
+                  )
+
+                  # --- 5. Read enrichment output and create task ---
+                  with open('enrichment_output.json', 'r') as f:
+                      enrichment = json.load(f)
+                  
+                  new_task = {
+                      "task_id": commit_id_short,
+                      "task_title": subject,
+                      # For simplicity, we'll categorize all backfilled tasks as CORE/DEV
+                      # This could be refined later.
+                      "task_category": "CORE",
+                      "task_type": "DEV",
+                      "status": "Completed",
+                      "operative": OPERATIVE_NAME,
+                      "deliverable_url": commit_url,
+                      "ai_generated_objective": enrichment.get('objective'),
+                      "ai_summary_of_changes": enrichment.get('summary_of_changes'),
+                      "ai_critique": enrichment.get('constructive_critique'),
+                      # ... other fields can be null ...
+                  }
+                  registry_data['tasks'].append(new_task)
+                  existing_ids.add(commit_id_short)
+                  new_tasks_added += 1
+
+                  print(f"Enriched and added task {commit_id_short}. Sleeping for {SLEEP_INTERVAL}s...")
+                  time.sleep(SLEEP_INTERVAL)
+
+              except Exception as e:
+                  print(f"Skipping commit due to error: {e}")
+                  continue
+
+          # --- 6. Write final registry ---
+          if new_tasks_added > 0:
+              with open(REGISTRY_FILE, 'w') as f:
+                  json.dump(registry_data, f, indent=2)
+              print(f"\nSUCCESS: Added {new_tasks_added} new, enriched tasks to the registry.")
+          else:
+              print("\nSUCCESS: No new tasks found to add.")
+            
+      - name: Upload Generated Registry for Inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-registry-for-review
+          path: _Admin & Core Docs/registry/operative_registry.json
