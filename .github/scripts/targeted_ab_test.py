@@ -7,7 +7,9 @@ import time
 import argparse
 import sys
 
+# We import the functions from our now-standardized enrichment script.
 from enrich_task_entry import initialize_model, get_enrichment_data
+
 
 def main():
     """Main function to orchestrate the targeted A/B test."""
@@ -31,7 +33,7 @@ def main():
     )
     parser.add_argument(
         '--task-ids',
-        nargs='+',  # This allows for one or more task IDs
+        nargs='+',
         required=True,
         help='A space-separated list of task_ids to test (e.g., d73868a7 14251f6f).'
     )
@@ -40,27 +42,38 @@ def main():
     # --- CONFIG ---
     sleep_interval = 5
 
-    # --- 1. Load the source registry ---
+    # --- 1. Load the source registry and handle both old/new formats ---
     try:
         with open(args.source_registry, 'r', encoding='utf-8') as f:
-            source_registry = json.load(f)
+            loaded_json = json.load(f)
+
+        source_tasks = []
+        # --- THIS IS THE FIX ---
+        # Check if the loaded data is a list (old format) or a dict (new format)
+        if isinstance(loaded_json, list):
+            print("Old registry format (list) detected.")
+            source_tasks = loaded_json
+        elif isinstance(loaded_json, dict) and 'tasks' in loaded_json:
+            print("New registry format (dict) detected.")
+            source_tasks = loaded_json.get("tasks", [])
+        # --- END OF FIX ---
         
         # Create a dictionary for fast lookups
         source_tasks_dict = {
-            task['task_id']: task for task in source_registry.get("tasks", [])
+            task['task_id']: task for task in source_tasks if 'task_id' in task
         }
         print(f"Loaded {len(source_tasks_dict)} tasks from {args.source_registry}.")
+
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error loading source registry: {e}")
         sys.exit(1)
 
-    # --- 2. Initialize the specified model ---
+    # --- The rest of the script is identical ---
     model = initialize_model(args.model_name)
     if not model:
         print("Failed to initialize Gemini model. Exiting.")
         sys.exit(1)
 
-    # --- 3. Process ONLY the specified tasks ---
     new_enriched_tasks = []
     tasks_to_process = args.task_ids
     total_tasks = len(tasks_to_process)
@@ -103,14 +116,12 @@ def main():
             print(f"Sleeping for {sleep_interval}s...")
             time.sleep(sleep_interval)
 
-    # --- 4. Write final results ---
     final_output = {"tasks": new_enriched_tasks}
     with open(args.output_file, 'w', encoding='utf-8') as f:
         json.dump(final_output, f, indent=2)
 
     print(f"\nSUCCESS: Targeted A/B Test complete.")
     print(f"Wrote {len(new_enriched_tasks)} enriched tasks to {args.output_file}.")
-
 
 if __name__ == "__main__":
     main()
