@@ -131,7 +131,13 @@ def get_enrichment_data(model, commit_url, commit_message):
             )
         )
         enrichment = json.loads(response.text)
-        # Add the default provenance type for AI-enriched tasks
+
+        if not isinstance(enrichment, dict):
+            print(f"ERROR: AI returned an unexpected data type (expected dict, got {type(enrichment)}).")
+            print(f"Raw AI Response: {enrichment}")
+            return None # Return None to indicate failure
+
+        # If the check passes, we can safely proceed.
         enrichment["provenance_type"] = "ai_assisted"
         return enrichment
 
