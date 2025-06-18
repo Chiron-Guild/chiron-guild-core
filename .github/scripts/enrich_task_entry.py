@@ -33,7 +33,7 @@ def initialize_model(model_name='gemini-2.5-flash-lite-preview-06-17'):
         return None
     genai.configure(api_key=GEMINI_API_KEY)
     print(f"Initializing model: {model_name}")
-    return genai.GenerativeModel(model_name)
+    return genai.GenerativeModel(model_name=model_name)
 
 def get_enrichment_data(model, commit_url, commit_message):
     """
