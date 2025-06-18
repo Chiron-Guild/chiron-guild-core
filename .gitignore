@@ -13,3 +13,8 @@ __pycache__/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
+# Ignore local test data files
+_Admin & Core Docs/registry/registry_backfill_source.json
+
+# Ignore temporary build and test artifacts
+/_output/
