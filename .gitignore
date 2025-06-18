@@ -15,3 +15,6 @@ __pycache__/
 
 # Ignore local test data files
 _Admin & Core Docs/registry/registry_backfill_source.json
+
+# Ignore temporary build and test artifacts
+/_output/
