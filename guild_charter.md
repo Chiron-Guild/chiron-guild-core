@@ -7,6 +7,14 @@
 
 This document serves as the master summary of the Chiron Guild's identity, strategy, and core operational principles. It is a Neutral Canon document, providing a concise, single source of truth derived from the Guild's foundational protocols.
 
+### Core Thesis: Augmentation & Adaptation
+
+The AI-augmented future we are building, where the "last 20%" of complex work is constantly being redefined, is a future of perpetual challenge and growth.
+
+The Guild is the vessel designed to help its members navigate that future. We achieve this not just by providing access to advanced tools, but by building a system that explicitly values and rewards the meta-skill of adaptation itself. Our protocols are architected to create tight feedback loops for learning, and our economic model is designed to recognize the act of acquiring new capabilities as a first-class contribution to the collective.
+
+This thesis—that a human armed with the right system for learning can always stay ahead of automation—is the strategic foundation of the Chiron Guild.
+
 ---
 
 ## 1. Vision
