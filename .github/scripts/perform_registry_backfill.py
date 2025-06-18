@@ -78,11 +78,20 @@ def main():
     # --- 4. Process each commit ---
     new_tasks_added = 0
     for commit_line in commits:
-        if new_tasks_added > 0:  # Don't sleep on the first iteration
+        if new_tasks_added > 0:
             print(f"Sleeping for {sleep_interval}s...")
             time.sleep(sleep_interval)
         try:
-            sha, subject, body = commit_line.split('||', 2)
+            parts = commit_line.split('||', 2)
+            if len(parts) == 3:
+                sha, subject, body = parts
+            else:
+                sha = parts[0]
+                subject = "Merge commit"
+                if len(parts) > 1:
+                    subject = parts[1]
+                body = ""
+
             commit_message = f"{subject}\n\n{body}".strip()
             commit_id_short = sha[:8]
 
@@ -98,7 +107,7 @@ def main():
                 continue
 
             commit_datetime = subprocess.check_output(
-                ['git', 'show', '-s', '--format=%cI', sha], text=True
+                ['git', 'show', '-s', f'--format=%cI', sha], text=True
             ).strip()
 
             new_task = {
@@ -110,7 +119,9 @@ def main():
                 "provenance_type": enrichment.get("provenance_type"),
                 "objective": enrichment.get('objective'),
                 "summary_of_changes": enrichment.get('summary_of_changes'),
-                "critique": (enrichment.get('annotations', [{}])[0].get('comment')),
+                "critique": (
+                    enrichment.get('annotations', [{}])[0].get('comment')
+                ),
                 "task_category": enrichment.get('task_category'),
                 "task_type": enrichment.get('task_type'),
                 "skills_demonstrated": enrichment.get('skills_demonstrated')
