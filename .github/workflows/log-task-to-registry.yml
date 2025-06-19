@@ -1,0 +1,104 @@
+name: Log Task to Registry (Placeholder)
+
+on:
+  push:
+    branches:
+      - main
+    # To prevent this from running on commits made by the bot itself
+    paths-ignore:
+      - '_Admin & Core Docs/registry/operative_history.json'
+
+jobs:
+  create-placeholder-task:
+    name: Create Placeholder Task in Registry
+    runs-on: ubuntu-latest
+    # This job will only run if the commit message contains the trigger phrase.
+    # This prevents it from running on standard commits without task data.
+    if: "contains(github.event.head_commit.message, 'Task-Category:')"
+    
+    # Grant the job write permissions to commit the new placeholder.
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # We pass the token to allow the bot to commit back to the repo.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Placeholder Task
+        id: create_task
+        run: |
+          import json
+          import re
+          from datetime import datetime, timezone
+
+          # --- Get data from GitHub Actions context ---
+          commit_sha = "${{ github.sha }}"
+          commit_url = "${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
+          commit_message = """${{ github.event.head_commit.message }}"""
+          author_name = "${{ github.event.head_commit.author.name }}"
+
+          print(f"Parsing commit {commit_sha[:8]} for task data...")
+
+          # --- Parse the commit message for task data ---
+          lines = commit_message.split('\n')
+          task_title = lines[0].strip()
+          
+          task_data = {}
+          for line in lines:
+              if 'Task-Category:' in line:
+                  task_data['category'] = line.split(':', 1)[1].strip().upper()
+              if 'Task-Type:' in line:
+                  task_data['type'] = line.split(':', 1)[1].strip().upper()
+              if 'Task-Brief:' in line:
+                  task_data['brief_path'] = line.split(':', 1)[1].strip()
+
+          if 'category' not in task_data or 'type' not in task_data:
+            print("Commit message is missing required 'Task-Category' or 'Task-Type' tags. Skipping.")
+            exit(0)
+          
+          # --- Construct the new placeholder task entry ---
+          # All AI and brief-related fields are deliberately set to null.
+          new_task = {
+              "task_id": commit_sha[:8],
+              "task_title": task_title,
+              "task_category": task_data['category'],
+              "task_type": task_data['type'],
+              "task_brief_path": task_data.get('brief_path'), # Store the path if it exists
+              "status": "Pending-Enrichment",
+              "completion_date": datetime.now(timezone.utc).isoformat(),
+              "operative": author_name,
+              "deliverable_url": commit_url,
+              "objective": None,
+              "skills_demonstrated": [],
+              "effort": None,
+              "ai_generated_objective": None,
+              "ai_summary_of_changes": None,
+              "ai_critique": None
+          }
+          
+          # Pass the short SHA to the next step for the commit message
+          print(f"::set-output name=task_id::{commit_sha[:8]}")
+
+          # --- Read, update, and write the registry file ---
+          registry_file = '_Admin & Core Docs/registry/operative_history.json'
+          with open(registry_file, 'r+', encoding='utf-8') as f:
+              registry_data = json.load(f)
+              # Prepend the new task to the list for easier viewing
+              registry_data['tasks'].insert(0, new_task) 
+              f.seek(0)
+              json.dump(registry_data, f, indent=2)
+              f.truncate()
+          
+          print(f"Successfully added placeholder for task {new_task['task_id']} to the registry.")
+
+      - name: Commit and push placeholder
+        run: |
+          git config --global user.name 'Chiron Guild Bot'
+          git config --global user.email 'bot@chironguild.com'
+          git add _Admin & Core Docs/registry/operative_history.json
+          # Use a different commit message prefix to avoid triggering this workflow again
+          git commit -m "chore(registry): Add placeholder for task ${{ steps.create_task.outputs.task_id }}"
+          git push
