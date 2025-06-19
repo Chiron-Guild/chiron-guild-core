@@ -8,6 +8,7 @@ The cooperative generates revenue through two primary modes of operation:
 
     *   **External Engagements:** We undertake projects for external clients and partners, leveraging the pooled expertise of our members to deliver high-value consulting and development services.
     *   **Internal Innovation:** Members are empowered to propose, develop, and launch their own products and services. This model allows the cooperative to pursue self-directed initiatives, transforming grassroots ideas into valuable assets.
+    *   **Collective Data Monetization:** In later phases, and with explicit member opt-in, the Guild may develop products or services derived from the aggregated, anonymized "Collective Analytics Dataset." This creates a long-term value stream that benefits all contributing members, as detailed in our `data_stewardship.md` protocol.
 
 2.  **Equitable Revenue Distribution:**
 

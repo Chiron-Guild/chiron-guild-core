@@ -1,7 +1,7 @@
 # Guild Charter
 
-**Version: 1.1**
-**Status: Draft**
+**Version: 1.2**
+**Status: Draft - Constitutional**
 
 ## 0. Preamble
 
@@ -43,6 +43,7 @@ All Guild operations and decisions are guided by a set of core values, which are
 *   Augmentation, Not Replacement
 *   Precision & Clarity
 *   Stewardship of Collective Assets
+*   Interoperable Not Interchangeable
 
 #### The Stewardship Mandate
 To ensure these principles are upheld, all significant leadership decisions are bound by the **Stewardship Mandate**. This consists of four co-equal duties that must be holistically balanced:
@@ -53,9 +54,6 @@ To ensure these principles are upheld, all significant leadership decisions are 
 4.  **Collective Resilience**
 
 This framework serves as the primary, binding obligation for Guild governance. The full mandate is defined in `architecture/identity/stewardship_mandate.md`.
-
-#### The Stewardship Mandate
-These principles are upheld through the **Stewardship Mandate**, a set of four co-equal duties that serve as the primary, binding obligation for all Guild decision-making. The full mandate is defined in `architecture/identity/stewardship_mandate.md`.
 
 ---
 
@@ -81,8 +79,10 @@ The precise mechanics for how value-generating assets are developed, managed, an
 
 The Guild's work is structured by a set of standardized, canonical protocols. The primary protocols include:
 
+*   **`member_bill_of_rights.md`**: Codifies the inalienable rights of every Guild member.
 *   **`stewardship_mandate.md`**: Defines the binding duties for Guild governance.
+*   **`data_stewardship.md`**: Governs the principles of data ownership, privacy, and use across the Guild's three tiers of data interaction.
 *   **`project_lifecycle.md`**: Outlines the economic lifecycle for all value-generating assets.
 *   **`work_breakdown_protocol.md`**: Provides a standardized process for decomposing a complex project into actionable tasks.
-*   **`task_lifecycle_protocol.md`**: Defines the standardized lifecycle for a single unit of work, from creation to archival.
+*   **`task_lifecycle_protocol.md`**: Defines the standardized lifecycle for a single unit of work.
 *   **`task_taxonomy_protocol.md`**: Defines the standardized categories and types for all units of work.
