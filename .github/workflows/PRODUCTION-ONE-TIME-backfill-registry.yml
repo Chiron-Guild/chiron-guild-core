@@ -16,25 +16,73 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Debug Git State
+        run: |
+          echo "Git status:"
+          git status
+          echo "Git log (last 5 commits):"
+          git log --oneline -5
+          echo "Git remote:"
+          git remote -v
+          echo "Current branch:"
+          git branch --show-current
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install google-generativeai
+        run: |
+          pip install google-generativeai
+          pip list
+
+      - name: Verify script exists
+        run: |
+          ls -la .github/scripts/
+          if [ -f ".github/scripts/perform_registry_backfill.py" ]; then
+            echo "Backfill script found"
+          else
+            echo "ERROR: Backfill script not found"
+            exit 1
+          fi
+          if [ -f ".github/scripts/enrich_task_entry.py" ]; then
+            echo "Enrichment script found"
+          else
+            echo "ERROR: Enrichment script not found"
+            exit 1
+          fi
+
+      - name: Create registry directory
+        run: |
+          mkdir -p "_Admin & Core Docs/registry"
+          ls -la "_Admin & Core Docs/registry/" || echo "Registry directory created"
 
       - name: Run Backfill and Enrichment Script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
+          cd ${{ github.workspace }}
           python .github/scripts/perform_registry_backfill.py \
             --operative-name "Kin-Caid" \
             --repo-url "${{ github.server_url }}/${{ github.repository }}" \
-            --registry-file "_Admin & Core Docs/registry/operative_registry.json"
+            --registry-file "_Admin & Core Docs/registry/operative_registry.json" \
+            --model-name "gemini-2.0-flash"
       
+      - name: Verify registry file
+        run: |
+          if [ -f "_Admin & Core Docs/registry/operative_registry.json" ]; then
+            echo "Registry file created successfully"
+            echo "File size: $(wc -c < '_Admin & Core Docs/registry/operative_registry.json') bytes"
+            echo "First few lines:"
+            head -20 "_Admin & Core Docs/registry/operative_registry.json"
+          else
+            echo "WARNING: Registry file not found"
+          fi
+
       - name: Upload Generated Registry for Inspection
         uses: actions/upload-artifact@v4
         with:
           name: generated-registry-for-review
           path: _Admin & Core Docs/registry/operative_registry.json
+        if: always()

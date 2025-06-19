@@ -14,6 +14,40 @@ import sys
 from enrich_task_entry import initialize_model, get_enrichment_data
 from google.api_core import exceptions as api_exceptions
 
+def get_commit_datetime(sha):
+    """
+    Safely get commit datetime with error handling.
+    
+    Args:
+        sha (str): The commit SHA hash
+        
+    Returns:
+        str: ISO format datetime string, or None if failed
+    """
+    try:
+        result = subprocess.run(
+            ['git', 'show', '-s', '--format=%cI', sha],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=30
+        )
+        return result.stdout.strip()
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+        print(f"Warning: Could not get datetime for commit {sha}: {e}")
+        # Try alternative approach
+        try:
+            result = subprocess.run(
+                ['git', 'log', '-1', '--format=%cI', sha],
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=30
+            )
+            return result.stdout.strip()
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            return None
+
 def main():
     """Main function to orchestrate the backfill process."""
     parser = argparse.ArgumentParser(
@@ -59,60 +93,84 @@ def main():
     existing_ids = {task['task_id'] for task in registry_data.get('tasks', [])}
     print(f"Found {len(existing_ids)} existing tasks.")
 
-    # --- 2. Get all commits ---
+    # --- 2. Get all commits with better error handling ---
     git_log_command = [
         'git', 'log', f'--author={args.operative_name}',
         '--pretty=format:%H||%s||%b%x00', '--reverse'
     ]
-    result = subprocess.run(
-        git_log_command, capture_output=True, text=True, check=True
-    )
-    commits = [line for line in result.stdout.strip().split('\x00') if line]
-    print(f"Found {len(commits)} total commits by {args.operative_name}.")
-
-    model = initialize_model(args.model_name)
-    if not model:
+    
+    try:
+        result = subprocess.run(
+            git_log_command, 
+            capture_output=True, 
+            text=True, 
+            check=True,
+            timeout=60
+        )
+        commits = [line for line in result.stdout.strip().split('\x00') if line.strip()]
+        print(f"Found {len(commits)} total commits by {args.operative_name}.")
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+        print(f"ERROR: Failed to get git log: {e}")
         sys.exit(1)
 
-    # --- 3. Initialize model ---
+    # --- 3. Initialize model (removed duplicate) ---
     model = initialize_model(args.model_name)
     if not model:
         sys.exit(1)
 
     # --- 4. Process each commit ---
     new_tasks_added = 0
-    for commit_line in commits:
+    skipped_commits = 0
+    
+    for i, commit_line in enumerate(commits):
         if new_tasks_added > 0:
             print(f"Sleeping for {sleep_interval}s...")
             time.sleep(sleep_interval)
+            
         try:
+            commit_line = commit_line.strip()
+            if not commit_line:
+                continue
+                
             parts = commit_line.split('||', 2)
-            if len(parts) == 3:
-                sha, subject, body = parts
+            if len(parts) >= 2:
+                sha = parts[0].strip()
+                subject = parts[1].strip()
+                body = parts[2].strip() if len(parts) > 2 else ""
             else:
-                sha = parts[0]
-                subject = "Merge commit"
-                if len(parts) > 1:
-                    subject = parts[1]
-                body = ""
+                print(f"Warning: Malformed commit line: {commit_line[:100]}...")
+                skipped_commits += 1
+                continue
+
+            # Validate SHA format
+            if not sha or len(sha) < 8:
+                print(f"Warning: Invalid SHA format: {sha}")
+                skipped_commits += 1
+                continue
 
             commit_message = f"{subject}\n\n{body}".strip()
             commit_id_short = sha[:8]
 
             if commit_id_short in existing_ids:
+                print(f"Skipping existing commit: {commit_id_short}")
                 continue
 
-            print(f"\n--- Processing new commit: {commit_id_short} ---")
+            print(f"\n--- Processing commit {i+1}/{len(commits)}: {commit_id_short} ---")
             commit_url = f"{args.repo_url}/commit/{sha}"
 
+            # Get commit datetime with error handling
+            commit_datetime = get_commit_datetime(sha)
+            if not commit_datetime:
+                print(f"Warning: Could not get datetime for {commit_id_short}, using current time")
+                from datetime import datetime
+                commit_datetime = datetime.now().isoformat()
+
+            # Get enrichment data
             enrichment = get_enrichment_data(model, commit_url, commit_message)
             if not enrichment:
                 print(f"Skipping commit {commit_id_short} due to enrichment failure.")
+                skipped_commits += 1
                 continue
-
-            commit_datetime = subprocess.check_output(
-                ['git', 'show', '-s', f'--format=%cI', sha], text=True
-            ).strip()
 
             new_task = {
                 "task_id": commit_id_short,
@@ -124,28 +182,45 @@ def main():
                 "objective": enrichment.get('objective'),
                 "summary_of_changes": enrichment.get('summary_of_changes'),
                 "critique": (
-                    enrichment.get('annotations', [{}])[0].get('comment')
+                    enrichment.get('annotations', [{}])[0].get('comment') if 
+                    enrichment.get('annotations') else enrichment.get('constructive_critique')
                 ),
                 "task_category": enrichment.get('task_category'),
                 "task_type": enrichment.get('task_type'),
                 "skills_demonstrated": enrichment.get('skills_demonstrated')
             }
+            
             registry_data['tasks'].append(new_task)
             existing_ids.add(commit_id_short)
             new_tasks_added += 1
             print(f"Successfully enriched and added task {commit_id_short}.")
 
-        except (subprocess.CalledProcessError, ValueError, api_exceptions.GoogleAPICallError) as e:
-            print(f"Skipping commit line due to processing error: {e}")
+        except (ValueError, api_exceptions.GoogleAPICallError) as e:
+            print(f"Skipping commit due to processing error: {e}")
+            skipped_commits += 1
+            continue
+        except Exception as e:
+            print(f"Unexpected error processing commit: {e}")
+            skipped_commits += 1
             continue
 
     # --- 5. Write final registry ---
     if new_tasks_added > 0:
-        with open(args.registry_file, 'w', encoding='utf-8') as f:
-            json.dump(registry_data, f, indent=2)
-        print(f"\nSUCCESS: Added {new_tasks_added} new tasks to the registry.")
+        try:
+            # Create directory if it doesn't exist
+            os.makedirs(os.path.dirname(args.registry_file), exist_ok=True)
+            
+            with open(args.registry_file, 'w', encoding='utf-8') as f:
+                json.dump(registry_data, f, indent=2)
+            print(f"\nSUCCESS: Added {new_tasks_added} new tasks to the registry.")
+        except IOError as e:
+            print(f"ERROR: Failed to write registry file: {e}")
+            sys.exit(1)
     else:
         print("\nSUCCESS: No new tasks found to add.")
+    
+    if skipped_commits > 0:
+        print(f"INFO: Skipped {skipped_commits} commits due to errors.")
 
 
 if __name__ == "__main__":
