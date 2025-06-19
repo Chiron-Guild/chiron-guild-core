@@ -25,11 +25,11 @@ The Guild ecosystem consists of three distinct tiers of data interaction, each w
 
 *   **Description:** A publicly verifiable, immutable ledger of all tasks completed as part of official Guild projects. Contribution to this registry is a requirement for all Guild members.
 *   **Purpose:** To create a secure, high-trust "source of truth" for all collective work. This registry serves as the foundation for the Guild's reputation systems, conflict resolution, and the calculation of rewards for project-based work.
-*   **Data Integrity:** The data in this registry is considered the official, canonical record of work and is designed to be tamper-resistant.
+*   **Data Integrity:** The data in this registry is considered the official, canonical record of work and is designed to be tamper-resistant. This fulfills **Article III: The Right to Verifiable Provenance**
 
 ### Tier 3: The Collective Analytics Dataset
 
 *   **Description:** A separate, private, and aggregated dataset derived from the Guild Registry. This dataset is used for internal research and development (e.g., improving Guild tools and protocols) and for potential future external monetization, as outlined in KRQ-6 of our research plan.
 *   **Purpose:** To create a long-term strategic asset that can generate value for the entire cooperative and fund its mission.
 *   **Opt-In Mechanism:** Contribution of an operative's data to this dataset is strictly voluntary and requires explicit, revocable consent (opt-in).
-*   **Profit Sharing:** Only members who have opted-in to contribute their data to the Collective Analytics Dataset are eligible to receive a share of any future profits generated from its external monetization. The profit-sharing calculation will be weighted based on factors including the volume and quality of an operative's contributed data.
+*   **Profit Sharing:** Only members who have opted-in to contribute their data to the Collective Analytics Dataset are eligible to receive a share of any future profits generated from its external monetization. The profit-sharing calculation will be weighted based on factors including the volume and quality of an operative's contributed data. This system is designed to fulfill **Article IV: The Right to Fair Compensation & Shared Prosperity**

@@ -9,7 +9,7 @@ This document outlines the phased, evolutionary roadmap for this cooperative fra
 *   **Core Activity:** The initial systems required for cooperative operations are being built, tested, and refined. This includes the task management processes, automation workflows, the contribution ledger, and the core guiding documents.
 *   **Key Objectives:**
     *   Establish a stable, repeatable system for defining, executing, and logging work.
-    *   Develop a functional "Personal Operating System" for a solo knowledge worker.
+    *   Develop Tier 1: The Personal Registry - a functional 'Personal Operating System' for a solo knowledge worker.
     *   Create the initial suite of foundational documents (Vision, Mission, Values, etc.).
 *   **Success Metric:** The system is fully operational and valuable for a single user, enabling them to manage all personal and professional projects within the framework.
 
@@ -32,6 +32,7 @@ This document outlines the phased, evolutionary roadmap for this cooperative fra
 *   **Key Objectives:**
     *   Successfully complete the first-ever contracted external project.
     *   Successfully launch the first member-led internal product.
+    *   Begin development of value-generating products based on the opt-in Tier 3: Collective Analytics Dataset.
     *   Prove the viability of the equitable revenue distribution model.
 *   **Success Metrics:**
     *   The cooperative is generating consistent revenue and distributing it to its members.
