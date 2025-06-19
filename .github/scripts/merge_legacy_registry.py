@@ -14,7 +14,7 @@ import json
 import os
 import sys
 import re
-import argparse  # Refinement: Use argparse for robust argument handling
+import argparse
 from typing import Dict, List, Any, Optional
 
 def load_json_file(file_path: str) -> Any:
@@ -51,13 +51,11 @@ def transform_legacy_task(legacy_task: Dict[str, Any]) -> Dict[str, Any]:
 
     title = legacy_task.get('issue_title', 'Legacy Task')
     
-    # Refinement: Handle missing category/type with defaults
     category_match = re.search(r'\[CHIRON-(\w+)', title)
     type_match = re.search(r'-\w+-(\w+)\]', title)
     category = category_match.group(1).upper() if category_match else "LEGACY"
     task_type = type_match.group(1).upper() if type_match else "PROJ"
     
-    # Refinement: Create a more descriptive summary
     deliverables = legacy_task.get('Deliverables', [])
     if deliverables:
         summary = f"Completed deliverables include: {', '.join(map(str, deliverables))}."
@@ -90,7 +88,6 @@ def merge_registries(legacy_file: str, new_file: str, output_file: str) -> None:
         sys.exit(1)
 
     existing_tasks = new_data['tasks']
-    # Create a set of existing task IDs for efficient lookup
     existing_ids = {task.get('task_id') for task in existing_tasks}
     
     print(f"Found {len(existing_tasks)} tasks in new history.")
@@ -99,13 +96,11 @@ def merge_registries(legacy_file: str, new_file: str, output_file: str) -> None:
 
     merged_count = 0
     for task in legacy_data:
-        # Skip tasks that are commit-based
         if has_commit_deliverable(task.get('Deliverables', [])):
             continue
 
         transformed = transform_legacy_task(task)
         
-        # Idempotency check: skip if already merged
         if transformed['task_id'] in existing_ids:
             continue
 
@@ -114,8 +109,6 @@ def merge_registries(legacy_file: str, new_file: str, output_file: str) -> None:
         existing_ids.add(transformed['task_id'])
         merged_count += 1
     
-    # Refinement: Sort the final merged list by completion date
-    # Handles cases where completion_date might be None or an empty string
     existing_tasks.sort(key=lambda x: x.get('completion_date') or '', reverse=True)
     
     new_data['tasks'] = existing_tasks
@@ -127,24 +120,23 @@ def merge_registries(legacy_file: str, new_file: str, output_file: str) -> None:
 
 def main():
     """Main entry point and argument parsing for the script."""
-    # Refinement: Use argparse for robust and documented arguments
     parser = argparse.ArgumentParser(
         description="Merge unique legacy tasks into a new operative history file.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
         '--legacy-file',
-        default='operative_registry_legacy.json',
+        default='_Admin & Core Docs/registry/operative_registry_legacy.json',
         help='Path to the legacy (issue-based) JSON registry file.'
     )
     parser.add_argument(
         '--new-file',
-        default='operative_history.json',
+        default='_Admin & Core Docs/registry/operative_history.json',
         help='Path to the new (commit-based) JSON history file.'
     )
     parser.add_argument(
         '--output-file',
-        default='operative_history_FINAL.json',
+        default='_Admin & Core Docs/registry/operative_history_FINAL.json',
         help='Path for the final merged JSON output file.'
     )
     args = parser.parse_args()
@@ -152,6 +144,13 @@ def main():
     print("Chiron Guild Legacy Registry Merger")
     print("=" * 40)
     
+    # Check that input files exist before proceeding
+    for file_path in [args.legacy_file, args.new_file]:
+        if not os.path.exists(file_path):
+            print(f"Error: Input file '{file_path}' does not exist.")
+            print("Please ensure you have run the backfill and created the legacy copy.")
+            sys.exit(1)
+
     merge_registries(args.legacy_file, args.new_file, args.output_file)
 
 if __name__ == "__main__":
