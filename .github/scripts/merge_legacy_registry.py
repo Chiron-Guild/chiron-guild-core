@@ -131,7 +131,7 @@ def main():
     )
     parser.add_argument(
         '--new-file',
-        default='_Admin & Core Docs/registry/operative_history.json',
+        default='_Admin & Core Docs/registry/commit_based_registry.json',
         help='Path to the new (commit-based) JSON history file.'
     )
     parser.add_argument(
