@@ -62,13 +62,17 @@ def main():
     # --- 2. Get all commits ---
     git_log_command = [
         'git', 'log', f'--author={args.operative_name}',
-        '--pretty=format:%H||%s||%b', '--reverse'
+        '--pretty=format:%H||%s||%b%x00', '--reverse'
     ]
     result = subprocess.run(
         git_log_command, capture_output=True, text=True, check=True
     )
-    commits = result.stdout.strip().split('\n')
+    commits = [line for line in result.stdout.strip().split('\x00') if line]
     print(f"Found {len(commits)} total commits by {args.operative_name}.")
+
+    model = initialize_model(args.model_name)
+    if not model:
+        sys.exit(1)
 
     # --- 3. Initialize model ---
     model = initialize_model(args.model_name)
