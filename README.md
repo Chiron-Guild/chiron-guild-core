@@ -1,101 +1,56 @@
-# Chiron Guild 🛡️🤖
+# The Chiron Guild Framework
 
-**Plug in. Forge the Future. Welcome to Chiron Guild.** We are a collective dedicated to architecting the next generation of AI-augmented labor—a system where individuals own their contributions, command their tools, and collectively build a more equitable digital future.
+A system for organizing, executing, and tracking AI-augmented knowledge work.
 
-To understand the soul of our endeavor, read [The Chiron Guild: A Manifesto for a New Reality](docs/Guild_Manifesto.md).
+[![Project Status: Phase 0 - Foundation](https://img.shields.io/badge/status-Phase%200%3A%20Foundation-blueviolet)](docs/strategic_phases.md)
 
----
-
-## 🚀 What We’re Forging
-
-We are compiling a fully-armed, operational alternative to old-world structures. A platform designed to:
-
-* **Tackle Complex Challenges:** Design and execute sophisticated solutions for large-scale projects, leveraging our unique cooperative model.
-* **AI-Augmented Execution:** Combine advanced AI capabilities with human expertise to translate complex directives into precise, actionable **Guild Ops**.
-* **Amplify & Empower:** Provide the pathway for contributors to master cutting-edge skills, earn verifiable **Guild Seals**, and relentlessly grow through structured, gamified collaboration.
-* **Unveil the Algorithmic Veil:** Transparently log and document how AI tools and human intellect intertwine throughout every project lifecycle, leaving no dark corners.
-* **Bootstrapped & Self-Assembling:** Build itself, one Guild Op at a time, into a self-organizing, community-owned **Chiron Guild Hub** of collective intelligence.
+This repository contains the core infrastructure for the Chiron Guild, a community building a new, more equitable model for digital work. To understand the philosophy behind our work, please read our **[Community Manifesto](docs/Guild_Manifesto.md)**.
 
 ---
 
-## 🧠 Mythic Core, Precision Shell
+## What is This, Really?
 
-Our external engagement is visionary and professional, grounded in precise execution and impactful solutions. Internally, our spirit—our 'Mythic Core'—is one of collaborative grit and creative ingenuity, inspired by transformative narratives and a drive to build what's next. This synergy defines our 'Precision Shell': principled vision, agile execution.
+At its heart, this is a sophisticated framework built on top of familiar tools like GitHub. It's designed to create a transparent, verifiable, and highly organized system for managing projects and tracking contributions.
 
----
+In its current **Phase 0**, it functions as a powerful **"Personal Operating System"** for a solo knowledge worker or a small team. You can use it to:
+*   Define your work with incredible clarity.
+*   Use AI assistants in a structured, repeatable way.
+*   Automatically build a permanent, auditable record of everything you accomplish.
 
-## 🚧 Phase 0: The Foundry of the Guild
+Our long-term vision is to scale this framework into a full, worker-owned digital cooperative. But we start here: by building a tool that is immensely valuable for the individual.
 
-We’re in **Phase 0: the Bootstrapping Era** of Chiron Guild. This is where the legends begin.
-Our first "client project"? To **forge Chiron Guild itself**. Every line of code, every documented workflow, every governance protocol, every tool—it's all built by the very hands and minds that will wield it in the future.
+## Core Features (Current - Phase 0)
 
-## ⚙️ The Forge: Our Current Toolkit
+*   **Automated Contribution Tracking:** When you close an `issue` (a task), a GitHub Action automatically logs it to a permanent `registry.md` file, creating a verifiable record of your work.
+*   **Structured Task Management:** Use our issue templates to define tasks with precision, including categories, types, dependencies, and clear acceptance criteria.
+*   **AI-Powered Assistance:** We provide standardized protocols and prompts to help you use Large Language Models (LLMs) for research, planning, and content generation, ensuring your AI use is efficient and well-documented.
+*   **Built on Proven Tools:** The entire system runs on the GitHub ecosystem (Issues, Actions, Pull Requests), making it robust and easy to adopt for anyone familiar with modern development workflows.
 
-During Phase 0, we have forged the foundational tools that power the Guild. Our system is not just a concept; it is operational.
+## Getting Started
 
-*   **Automated Registry Logging:** Our `log-op-to-registry.yml` workflow automatically updates every Operative's `Reputation Matrix` the moment a Guild Op is completed.
-*   **AI-Augmented Project Decomposition:** A standardized protocol using LLMs to systematically break down large, ambiguous goals into a precise backlog of actionable tasks.
-*   **The Guild Interface AI (Prototype):** A Jupyter Notebook-based conversational AI, primed with the Guild's core protocols, that serves as a persistent, strategic "Oracle" for planning and guidance.
-*   **Streamlined Op Creation:** Issue templates that allow for both deep, planned work and the rapid, low-friction creation of Guild Ops for smaller tasks.
+You can use this framework for your own projects right now.
 
-### 🔥 How You Can Enter the Forge Right Now
+1.  **Fork the Repository:** Create your own copy of this repository to use as a template for your work.
+2.  **Configure Secrets:** Set the necessary GitHub Secrets (like `GH_TOKEN`) to allow the GitHub Actions workflows to run correctly.
+3.  **Customize Your Registry:** Edit the `data/registry.md` file to list yourself as the initial member.
+4.  **Create Your First Task:** Go to the "Issues" tab and open a new issue using one of the provided templates (e.g., `[TASK]`). Fill out the details.
+5.  **Do the Work:** Complete the task as described.
+6.  **Log Your Accomplishment:** Close the issue. The `log-work-to-registry` action will automatically run and append your accomplishment to your personal registry.
 
-* **Architect the Codebase:** Help design the underlying protocols, the prompt structures, and the digital infrastructure that will power future Guild Ops.
-* **Compile the Tools:** Contribute raw code, develop templates, and build the project management systems that will bind our collective.
-* **Scribe the Digital Lore:** Document our processes, generate critical context files, and help craft the profiles and AI guidance systems that will define our members.
-* **Engineer the Structure:** Help establish the ironclad governance rules, the licensing terms, and the dynamic engine that assigns Guild Ops.
-* **Amplify the Signal:** Recruit new collaborators, digital mentors, and mission leads to swell our ranks.
+## How to Contribute
 
-> 🛠️ Every contribution during Phase 0 earns **full credit**, feeds directly into your future **reputation matrix** (your digital standing in the Guild), and lays the foundational bedrock for the Guild's ultimate dominion.
->
-> **Chiron Guild begins by forging itself—join us and seize control of the future's framework.**
+We are actively building this framework and welcome all contributors. The best way to start is by helping us build the system itself.
 
----
+1.  **See Our Project Board:** Check the **[Issues Tab](https-placeholder-for-issues-link)** to see what tasks we're currently working on.
+2.  **Pick a Task:** Find an open issue that interests you, especially those labeled `good first issue`.
+3.  **Follow the Process:** Follow the instructions in our **[`CONTRIBUTING.md`](CONTRIBUTING.md)** guide to get set up, do the work, and submit it for review.
 
-## 🛠️ Access Protocols
+Every contribution you make is a **Verified Accomplishment** that builds your reputation within our community.
 
-### For Contributors: Initiating Your Guild Op
+## Our Vision
 
-1.  **Intercept the Signal:** Join our secure communication channels and find your first **Guild Op** on the **Guild Board** (GitHub Issues within this Chiron Guild Hub).
-2.  **Arm Yourself:** Utilize the provided templates, AI guidance, and collaboration prompts. Operatives leverage protocols like our project_decomposition.md for new initiatives or our Rapid Op Instantiation templates for logging daily tasks.*Remember: bring your own LLM to **your Op**—your choice, your power.*
-3.  **Transmit Your Work:** Submit your compiled code via Pull Requests or transmit your designs and documentation as proposals through GitHub.
-
-📘 Review [`CONTRIBUTING.md`](CONTRIBUTING.md) for full initiation protocols.
-
-### For Future Clients & Strategic Partners: The Alternative Paradigm
-
-The old guard of consulting firms, with their bloated overheads and opaque processes, are a relic. We are currently in the Bootstrapping Era, compiling our core platform and refining our collective intelligence workflows. However, the Guild is actively engaging with organizations who seek a superior, ethical alternative for complex project execution—leveraging AI-augmented collective intelligence with unparalleled agility and transparency.
-
-To forge an alliance or discuss future opportunities, establish contact via **[TheChironGuild@gmail.com](mailto:TheChironGuild@gmail.com)**.
-📄 See [`LICENSE.md`](LICENSE.md) for usage terms.
+We are building the foundation for a new economic infrastructure—one that is owned and controlled by the people who create the value. By starting with a system that empowers the individual, we are laying the groundwork for a network of collaborators who can tackle ambitious projects, share in their success, and define a better future of work.
 
 ---
 
-## 📜 Core Protocols & The Guild Codex
-
-Our operations are guided by a suite of well-defined, living protocols. These documents form our "Precision Shell" and are the source of truth for all Guild activity.
-
-*   **`taxonomy_framework.md`**: The definitive guide to all Guild Op categories (`CORE`, `PERS`) and work types (`DEV`, `DOC`, `PROJ`).
-*   **`project_decomposition.md`**: The master protocol for our AI-augmented process of breaking down large projects into actionable Guild Ops.
-*   **`GUILD_OP_PROTOCOLS.md`**: The rules governing the structure, ID system, and lifecycle of every Guild Op.
-*   **`operative_registry.json`**: Our automated, real-time **Reputation Matrix**, which verifiably logs every completed Guild Op.
-*   **`LLM_Interaction_Protocols.md`**: Best practices for efficient and powerful collaboration between Operatives and AI assistants.
-
----
-
-## 💬 Guild Axioms: Our Code
-
-* **Own What You Forge** — Contributors retain full digital sovereignty over their work and data.
-* **Open Access, Earned Value** — Structured Guild Ops provide pathways for all skill levels to contribute, grow, and secure equitable value.
-* **Transparent Augmentation** — All AI contributions are logged, visible, and subjected to human oversight.
-* **Collective Authority** — Guild decisions and strategic vectors are shaped by the collective will of its members, not by distant algorithms or corporate command.
-
----
-
-## 💡 Vision: The Inevitable Rise
-
-Chiron Guild is the nascent seed of a new kind of global labor infrastructure: **decentralized, AI-augmented, and fundamentally human-led**. As our ranks swell and more Guild Ops are completed, the system gains coherence, its network effects intensify, and it eventually compiles itself into a fully autonomous, worker-controlled economic force.
-
-> **Join the Guild. Secure your place. Forge the future of work.** 🛡️
-
-📘 Ready for your first Directive? Access [`CONTRIBUTING.md`](CONTRIBUTING.md)
+**Ready to get started? Fork this repository or check out our [contribution guide](CONTRIBUTING.md).**
