@@ -5,3 +5,18 @@
 2025-06-23 14:31:32,166 - pwl_logger - ERROR - This is an error message. A specific operation failed.
 2025-06-23 14:31:32,166 - pwl_logger - CRITICAL - This is a critical message. The application cannot continue.
 2025-06-23 14:31:32,166 - pwl_logger - INFO - --- Logger Test Finished ---
+2025-06-23 15:56:18,036 - pwl_logger - INFO - --- Starting Window Monitor Test ---
+2025-06-23 15:56:18,037 - pwl_logger - INFO - Switch to different windows to see the output change.
+2025-06-23 15:56:18,037 - pwl_logger - INFO - Press Ctrl+C to stop the test.
+2025-06-23 15:56:18,037 - pwl_logger - INFO - Active Window: {'title': 'test_window_monitor.py - Untitled (Workspace) - Visual Studio Code', 'process_name': 'Code.exe', 'pid': '30320'}
+2025-06-23 15:56:21,038 - pwl_logger - INFO - Active Window: {'title': 'test_window_monitor.py - Untitled (Workspace) - Visual Studio Code', 'process_name': 'Code.exe', 'pid': '30320'}
+2025-06-23 15:56:24,040 - pwl_logger - INFO - Active Window: {'title': 'test_window_monitor.py - Untitled (Workspace) - Visual Studio Code', 'process_name': 'Code.exe', 'pid': '30320'}
+2025-06-23 15:56:27,040 - pwl_logger - INFO - Active Window: {'title': 'test_window_monitor.py - Untitled (Workspace) - Visual Studio Code', 'process_name': 'Code.exe', 'pid': '30320'}
+2025-06-23 15:56:30,041 - pwl_logger - INFO - Active Window: {'title': 'APM Manager - PWL Prototype | Google AI Studio - Google Chrome', 'process_name': 'chrome.exe', 'pid': '16832'}
+2025-06-23 15:56:33,042 - pwl_logger - INFO - Active Window: {'title': 'APM Manager - PWL Prototype | Google AI Studio - Google Chrome', 'process_name': 'chrome.exe', 'pid': '16832'}
+2025-06-23 15:56:36,043 - pwl_logger - INFO - Active Window: {'title': 'Your Voice, Shaping Our Priorities_ Rain to River Survey_Comments_6_23_2025 - Excel', 'process_name': 'EXCEL.EXE', 'pid': '14412'}
+2025-06-23 15:56:39,045 - pwl_logger - INFO - Active Window: {'title': 'MIP_Planning_Agenda - Word', 'process_name': 'WINWORD.EXE', 'pid': '1956'}
+2025-06-23 15:56:42,046 - pwl_logger - INFO - Active Window: {'title': 'test_window_monitor.py - Untitled (Workspace) - Visual Studio Code', 'process_name': 'Code.exe', 'pid': '30320'}
+2025-06-23 15:56:45,048 - pwl_logger - INFO - Active Window: {'title': 'test_window_monitor.py - Untitled (Workspace) - Visual Studio Code', 'process_name': 'Code.exe', 'pid': '30320'}
+2025-06-23 15:56:46,997 - pwl_logger - INFO - 
+Window monitoring stopped by user.

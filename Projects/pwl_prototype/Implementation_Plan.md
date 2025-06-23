@@ -38,8 +38,8 @@ The project must adhere to strict user sovereignty and local-first data privacy.
 *Objective: Build the background service to monitor user activity.*
 | Task ID | Description | Status | Agent Notes |
 | :--- | :--- | :--- | :--- |
-| **T03** | **Global Input Monitoring:** Implement basic keyboard and mouse event monitoring using a library like `pynput` to capture raw input activity. | `Pending` | This will be the base layer for the heuristic engine. |
-| **T04** | **Active Window & Application Tracking:** Implement logic to identify the active foreground application (e.g., `Code.exe`, `chrome.exe`). | `Pending` | Crucial for attributing events to the correct application. |
+| **T03** | **Global Input Monitoring:** Implement basic keyboard and mouse event monitoring using a library like `pynput` to capture raw input activity. | `Complete` | This will be the base layer for the heuristic engine. |
+| **T04** | **Active Window & Application Tracking:** Implement logic to identify the active foreground application (e.g., `Code.exe`, `chrome.exe`). | `Complete` | Crucial for attributing events to the correct application. |
 | **T05** | **VS Code Integration:** Develop specific hooks or monitoring techniques for VS Code events (e.g., file save, find/replace). | `Pending` | May require inspecting accessibility APIs or logs. |
 | **T06** | **Chrome Browser Integration:** Develop logic to track significant web events like form submissions and URL changes. | `Pending` | Complex; will likely involve Windows UI Automation APIs. |
 | **T07** | **Microsoft Office (Word/Excel) Integration:** Develop logic to track file save events for Word and Excel. | `Pending` | COM automation or UI Automation may be viable paths. |
