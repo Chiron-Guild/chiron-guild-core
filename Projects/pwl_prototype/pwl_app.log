@@ -20,3 +20,596 @@
 2025-06-23 15:56:45,048 - pwl_logger - INFO - Active Window: {'title': 'test_window_monitor.py - Untitled (Workspace) - Visual Studio Code', 'process_name': 'Code.exe', 'pid': '30320'}
 2025-06-23 15:56:46,997 - pwl_logger - INFO - 
 Window monitoring stopped by user.
+2025-06-23 16:05:23,860 - pwl_logger - INFO - Starting PWL Engine...
+2025-06-23 16:05:23,862 - pwl_logger - INFO - Database writer thread started.
+2025-06-23 16:05:23,870 - pwl_logger - INFO - PWL Engine running. Press 'Esc' to stop.
+2025-06-23 16:05:26,159 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,019 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,162 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,298 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,338 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,363 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,499 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,514 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,667 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,690 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:27,698 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:28,027 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:28,755 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:28,959 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:29,119 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:29,275 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:29,427 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:29,587 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:29,747 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:29,915 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:30,098 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:30,275 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:30,762 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:30,995 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:31,467 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:31,723 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:32,059 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:32,799 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:32,922 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:33,105 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:33,287 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:33,647 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:34,352 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:34,511 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:36,668 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:38,325 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:39,591 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:39,968 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:40,151 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:40,271 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:47,664 - pwl_logger - INFO - Escape key detected, signaling shutdown.
+2025-06-23 16:05:47,664 - pwl_logger - ERROR - Database writer error: no such table: events
+Traceback (most recent call last):
+  File "C:\Users\kincaidn\OneDrive - City of Austin\Documents\GitHub\chiron-guild-core\Projects\pwl_prototype\pwl_core\engine.py", line 73, in _database_writer
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+sqlite3.OperationalError: no such table: events
+2025-06-23 16:05:47,664 - pwl_logger - INFO - Stopping PWL Engine...
+2025-06-23 16:05:48,680 - pwl_logger - INFO - Database writer thread finished.
+2025-06-23 16:05:48,681 - pwl_logger - INFO - PWL Engine stopped cleanly.
+2025-06-23 16:11:59,425 - pwl_logger - INFO - Initializing database at: pwl_ledger.db
+2025-06-23 16:11:59,435 - pwl_logger - INFO - Database initialized successfully.
+2025-06-23 16:11:59,435 - pwl_logger - INFO - Starting PWL Engine...
+2025-06-23 16:11:59,436 - pwl_logger - INFO - Database writer thread started.
+2025-06-23 16:11:59,443 - pwl_logger - INFO - PWL Engine running. Press 'Esc' to stop.
+2025-06-23 16:12:01,620 - pwl_logger - DEBUG - Logged event to DB: mouse_click
+2025-06-23 16:12:04,752 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:05,048 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:05,311 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:05,655 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:05,850 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:05,997 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:06,281 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:06,402 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:06,514 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:06,977 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:07,111 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:07,305 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:07,576 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:07,673 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:07,766 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:08,409 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:08,960 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:09,120 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:09,322 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:09,433 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:09,607 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:09,729 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:11,361 - pwl_logger - DEBUG - Logged event to DB: mouse_click
+2025-06-23 16:12:12,713 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:12,963 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:13,395 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:13,625 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:13,842 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:14,094 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:14,313 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:14,440 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:14,503 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:14,609 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:14,847 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:14,934 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:15,069 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:15,165 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:16,425 - pwl_logger - DEBUG - Logged event to DB: mouse_click
+2025-06-23 16:12:17,480 - pwl_logger - DEBUG - Logged event to DB: mouse_click
+2025-06-23 16:12:19,183 - pwl_logger - DEBUG - Logged event to DB: mouse_click
+2025-06-23 16:12:19,982 - pwl_logger - DEBUG - Logged event to DB: mouse_click
+2025-06-23 16:12:21,431 - pwl_logger - DEBUG - Logged event to DB: mouse_click
+2025-06-23 16:12:23,577 - pwl_logger - INFO - Escape key detected, signaling shutdown.
+2025-06-23 16:12:23,578 - pwl_logger - INFO - Stopping PWL Engine...
+2025-06-23 16:12:23,585 - pwl_logger - DEBUG - Logged event to DB: key_press
+2025-06-23 16:12:23,585 - pwl_logger - INFO - Database writer thread finished.
+2025-06-23 16:12:23,585 - pwl_logger - INFO - PWL Engine stopped cleanly.

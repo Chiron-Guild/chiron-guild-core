@@ -40,7 +40,7 @@ The project must adhere to strict user sovereignty and local-first data privacy.
 | :--- | :--- | :--- | :--- |
 | **T03** | **Global Input Monitoring:** Implement basic keyboard and mouse event monitoring using a library like `pynput` to capture raw input activity. | `Complete` | This will be the base layer for the heuristic engine. |
 | **T04** | **Active Window & Application Tracking:** Implement logic to identify the active foreground application (e.g., `Code.exe`, `chrome.exe`). | `Complete` | Crucial for attributing events to the correct application. |
-| **T05** | **VS Code Integration:** Develop specific hooks or monitoring techniques for VS Code events (e.g., file save, find/replace). | `Pending` | May require inspecting accessibility APIs or logs. |
+| **T05** | **VS Code Integration:** Implement a lightweight VS Code extension that uses the `onDidSaveTextDocument` event to spawn a Python handler script, passing the saved file's path as an argument. | `Pending` | Chosen based on T05-R research. The most reliable method. |
 | **T06** | **Chrome Browser Integration:** Develop logic to track significant web events like form submissions and URL changes. | `Pending` | Complex; will likely involve Windows UI Automation APIs. |
 | **T07** | **Microsoft Office (Word/Excel) Integration:** Develop logic to track file save events for Word and Excel. | `Pending` | COM automation or UI Automation may be viable paths. |
 | **T08** | **System Terminal Integration:** Monitor a running PowerShell/CMD process for command executions, especially `git` commands. | `Pending` | Involves process monitoring and potentially stdout capture. |
@@ -49,7 +49,8 @@ The project must adhere to strict user sovereignty and local-first data privacy.
 *Objective: Process raw events into meaningful, enriched log entries.*
 | Task ID | Description | Status | Agent Notes |
 | :--- | :--- | :--- | :--- |
-| **T09** | **Event Stream Processor:** Develop a script that reads raw events from the SQLite DB and groups them into logical sessions or actions. | `Pending` | The first step in turning noise into signal. |
+| **T09a**| **Develop Core Engine & DB Writer:** Architect and implement the main application engine (`PWLEngine`) to manage listeners and write combined event data to the database using a thread-safe queue. | `Complete` | Core data ingestion pipeline. Integrates T03 & T04. |
+| **T09** | **Event Stream Post-Processor:** Develop a script that reads raw events from the SQLite DB and groups them into logical sessions or actions. | `Pending` | The first step in turning noise into signal. |
 | **T10** | **Human vs. AI Heuristic Engine:** Implement the initial logic to distinguish provenance based on event patterns (e.g., paste events followed by minimal typing). | `Pending` | Highly experimental. Will require significant iteration. |
 | **T11** | **Google Gemini API Integration:** Create a module to send contextual data to the Gemini API for enrichment (e.g., summarizing a task, suggesting skills). | `Pending` | Requires secure API key management. |
 
