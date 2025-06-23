@@ -32,7 +32,7 @@ The project must adhere to strict user sovereignty and local-first data privacy.
 | Task ID | Description | Status | Agent Notes |
 | :--- | :--- | :--- | :--- |
 | **T01** | **Initialize Project Structure & Database:** Create directory layout, `requirements.txt`, and define the SQLite database schema in a setup script. | `Complete` | Foundational first step. |
-| **T02** | **Develop Core Logging Module:** Create a simple, robust Python logging module to standardize how all other components will write status updates and errors to the console and/or a file. | `Pending` | Essential for debugging all subsequent phases. |
+| **T02** | **Develop Core Logging Module:** Create a simple, robust Python logging module to standardize how all other components will write status updates and errors to the console and/or a file. | `Complete` | Essential for debugging all subsequent phases. |
 
 ### Phase 2: Event Tracker Development (Windows)
 *Objective: Build the background service to monitor user activity.*

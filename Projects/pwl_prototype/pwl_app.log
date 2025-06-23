@@ -1,0 +1,7 @@
+2025-06-23 14:31:32,165 - pwl_logger - INFO - --- Starting Logger Test ---
+2025-06-23 14:31:32,166 - pwl_logger - DEBUG - This is a detailed debug message for developers.
+2025-06-23 14:31:32,166 - pwl_logger - INFO - This is an informational message about the application's progress.
+2025-06-23 14:31:32,166 - pwl_logger - WARNING - This is a warning message. The application can continue, but something is unexpected.
+2025-06-23 14:31:32,166 - pwl_logger - ERROR - This is an error message. A specific operation failed.
+2025-06-23 14:31:32,166 - pwl_logger - CRITICAL - This is a critical message. The application cannot continue.
+2025-06-23 14:31:32,166 - pwl_logger - INFO - --- Logger Test Finished ---
