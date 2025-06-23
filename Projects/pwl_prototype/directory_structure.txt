@@ -1,0 +1,25 @@
+pwl_prototype/
+│
+├── .gitignore
+├── requirements.txt
+├── pwl_ledger.db           # (Will be created by the script)
+│
+├── memory/
+│   └── Phase_1_Infrastructure/
+│       └── T01_Database_Schema_Log.md  # (This file)
+│
+├── pwl_core/
+│   ├── __init__.py
+│   ├── data_capture/
+│   │   └── __init__.py
+│   ├── processing/
+│   │   └── __init__.py
+│   └── ui/
+│       └── __init__.py
+│
+├── scripts/
+│   └── setup_database.py
+│
+└── tests/
+    ├── __init__.py
+    └── test_database.py    # (Placeholder for future tests)
