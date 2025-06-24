@@ -1,0 +1,17 @@
+{
+  "name": "pwl-tracker",
+  "displayName": "PWL Tracker",
+  "description": "A simple tracker that logs file save events for the PWL.",
+  "version": "0.0.1",
+  "publisher": "ChironGuild",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./src/extension.js"
+}
