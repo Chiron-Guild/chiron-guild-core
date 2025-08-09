@@ -1,0 +1,96 @@
+name: Log Standalone Commits
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *' # Runs at 8:00 AM UTC every day
+
+jobs:
+  find-unlogged-commits:
+    runs-on: ubuntu-latest
+    outputs:
+      commits: ${{ steps.find_commits.outputs.commits }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 50 # Fetch enough history to find recent commits
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Find unlogged commits
+        id: find_commits
+        run: python .github/scripts/find_unlogged_commits.py
+
+  process-commits:
+    needs: find-unlogged-commits
+    if: fromJson(needs.find-unlogged-commits.outputs.commits)[0] != null
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        commit: ${{ fromJson(needs.find-unlogged-commits.outputs.commits) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Get Commit Details
+        id: get_commit_details
+        run: |
+          COMMIT_SHA=${{ matrix.commit }}
+          COMMIT_MESSAGE=$(git log --format=%B -n 1 $COMMIT_SHA)
+          COMMIT_URL="https://github.com/${{ github.repository }}/commit/$COMMIT_SHA"
+          echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$COMMIT_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "COMMIT_URL=$COMMIT_URL" >> $GITHUB_ENV
+          echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_ENV
+
+      - name: Run AI Enrichment
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          pip install google-generativeai
+          python .github/scripts/summarize_commit.py
+
+      - name: Log Commit Entry
+        env:
+          AI_SUMMARY: ${{ steps.enrich.outputs.summary }}
+        run: |
+          if [ -f "enrichment.json" ]; then
+            export AI_SUMMARY=$(cat enrichment.json)
+          else
+            export AI_SUMMARY=""
+          fi
+          python .github/scripts/log_commit_entry.py
+
+  commit-changes:
+    needs: process-commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # Use a token with write permissions
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if ! git diff --quiet registry.md; then
+            git add registry.md
+            git commit -m "chore(registry): Log standalone commits"
+            git push
+            echo "Registry updated with standalone commits."
+          else
+            echo "No new standalone commits to log."
+          fi
