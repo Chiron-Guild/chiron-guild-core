@@ -1,0 +1,46 @@
+name: Log Closed Issue to Registry
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  log-to-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Create Registry Entry
+        run: |
+          python .github/scripts/create_registry_entry.py
+        env:
+          ISSUE_TITLE: "${{ github.event.issue.title }}"
+          ISSUE_NUMBER: "${{ github.event.issue.number }}"
+          ISSUE_URL: "${{ github.event.issue.html_url }}"
+          ISSUE_BODY: "${{ github.event.issue.body }}"
+          CLOSED_AT: "${{ github.event.issue.closed_at }}"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add registry.md
+
+          # Check if there are changes to commit
+          if ! git diff --quiet --cached; then
+            git commit -m "chore(registry): Log issue #${{ github.event.issue.number }}"
+            git push
+            echo "Registry updated."
+          else
+            echo "No changes to commit."
+          fi
