@@ -20,8 +20,69 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Find Closing Pull Request
+        id: find_pr
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const response = await github.rest.issues.listEventsForTimeline({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            const events = response.data;
+            const closedEvent = events.find(event => event.event === 'closed' && event.source && event.source.issue);
+            if (closedEvent) {
+              const pr_url = closedEvent.source.issue.html_url;
+              const pr_number = pr_url.split('/').pop();
+              core.setOutput('pr_number', pr_number);
+              console.log(`Found closing PR: #${pr_number}`);
+              return pr_number;
+            }
+            console.log('Could not find a closing PR.');
+            return null;
+          result-encoding: string
+
+      - name: Get Commit URL from PR
+        id: get_commit
+        if: steps.find_pr.outputs.result
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pr_number = ${{ steps.find_pr.outputs.result }};
+            const response = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr_number,
+            });
+            const commit_sha = response.data.merge_commit_sha;
+            const commit_url = `https://github.com/${context.repo.owner}/${context.repo.repo}/commit/${commit_sha}`;
+            core.setOutput('commit_url', commit_url);
+            core.setOutput('commit_message', response.data.title); // Use PR title as commit message for context
+            console.log(`Found commit URL: ${commit_url}`);
+            return commit_url;
+          result-encoding: string
+
+      - name: Run AI Enrichment
+        id: enrich
+        if: steps.get_commit.outputs.result
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          COMMIT_URL: ${{ steps.get_commit.outputs.result }}
+          COMMIT_MESSAGE: ${{ steps.get_commit.outputs.commit_message }}
+        run: |
+          pip install google-generativeai
+          python .github/scripts/summarize_commit.py
+
       - name: Create Registry Entry
         run: |
+          # Read the AI summary if it exists
+          if [ -f "enrichment.json" ]; then
+            export AI_SUMMARY=$(cat enrichment.json)
+          else
+            export AI_SUMMARY=""
+          fi
+
           python .github/scripts/create_registry_entry.py
         env:
           ISSUE_TITLE: "${{ github.event.issue.title }}"
@@ -29,6 +90,7 @@ jobs:
           ISSUE_URL: "${{ github.event.issue.html_url }}"
           ISSUE_BODY: "${{ github.event.issue.body }}"
           CLOSED_AT: "${{ github.event.issue.closed_at }}"
+          COMMIT_URL: "${{ steps.get_commit.outputs.result }}"
 
       - name: Commit and push changes
         run: |

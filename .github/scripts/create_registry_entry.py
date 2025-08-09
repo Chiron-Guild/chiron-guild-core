@@ -1,5 +1,6 @@
 import os
 import re
+import json
 from datetime import datetime
 
 def parse_issue_body(body):
@@ -27,21 +28,18 @@ def format_entry(data):
     """Formats the parsed data into a markdown block."""
 
     title = os.getenv("ISSUE_TITLE", "")
-    number = os.getenv("ISSUE_NUMBER", "")
     issue_url = os.getenv("ISSUE_URL", "")
+    commit_url = os.getenv("COMMIT_URL", "")
     closed_at_str = os.getenv("CLOSED_AT", "")
+    ai_summary_json = os.getenv("AI_SUMMARY", "")
 
-    # Format the date nicely
     if closed_at_str:
         closed_at_dt = datetime.fromisoformat(closed_at_str.replace("Z", "+00:00"))
         closed_at_formatted = closed_at_dt.strftime("%Y-%m-%d")
     else:
         closed_at_formatted = "N/A"
 
-    # Extract details from the parsed body
     objective = data.get("Objective(s)", "Not specified")
-    deliverables = data.get("Deliverables", "Not specified").replace('\n', '\n  ') # Indent list items
-    skills = data.get("Skills Demonstrated", "Not specified")
     guild_seal = data.get("Awarded Guild Seal", "Not specified")
 
     entry = f"""
@@ -51,13 +49,29 @@ def format_entry(data):
 - **Status:** Completed on {closed_at_formatted}
 - **Guild Seal:** {guild_seal}
 - **Objective:** {objective}
-- **Skills Demonstrated:** {skills}
-
-#### Deliverables:
-  {deliverables}
-
 """
-    return entry
+
+    if commit_url:
+        entry += f"- **Associated Commit:** [{commit_url.split('/')[-1][:7]}]({commit_url})\n"
+
+    if ai_summary_json:
+        try:
+            ai_data = json.loads(ai_summary_json)
+            summary = ai_data.get("summary_of_changes", "N/A")
+            critique = ai_data.get("constructive_critique", "N/A")
+            skills = ai_data.get("skills_demonstrated", [])
+
+            entry += f"""
+#### AI-Generated Summary of Changes
+{summary}
+
+- **Constructive Critique:** {critique}
+- **Skills Demonstrated (AI):** {', '.join(skills) if skills else 'N/A'}
+"""
+        except json.JSONDecodeError:
+            entry += "\n*AI summary was not valid JSON and could not be included.*"
+
+    return entry + "\n"
 
 def main():
     issue_body = os.getenv("ISSUE_BODY")
